@@ -2,26 +2,38 @@
 
 Utilitary::Utilitary() {}
 Utilitary::~Utilitary() { cout << "Un powerup de heal a ete detruit" << endl; }
-void Utilitary::setUtilitary() {
-	if(type == heart)
-		if (!texture.loadFromFile("heartboost.png")) { throw runtime_error("Impossible de charger la texture de heal"); }
-	if(type == evilHeart)
-		if (!texture.loadFromFile("heartnerf.png")) { throw runtime_error("Impossible de charger la texture de heal ennemi"); }
-	if(type == battery)
-		if (!texture.loadFromFile("cooldownboost.png")) { throw runtime_error("Impossible de charger la texture de boost de cooldown"); }
-	if(type == evilBattery)
-		if (!texture.loadFromFile("cooldownnerf.png")) { throw runtime_error("Impossible de charger la texture de boost du cooldown ennemi"); }
-	if(type == shield)
-		if(!texture.loadFromFile("shield.png")) { throw runtime_error("Impossible de charger la texture de boost du shield"); }
-	if(type == evilShield)
-		if(!texture.loadFromFile("evilshield.png")) { throw runtime_error("Impossible de charger la texture de shield ennemi"); }
-	sprite.setTexture(texture);
+void Utilitary::setUtilitary(TextureManager& textureManager) {
+	switch (type)
+	{
+		case heart:
+		sprite.setTexture(textureManager.getTexture("heart"));
+		break;
+		case evilHeart:
+			sprite.setTexture(textureManager.getTexture("evilHeart"));
+			break;
+		case battery:
+			sprite.setTexture(textureManager.getTexture("battery"));
+			break;
+		case evilBattery:
+			sprite.setTexture(textureManager.getTexture("evilBattery"));
+			break;
+		case shield:
+			sprite.setTexture(textureManager.getTexture("shield"));
+			break;
+		case evilShield:
+			sprite.setTexture(textureManager.getTexture("evilShield"));
+			break;
+		default:
+			break;
+	}
 }
 void Utilitary::moveUtilitary()
 {
 	sprite.move(-velocity, 0);
 }
 
+
+UtilitaryManager::UtilitaryManager(TextureManager& manager) : textureManager(manager) {}
 
 UtilitaryManager::~UtilitaryManager()
 {
@@ -35,7 +47,7 @@ UtilitaryManager::~UtilitaryManager()
 Utilitary* UtilitaryManager::creerUtilitary(Powerup defType, float width, float height) {
 	Utilitary* h = new Utilitary();
 	h->type = defType;
-	h->setUtilitary();
+	h->setUtilitary(textureManager);
 	h->sprite.setPosition(width, height);
 	h->sprite.setScale(0.5,0.5);
 	if (defType == shield || defType == evilShield)

@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include "globalvar.hpp"
+#include "textureManager.hpp"
 using namespace sf;
 
 enum Difficulty { Easy, Normal, Hardcore };
@@ -26,7 +27,6 @@ public:
 	bool UShip3 = false;
 	Difficulty difficulty = Normal;
 	Sprite sprite;
-	Texture texture;
 	Sound impact;
 	SoundBuffer impactB;
 	Sound buy;
@@ -40,15 +40,16 @@ public:
 	Time boostDuration;
 	Time attackCooldown;
 	ID id = PLAYER;
+	TextureManager& textureManager;
 	bool canBeBoosted = false;
 	bool isAlive = true;
-	int setSprite();
-	Player();
+	void setSprite();
+	Player(TextureManager& manager);
 	void checkOutOfScreen();
 	void increaseScore(int toIncrease);
 	void decreaseScore(Text &scoreText, int toDecrease);
 	void setDifficulty(Difficulty defDifficulty);
-	void changeShip();
+	void handleShipTexture();
 };
 
 

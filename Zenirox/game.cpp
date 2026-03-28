@@ -1163,28 +1163,28 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 			{
 				confirmSound.play();
 				player.ship = Default;
-				player.changeShip();
+				player.handleShipTexture();
 				screen = previousScreen;
 			}
 			if (player.UShip1 == true && event.mouseButton.button == Mouse::Left && inventoryShip1S.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 			{
 				confirmSound.play();
 				player.ship = Ship1;
-				player.changeShip();
+				player.handleShipTexture();
 				screen = previousScreen;
 			}
 			if (player.UShip2 == true && event.mouseButton.button == Mouse::Left && inventoryShip2S.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 			{
 				confirmSound.play();
 				player.ship = Ship2;
-				player.changeShip();
+				player.handleShipTexture();
 				screen = previousScreen;
 			}
 			if (player.UShip3 == true && event.mouseButton.button == Mouse::Left && inventoryShip3S.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 			{
 				confirmSound.play();
 				player.ship = Ship3;
-				player.changeShip();
+				player.handleShipTexture();
 				screen = previousScreen;
 			}
 		}

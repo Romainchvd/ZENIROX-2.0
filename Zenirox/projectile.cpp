@@ -4,19 +4,18 @@
 #include "score.hpp"
 using namespace sf;
 
-Projectile::Projectile() {};
+Projectile::Projectile(TextureManager& textureManager) : textureManager(textureManager) {};
 Projectile::~Projectile() { std::cout << "Projectile detruit" << std::endl; }
 
-int Projectile::setProjectile() {
+void Projectile::setProjectile() {
 	if(id == PLAYER)
 	{
-		if (!texture.loadFromFile("projectiles/11.png")) { cout << "Erreur chargement projectile joueur" << endl; return -1; }
+		sprite.setTexture(textureManager.getTexture("projectilePlayer"));
 	}
 	else
 	{
-		if (!texture.loadFromFile("projectiles/14.png")) { cout << "Erreur chargement projectile ennemis" << endl; return -1; }
+		sprite.setTexture(textureManager.getTexture("projectileEnemy"));
 	}
-	sprite.setTexture(texture);
 	sprite.setScale(0.3 , 0.3);
 		
 }
@@ -29,7 +28,7 @@ ProjectileManager::~ProjectileManager() {
 		projectiles.clear();
 	}
 	Projectile* ProjectileManager::creerProjectile(Player player) {
-			Projectile* p = new Projectile();
+			Projectile* p = new Projectile(textureManager);
 			p->sprite.setOrigin(p->sprite.getGlobalBounds().width / 2, p->sprite.getGlobalBounds().height / 2);
 			p->id = player.id;
 			p->setProjectile();
@@ -38,7 +37,7 @@ ProjectileManager::~ProjectileManager() {
 	}
 
 	Projectile* ProjectileManager::creerProjectile(Enemy* enemy, int defVelocity) {
-		Projectile* p = new Projectile();
+		Projectile* p = new Projectile(textureManager);
 		p->sprite.setOrigin(p->sprite.getGlobalBounds().width, p->sprite.getGlobalBounds().height / 2);
 		p->sprite.rotate(180);
 		p->id = enemy->id;

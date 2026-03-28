@@ -4,7 +4,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "player.hpp"
-#include "enemy.hpp"
+#include "enemyManager.hpp"
 
 using namespace std;
 using namespace sf;
@@ -17,12 +17,11 @@ class Utilitary
 {
 public:
 	Sprite sprite;
-	Texture texture;
 	float velocity = 3;
 	Powerup type;
 	Utilitary();
 	~Utilitary();
-	void setUtilitary();
+	void setUtilitary(TextureManager& textureManager);
 	void moveUtilitary();
 
 	
@@ -31,7 +30,9 @@ public:
 class UtilitaryManager {
 private:
 	vector<Utilitary*> utilitaryList;
+	TextureManager& textureManager;
 public:
+	UtilitaryManager(TextureManager& manager);
 	~UtilitaryManager();
 	Utilitary* creerUtilitary(Powerup type, float width, float height);
 	void detruireUtilitary(Utilitary* utilitary);

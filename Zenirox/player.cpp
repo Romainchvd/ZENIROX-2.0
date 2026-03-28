@@ -4,52 +4,34 @@
 using namespace std;
 
 
-int Player::setSprite() {
-	switch (ship)
-	{
-	case Default:
-		if (!texture.loadFromFile("ship.png")) { cout << "Texture du vaisseau de joueur de base non trouvee" << endl; return -1; }
-		break;
-	case Ship1:
-		if (!texture.loadFromFile("ship1.png")) throw runtime_error("Erreur de chargement DLC1");
-		break;
-	case Ship2:
-		if (!texture.loadFromFile("ship2.png")) throw runtime_error("Erreur de chargement DLC2");
-		break;
-	case Ship3:
-		if (!texture.loadFromFile("ship3.png")) throw runtime_error("Erreur de chargement DLC3");
-	default:
-		break;
-	}
-	
+void Player::setSprite() {
 
-
-	sprite.setTexture(texture);
+	handleShipTexture();
 	sprite.rotate(90);
 	sprite.setPosition(200, HEIGHT / 2);
 }
-void Player::changeShip()
+
+void Player::handleShipTexture()
 {
 	switch (ship)
 	{
 	case Default:
-		if (!texture.loadFromFile("ship.png")) throw runtime_error("Erreur de chargement ship par defaut");
+		sprite.setTexture(textureManager.getTexture("ship"));
 		break;
 	case Ship1:
-		if (!texture.loadFromFile("ship1.png")) throw runtime_error("Erreur de chargement DLC1");
+		sprite.setTexture(textureManager.getTexture("ship1"));
 		break;
 	case Ship2:
-		if (!texture.loadFromFile("ship2.png")) throw runtime_error("Erreur de chargement DLC2");
+		sprite.setTexture(textureManager.getTexture("ship2"));
 		break;
 	case Ship3:
-		if (!texture.loadFromFile("ship3.png")) throw runtime_error("Erreur de chargement DLC3");
+		sprite.setTexture(textureManager.getTexture("ship3"));
 	default:
 		break;
 	}
-	sprite.setTexture(texture);
 }
 
-Player::Player() : attackCooldown(seconds(0.2)), boostDuration(seconds(2.5)) {
+Player::Player(TextureManager& manager) : attackCooldown(seconds(0.2)), boostDuration(seconds(2.5)), textureManager(manager) {
 	if (!impactB.loadFromFile("sounds/hit.ogg")) throw runtime_error("Erreur de chargement du son d'impact");
 	impact.setBuffer(impactB);
 	if (!bonusB.loadFromFile("sounds/boost.ogg")) throw runtime_error("Erreur de chargement du son de bonus");

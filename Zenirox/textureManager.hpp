@@ -64,7 +64,15 @@ private:
 			{"buyShip3", "shop/ship3.png" },
 			{"menu", "button/menu.png"},
 			{ "pause", "button/pause.png" },
-			{"meteor", "meteor.png" }
+			{"meteor", "meteor.png" },
+			{  "heart", "heartboost.png" },
+			{ "evilHeart", "heartnerf.png" },
+			{ "battery", "cooldownboost.png" },
+			{ "evilBattery", "cooldownnerf.png" },
+			{ "shield", "shield.png" },
+			{ "evilShield", "evilshield.png" },
+			{"projectilePlayer", "projectiles/11.png" },
+			{"projectileEnemy", "projectiles/14.png" }
 		};
 		for (const auto& pair : textureFiles) {
 			if (!texture.loadFromFile(pair.second)) {

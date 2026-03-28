@@ -1,6 +1,6 @@
 #ifndef CLASS_HPP
 #define CLASS_HPP
-#include "enemy.hpp"
+#include "enemyManager.hpp"
 #include "player.hpp"
 #include "globalvar.hpp"
 using namespace sf;
@@ -10,18 +10,20 @@ using namespace std;
 class Projectile {
 public:
 	Sprite sprite;
-	Texture texture;
+	TextureManager& textureManager;
 	ID id;
 	int velocity;
-	Projectile();
+	Projectile(TextureManager& textureManager);
 	~Projectile();
-	int setProjectile();
+	void setProjectile();
 };
 
 class ProjectileManager {
 private:
 	vector<Projectile*> projectiles;
+	TextureManager& textureManager;
 public:
+	ProjectileManager(TextureManager& manager) : textureManager(manager) {}
 	~ProjectileManager();
 	Projectile* creerProjectile(Player player);
 	Projectile* creerProjectile(Enemy* enemy, int defVelocity);
