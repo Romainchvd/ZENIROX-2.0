@@ -1,15 +1,18 @@
+Improved version of the original project.  Credits for the parallax background: Janelle Grumiaux https://www.linkedin.com/in/janelle-grumiaux-kapahou-kenmoe-33910829b/
+Original memory: 414 Mo
+
 # **SHOOT_THEM_UP**
 
 ---
 
 ## **1. Informations Générales**
 
-**Titre** : Project Noël.  
+**Titre** : ZENIROX 2.0.  
 **Genre** : Shoot'em Up.
 **Style Visuel** : Pixel Art (particules, explosions dynamiques).  
-**Plateforme(s)** : PC .  
-**Public cible** : Amateurs de jeux d’arcade et de défis rapides, âgés de 8 ans et plus.  
-**Résumé** :  Après une invasion extraterrestre. La Terre decide alors d'envahir la planète ennemis Zenirox.
+**Plateforme(s)** : PC.  
+**Public cible** : Amateurs de jeux d’arcade et de défis rapides, âgés de 3 ans et plus.  
+**Résumé** : La Terre a été attaquée par une planète ennemie appelée Zenirox. Le joueur repousse l'attaque avant de contre-attaquer.
 
 ---
 
@@ -17,43 +20,36 @@
 
 - **Gameplay principal** : Le joueur contrôle un vaisseau spatial, détruit des vagues d’ennemis et évite des projectiles et des obstacle pour progresser dans les niveaux.  
 - **Objectifs** : Détruire les vagues d'ennemis pour pouvoir tuer le Boss de la planète Zenirox.
-  - Court terme : Survivre et accumuler des  en détruisant les ennemis.
+  - Court terme : Survivre et accumuler des pièces en détruisant les ennemis.
   - Long terme : Compléter les niveaux, vaincre les boss et sauver la planète.  
-- **Déroulement** : Le jeu est divisé en plusieurs niveaux avec une difficulté croissante, chacun se terminant par un combat de boss unique. Pour terminer le jeu il faut donc tué le Boss du dernier niveau. 
-- **Style de progression** : Défilement vertical automatique, avec des phases de répit pour récupérer des power-ups et réorganiser ses stratégies entre chaque niveau.
+- **Déroulement** : Le jeu est divisé en plusieurs niveaux avec une difficulté croissante, chacun se terminant par un combat de boss. Pour terminer le jeu il faut donc tuer le Boss du dernier niveau. 
+- **Style de progression** : Défilement vertical automatique, avec des power-ups sur le terrain.
 
 ---
 
 ## **3. Méchaniques de Jeu**
 
 ### **3.1. Contrôle du joueur**
-- **Déplacement** : Mouvement en 2 des touches directionnelles (clavier).  
-- **Tir principal** : Tir automatique en maintenant en faisant un clique gauche sur la souris .  
-- **Tir secondaire** : Attaque spéciale, dépendant des power-ups collectés.  
-- **Obstacles** : Présence d'obstacles apportants des malus ou infligeants des dégâts au joueur .
+- **Déplacement** : Utilisation des flèches haut et bas du clavier.  
+- **Tir** : Tir automatique en maintenant en faisant un clique gauche sur la souris.  
+- **Obstacles** : Présence d'astéroïdes qui infligent des dégâts au contact. En mode difficile, des malus divers peuvent apparaître.
 
 ### **3.2. Système de Scoring**
-- **Score** : Une piece est equivaut à un poitnt de score pour obtenir des pièce il faut donc tué des ennemis.
-- **Multiplicateurs** : Augmentez vos points en détruisant des ennemis et en ramassant des bonus.
-- **Diviseur** : Diminuez vos points en touchant un obstacle ou en touchant un malus .
-- **Shop** : Possibilité d'acheter des skins avec le score et/ou l'argent réel
+- **Score** : Le score est représenté par des pièces et augmente à chaque tir réussi sur un ennemi.
+- **Shop** : Possibilité d'acheter des skins avec le score.
   
 ### **3.3. Power-ups**
-1. **Boost d'attaque**:  
-   - Augmente les dégats
-   - Augmente la vitesse de tir    
+1. **Boost d'attaque**
+   - Augmente la vitesse de tir, représenté par une pile.
 2. **Boosts défensifs** :  
-   - Bouclier temporaire (absorbe un coup).  
-   - Ralentissement des projectiles ennemis.
-   - Dégâts des enemis divisé par 2  
-3. **Économies** :  
-   - Collecte de pièce pour acheter des skins, des sons et des bonus permanants entre les niveaux.  
+   - Bouclier (barre de vie bleue absorbant la même quantité de dégâts que la barre de vie classique, mais indépendante (ne soigne pas la vie initiale).
+   - Coeur: soigne la vie.
 
 ### **3.4. Difficulté**
 - **Modes de jeu** :  
-   - Débutant : Parfait pour les nouveaux joueurs.  
-   - Standard : Plus d’ennemis, tirs plus rapides.  
-   - Hardcore : Tirs très complexes, erreurs non pardonnées (Enemis font plus de dégat, pas de bunus et pas de regen).
+   - Facile : Le joueur inflige plus de dégâts et les ennemis lui en infligent moins. 
+   - Normal : Dégâts infligés et reçus standards. 
+   - Hardcore : Les ennemis sont plus lents à tuer et infligent plus de dégâts. Il n'y a plus de powers up. Des malus apparaîssent à la place et fonctionnent comme les power-ups mais sont appliqués aux ennemis plutôt qu'au joueur.
 
 ---
 
@@ -61,60 +57,48 @@
 
 ### **4.1. Types d’ennemis**
 1. **Basique** :  
-   - Faible santé, tirent lentement, zero mouvement (nombreux).  
-   - Exemple : vaisseau alien de reconnaissance.  
+   - Faible santé, zero mouvement.  
 2. **Intermédiaire** :  
-   - Mouvements lent, Forte santé , tirs lent.  
-   - Exemple : Vaisseaux tank alien.  
+   - Mouvements lent, santé moyenne.  
 3. **Avancé** :  
-   - Déplacement rapide, santé normal, tirs rapides.  
-   - Exemple : Vaisseau d'attaque.  
+   - Déplacement rapide, santé élevée.  
 
 ### **4.2. Boss**
 Chaque niveau se termine par un boss avec des mécaniques uniques :
-- **Niveau 1 : Sentinel**  
-   -  principale : Mitraillette avec beaucoup de dégâts.
-- **Niveau 2 : Trespasser**  
-   -  principale : déplacement rapide
-   - Pattern :
-- **Niveau 3 : Scunner**
-   -  principale : Bouclier
-   - Pattern :
-- **Niveau 4 : Reckoner**
-   -  principale : combinaison de tous les boss précédant, amplifié avec malus qui lui rendent de la vie
+- **Tier 1**  
+   -  Tire par raffale, très rapidement.
+- **Tier Niveau 2**  
+   -  Se déplace très rapidement.
+- **Tier 3**
+   -  Possède un bouclier.
+- **Boss final**
+   -  Possède toutes les particularités des autres boss.
 ---
 
 ## **5. Progression et Structure**
 
 ### **5.1. Niveaux**
-1. **Niveau 1** : Haute atmosphère terrestre.  
-   - Thème : Débris spatiaux, satellites détruits.  
-   - Introduction aux ennemis de niveau 1
+1. **Tier 1** : Haute atmosphère terrestre.
    - Ennemi : Boss 1.
      
-2. **Niveau 2** : Espace.  
-   - Thème : Astéroïdes destructibles et passages étroits.  
-   - Introduction aux ennemis de niveau 2.
+2. **Tier 2** : Espace.   
    - Ennemi : Boss 2.
      
-3. **Niveau 3** : Système solaire ennemi.  
-   - Thème : Structures mécaniques et machines géantes.  
-   - Introduction aux ennemis de niveau 3.
+3. **Tier 3** : Système solaire ennemi.
    - Ennemi : Boss 3.
 
-4. **Niveau 4** : Haute atmosphère planète ennemie.  
-   - Thème : Structures mécaniques et machines géantes.  
-   - Ennemi : Big Boss  
+4. **Boss final** : Haute atmosphère de la planète ennemie.  
+   - Ennemi : Boss final.  
 
 ### **5.2. Rythme**
--Augmentation du nombre d'ennemis pour chaque palier  
+-Augmentation du niveau moyen des ennemis à chaque niveau.
 
 ---
 
 ## **6. Direction Artistique**
 
 ### **6.1. Style Visuel**
-- Pixel art rétro combiné avec des effets modernes (glow, particules).  
+- Pixel art rétro.  
 - Palette de couleurs évoluant selon les niveaux :  
   - Niveau 1 : Tons Terrestre (bleu, vert).  
   - Niveau 2 : Tons spatiaux (bleu).  
@@ -124,9 +108,10 @@ Chaque niveau se termine par un boss avec des mécaniques uniques :
 ### **6.2. Interface utilisateur**
 
 - **HUD** :  
-   - Score en haut à gauche.  
-   - Barre de vie du joueur en bas à gauche.  
-   - Indicateurs de power-ups et bombes en bas à droite.  
+   - Affichage du score. 
+   - Barre de vie du joueur en bas à gauche.
+   - Bouton de pause.
+   - Niveau actuel.
 
 ---
 
@@ -134,7 +119,7 @@ Chaque niveau se termine par un boss avec des mécaniques uniques :
 
 ### **7.1. Musique**
 - Rythmes électroniques rapides pour les phases d’action.  
-- Musique plus lourde et dramatique pour les combats de boss.  
+- Musique plus lourde et dramatique pour les combats de boss.
 
 ### **7.2. Effets sonores**
 - Sons distincts pour les tirs, les explosions, et les power-ups.  
@@ -146,10 +131,6 @@ Chaque niveau se termine par un boss avec des mécaniques uniques :
 
 ### **8.1. Moteur de Jeu**
 - **SFML** 
-
-### **8.2. Logiciels Recommandés**
-- Pixel art : **Aseprite** pour les sprites et animations.  
-- Audio : **Bfxr** pour les effets sonores, **Ableton Live** pour la musique.  
 
 ---
 
