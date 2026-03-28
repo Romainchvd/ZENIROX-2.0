@@ -12,6 +12,8 @@
 #include "healthbar.hpp"
 #include "obstacle.hpp"
 #include "powerups.hpp"
+#include "enemyManager.hpp"
+#include "textureManager.hpp"
 
 using namespace std;
 using namespace sf;
@@ -36,36 +38,7 @@ private:
 public:
 	Game();
 
-	Texture backgroundTexture;
-	Texture closeT;
-	Texture confirmT;
-	Texture editorT;
-	Texture cancelT;
-	Texture dataT;
-	Texture easyT;
-	Texture hardcoreT;
-	Texture menuT;
-	Texture normalT;
-	Texture questT;
-	Texture resumeT;
-	Texture settingsT;
-	Texture buyT;
-	Texture yesT;
-	Texture noT;
-	Texture backT;
-	Texture shopT;
-	Texture continueT;
-	Texture resetT;
-	Texture buyShip1T;
-	Texture buyShip2T;
-	Texture buyShip3T;
-	Texture inventoryShipT;
-	Texture inventoryShip1T;
-	Texture inventoryShip2T;
-	Texture inventoryShip3T;
-	Texture pauseT;
-
-
+	TextureManager textureManager;
 	Sprite backgroundSprite;
 	Sprite closeS;
 	Sprite confirmS;

@@ -10,12 +10,11 @@ private:
     float starSpeed;
 
 public:
-    sf::Texture texture;
     sf::Sprite sprite;
     sf::Sprite sprite2;
-    Starparallaxe(const std::string& texturePath, float speed);
-    void startexture();
-    void cloudtexture();
+    Starparallaxe(TextureManager& manager, float& speed, string& texture);
+    void starTexture();
+    void cloudTexture();
     void update(float deltaTime);
     void draw(sf::RenderWindow& window);
 };

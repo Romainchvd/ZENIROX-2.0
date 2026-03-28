@@ -1,36 +1,29 @@
 #include "enemy.hpp"
 
 
-int Enemy::setTexture() {
+void Enemy::setTexture(TextureManager& manager) {
 	switch (id)
 	{
 	case ENNEMI1:
-		if (!texture.loadFromFile("enemy1.png")) { cout << "Erreur lors du chargement de texure d'ennemi niveau 1" << endl; return -1; }
-		sprite.setTexture(texture);
+		sprite.setTexture(manager.getTexture("enemy1"));
 		break;
 	case ENNEMI2:
-		if (!texture.loadFromFile("enemy2.png")) { cout << "Erreur lors du chargement de texture d'ennemi niveau 2" << endl; return -1; }
-		sprite.setTexture(texture);
+		sprite.setTexture(manager.getTexture("enemy2"));
 		break;
 	case ENNEMI3:
-		if (!texture.loadFromFile("enemy3.png")) { cout << "Erreur lors du chargement de texture d'ennemi niveau 3" << endl; return -1; }
-		sprite.setTexture(texture);
+		sprite.setTexture(manager.getTexture("enemy3"));
 		break;
 	case BOSS1:
-		if (!texture.loadFromFile("Boss1.png")) { cout << "Erreur lors du chargement de texture de boss niveau 1" << endl; return -1; }
-		sprite.setTexture(texture);
+		sprite.setTexture(manager.getTexture("Boss1"));
 		break;
 	case BOSS2:
-		if (!texture.loadFromFile("Boss2.png")) { cout << "Erreur lors du chargement de texture de boss niveau 2" << endl; return -1; }
-		sprite.setTexture(texture);
+		sprite.setTexture(manager.getTexture("Boss2"));
 		break;
 	case BOSS3:
-		if (!texture.loadFromFile("Boss3.png")) { cout << "Erreur lors du chargement de texture de boss niveau 3" << endl; return -1; }
-		sprite.setTexture(texture);
+		sprite.setTexture(manager.getTexture("Boss3"));
 		break;
 	case BOSS4:
-		if (!texture.loadFromFile("Boss4.png")) { cout << "Erreur lors du chargement de texture de boss niveau 4" << endl; return -1; }
-		sprite.setTexture(texture);
+		sprite.setTexture(manager.getTexture("Boss4"));
 		break;
 	default:
 		break;
@@ -124,114 +117,4 @@ void Enemy::enemyMove() {
 		sprite.setPosition(sprite.getPosition().x + WIDTH + 2000, sprite.getPosition().y);
 	}
 }
-
-
-
-
-	EnemyManager::~EnemyManager() {
-		for (auto enemy : enemies)
-		{
-			delete enemy;
-		}
-		enemies.clear();
-	}
-
-	Enemy* EnemyManager::creerEnemy(ID defLevel, float width, float height)
-	{
-		Enemy* e = new Enemy();
-		e->id = defLevel;
-		e->setTexture();
-		e->setAttackAndHP();
-		e->sprite.setPosition(width, height);
-		e->sprite.setScale(2, 2);
-		e->boostDuration = seconds(2.5);
-		if (defLevel == BOSS2)
-			e->sprite.setScale(1.5, 1.5);
-		else if (defLevel == BOSS3)
-			e->sprite.setScale(1, 1);
-		else if (defLevel == BOSS4)
-			e->sprite.setScale(1, 1);
-		switch (defLevel)
-		{
-		case ENNEMI1:
-			e->id = ENNEMI1;
-			break;
-		case ENNEMI2:
-			e->id = ENNEMI2;
-			break;
-		case ENNEMI3:
-			e->id = ENNEMI3;
-			break;
-		case BOSS1:
-			e->id = BOSS1;
-			break;
-		case BOSS2:
-			e->id = BOSS2;
-			break;
-		case BOSS3:
-			e->id = BOSS3;
-			break;
-		case BOSS4:
-			e->id = BOSS4;
-		default:
-			break;
-		}
-		switch (e->id)
-		{
-		case ENNEMI1:
-			e->attackCooldown = seconds(3);
-			e->rechargeCooldown = seconds(0);
-			break;
-		case ENNEMI2:
-			e->attackCooldown = seconds(1.5);
-			e->rechargeCooldown = seconds(0);
-			break;
-		case ENNEMI3:
-			e->attackCooldown = seconds(1);
-			e->rechargeCooldown = seconds(1);
-			break;
-		case BOSS1:
-			e->attackCooldown = seconds(0.08);
-			e->rechargeCooldown = seconds(2);
-			e->velocity = 3;
-			break;
-		case BOSS2:
-			e->attackCooldown = seconds(0.2);
-			e->rechargeCooldown = seconds(2);
-			e->velocity = 5;
-			break;
-		case BOSS3:
-			e->attackCooldown = seconds(0.2);
-			e->rechargeCooldown = seconds(2);
-			break;
-		case BOSS4:
-			e->attackCooldown = seconds(0.06);
-			e->rechargeCooldown = seconds(2);
-			e->velocity = 6;
-			break;
-		}
-		enemies.push_back(e);
-		return e;
-	}
-	void EnemyManager::detruireEnemy(Enemy* enemy) {
-		auto it = find(enemies.begin(), enemies.end(), enemy);
-		if (it != enemies.end()) {
-			delete* it;
-			enemies.erase(it);
-		}
-	}
-
-
-	void EnemyManager::checkEnemy(Enemy* enemy, int &toKill, ExplosionManager& exManager)
-	{
-		if (enemy->HP < 1)
-		{
-			exManager.creerExplosion(enemy);
-			detruireEnemy(enemy);
-			--toKill;
-		}
-	}
-	vector<Enemy* > EnemyManager::getEnemies() {
-		return enemies;
-	}
 

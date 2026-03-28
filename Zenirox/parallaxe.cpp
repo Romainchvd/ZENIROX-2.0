@@ -3,30 +3,13 @@
 #include <iostream>
 using namespace std;
 
-Starparallaxe::Starparallaxe(const std::string& texturePath, float speed)
+Starparallaxe::Starparallaxe(TextureManager& manager, float& speed, string& texture)
 	: starSpeed(speed) {
-	if (!texture.loadFromFile(texturePath)) {
-		throw std::runtime_error("Failed to load texture");
-	}
-
-	sprite.setTexture(texture);
-	sprite.setPosition(0, 0); // position initial
-
-    sprite2.setTexture(texture);
-    sprite2.setPosition(sprite.getGlobalBounds().width, 0); // Position it next to the first
-}
-
-
-void Starparallaxe::startexture() {
-	if (!texture.loadFromFile("star.png")) {
-		throw std::runtime_error("Failed to load texture");
-	}
-}
-
-void Starparallaxe::cloudtexture() {
-	if (!texture.loadFromFile("cloud.png")) {
-		throw std::runtime_error("Failed to load texture");
-	}
+	
+	sprite.setTexture(manager.getTexture(texture));
+	sprite2.setTexture(manager.getTexture(texture));
+	sprite.setPosition(0, 0); 
+    sprite2.setPosition(sprite.getGlobalBounds().width, 0); 
 }
 
 void Starparallaxe::update(float deltaTime) {

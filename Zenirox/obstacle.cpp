@@ -4,9 +4,8 @@
 
 Obstacle::Obstacle(){}
 Obstacle::~Obstacle() { cout << "Un obstacle a ete detruit" << endl; }
-void Obstacle::setTexture() {
-	if (!texture.loadFromFile("meteor.png")) { throw runtime_error("Impossible de charger la texture de l'obstacle"); }
-	sprite.setTexture(texture);
+void Obstacle::setTexture(TextureManager& manager) {
+	sprite.setTexture(manager.getTexture("meteor"));
 }
 void Obstacle::moveObstacle(int randValue)
 {
@@ -50,6 +49,7 @@ void Obstacle::checkObstacle(Player& player)
 		player.impact.play();
 	}
 }
+
 
 
 ObstacleManager::~ObstacleManager()

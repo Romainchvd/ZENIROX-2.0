@@ -2,6 +2,7 @@
 #define ENEMY_HPP
 #include "SFML/Graphics.hpp"
 #include "SFML/Audio.hpp"
+#include "textureManager.hpp"
 #include "globalvar.hpp"
 #include "explosion.hpp"
 
@@ -22,7 +23,6 @@ public:
 	float velocity = 2;
 	Direction direction = up;
 	Sprite sprite;
-	Texture texture;
 	Sound impact;
 	SoundBuffer impactB;
 	Sound lasershot;
@@ -36,7 +36,7 @@ public:
 	Clock rechargeClock;
 	Time rechargeCooldown;
 	bool canBeBoosted = false;
-	int setTexture();
+	void setTexture(TextureManager& manager);
 	void setAttackAndHP();
 	Enemy();
 	~Enemy();
@@ -44,16 +44,5 @@ public:
 };
 
 
-
-class EnemyManager {
-private:
-	vector<Enemy*> enemies;
-public:
-	~EnemyManager();
-	Enemy* creerEnemy(ID defLevel, float width, float height);
-	void detruireEnemy(Enemy* enemy);
-	void checkEnemy(Enemy* enemy,int &toKill, ExplosionManager& exManager);
-	vector<Enemy* > getEnemies();
-};
 
 #endif

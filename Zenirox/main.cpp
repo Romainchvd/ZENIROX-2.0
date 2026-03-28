@@ -36,10 +36,9 @@ int main() {
 	Text totalScoreText;
 
 	setCurrentScoreText(player, scoreFont, scoreText);
-	Background background("palier1Test.jpg", -31); // Default texture and speed
+	Background background(game.textureManager, -31); // Default texture and speed
 
-	Starparallaxe star("star.png", -100.f);
-	fastStarparallaxe faststar("starR.png", -250.f);
+	Starparallaxe star(game.textureManager, -100.f, "star.png");
 
 	Healthbar healthbar;
 	healthbar.setTextureList();
