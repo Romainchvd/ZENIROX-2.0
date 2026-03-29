@@ -25,7 +25,6 @@ TextureManager::TextureManager()
 		{"palier3", "palier3.jpg"},
 		{"palier4", "palier4.jpg"},
 		{"star", "star.png"},
-		{"cloud", "cloud.png"},
 		{"enemy1", "enemy1.png"},
 		{"enemy2", "enemy2.png"},
 		{"enemy3", "enemy3.png"},
@@ -69,7 +68,11 @@ TextureManager::TextureManager()
 		{ "shield", "shield.png" },
 		{ "evilShield", "evilshield.png" },
 		{"projectilePlayer", "projectiles/11.png" },
-		{"projectileEnemy", "projectiles/14.png" }
+		{"projectileEnemy", "projectiles/14.png" },
+		{"ship", "ship.png" },
+		{"ship1", "ship1.png" },
+		{"ship2", "ship2.png" },
+		{"ship3", "ship3.png" },
 	};
 	for (const auto& pair : textureFiles) {
 		if (!texture.loadFromFile(pair.second)) {

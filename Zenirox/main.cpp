@@ -8,13 +8,13 @@ using namespace sf;
 
 int main() {
 	srand(time(NULL));
-	RenderWindow window(VideoMode(WIDTH, HEIGHT), "ZENIROX", Style::Fullscreen);
+	RenderWindow window(VideoMode(WIDTH, HEIGHT), "ZENIROX", Style::Default);
 	window.setFramerateLimit(60);
 	window.setVerticalSyncEnabled(true);
 
 	Game game;
 
-	Player player;
+	Player player(game.textureManager);
 	player.setSprite();
 	EnemyManager eManager;
 
@@ -36,16 +36,17 @@ int main() {
 	Text totalScoreText;
 
 	setCurrentScoreText(player, scoreFont, scoreText);
-	Background background(game.textureManager, -31); // Default texture and speed
+	Background background(game.textureManager, -31);
 
-	Starparallaxe star(game.textureManager, -100.f, "star.png");
+	Starparallaxe star(game.textureManager, -100.f, "star");
+	Starparallaxe faststar(game.textureManager, -200.f, "star");
 
 	Healthbar healthbar;
 	healthbar.setTextureList();
 
 	sf::Clock clock;
 
-	ProjectileManager pManager;
+	ProjectileManager pManager(game.textureManager);
 	openData(player, game);
 	
 	if (game.UfinalBoss == true)
@@ -69,9 +70,9 @@ int main() {
 	else
 		game.state = niveau1A;
 
-	ObstacleManager oManager;
+	ObstacleManager oManager(game.textureManager);
 
-	UtilitaryManager uManager;
+	UtilitaryManager uManager(game.textureManager);
 
 	ExplosionManager exManager;
 

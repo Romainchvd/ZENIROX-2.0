@@ -3,7 +3,7 @@
 #include <iostream>
 using namespace std;
 
-Starparallaxe::Starparallaxe(TextureManager& manager, float& speed, string& texture)
+Starparallaxe::Starparallaxe(TextureManager& manager, float speed, string texture)
 	: starSpeed(speed) {
 	
 	sprite.setTexture(manager.getTexture(texture));

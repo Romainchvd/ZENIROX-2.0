@@ -63,7 +63,7 @@ ObstacleManager::~ObstacleManager()
 
 Obstacle* ObstacleManager::creerObstacle(float width, float height) {
 	Obstacle* o = new Obstacle();
-	o->setTexture();
+	o->setTexture(manager);
 	o->sprite.setPosition(width, height);
 	o->sprite.setScale(0.25, 0.25);
 	obstacles.push_back(o);
