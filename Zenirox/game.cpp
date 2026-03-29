@@ -7,143 +7,88 @@ Game::Game() : hoveredOption(-1) {
 		throw std::runtime_error("Failed to load texture");
 	}
 
-	// background texture
-	if (!backgroundTexture.loadFromFile("mainmenu.png")) {
-		throw std::runtime_error("Failed to load texture");
-	}
-
-	//Load the texture and set the sprite
-	if (!closeT.loadFromFile("button/close.png")) {
-		throw runtime_error("Erreur : texture de close introuvable.");
-	}
-	closeS.setTexture(closeT);
+	
+	closeS.setTexture(textureManager.getTexture("close"));
 	closeS.setScale(2, 2);
 
-	//Load the texture and set the sprite
-	if (!confirmT.loadFromFile("button/confirm.png")) {
-		throw runtime_error("Erreur : texture de close introuvable.");
-	}
-	confirmS.setTexture(confirmT);
+	
+	
+	confirmS.setTexture(textureManager.getTexture("confirm"));
 	confirmS.setScale(2, 2);
 
-	//Load the texture and set the sprite
-	if (!editorT.loadFromFile("button/editor.png")) {
-		throw runtime_error("Erreur : texture de close introuvable.");
-	}
-	editorS.setTexture(editorT);
+	
+	editorS.setTexture(textureManager.getTexture("editor"));
 	editorS.setScale(2, 2);
 
-	//Load the texture and set the sprite
-	if (!cancelT.loadFromFile("button/cancel.png")) {
-		throw runtime_error("Erreur : texture de close introuvable.");
-	}
-	cancelS.setTexture(cancelT);
+	
+	cancelS.setTexture(textureManager.getTexture("cancel"));
 	cancelS.setScale(2, 2);
 
-	//Load the texture and set the sprite
-	if (!dataT.loadFromFile("button/data.png")) {
-		throw runtime_error("Erreur : texture de close introuvable.");
-	}
-	dataS.setTexture(dataT);
+	
+	dataS.setTexture(textureManager.getTexture("data"));
 	dataS.setScale(2, 2);
 
-	//Load the texture and set the sprite
-	if (!easyT.loadFromFile("button/easy.png")) {
-		throw runtime_error("Erreur : texture de close introuvable.");
-	}
-	easyS.setTexture(easyT);
+	
+	
+	easyS.setTexture(textureManager.getTexture("easy"));
 	easyS.setScale(2, 2);
 
-	//Load the texture and set the sprite
-	if (!hardcoreT.loadFromFile("button/hardcore.png")) {
-		throw runtime_error("Erreur : texture de close introuvable.");
-	}
-	hardcoreS.setTexture(hardcoreT);
+	
+	hardcoreS.setTexture(textureManager.getTexture("hardcore"));
 	hardcoreS.setScale(2, 2);
 
-	//Load the texture and set the sprite
-	if (!menuT.loadFromFile("button/menu.png")) {
-		throw runtime_error("Erreur : texture de close introuvable.");
-	}
-	menuS.setTexture(menuT);
+	
+	menuS.setTexture(textureManager.getTexture("menu"));
 	menuS.setScale(2, 2);
 
-	//Load the texture and set the sprite
-	if (!normalT.loadFromFile("button/normal.png")) {
-		throw runtime_error("Erreur : texture de close introuvable.");
-	}
-	normalS.setTexture(normalT);
+	
+	normalS.setTexture(textureManager.getTexture("normal"));
 	normalS.setScale(2, 2);
 
-	//Load the texture and set the sprite
-	if (!questT.loadFromFile("button/quest.png")) {
-		throw runtime_error("Erreur : texture de close introuvable.");
-	}
-	questS.setTexture(questT);
+	
+	questS.setTexture(textureManager.getTexture("quest"));
 	questS.setScale(2, 2);
 
-	//Load the texture and set the sprite
-	if (!resumeT.loadFromFile("button/resume.png")) {
-		throw runtime_error("Erreur : texture de close introuvable.");
-	}
-	resumeS.setTexture(resumeT);
+	
+	resumeS.setTexture(textureManager.getTexture("resume"));
 	resumeS.setScale(2, 2);
 
-	//Load the texture and set the sprite
-	if (!settingsT.loadFromFile("button/settings.png")) {
-		throw runtime_error("Erreur : texture de close introuvable.");
-	}
-	settingsS.setTexture(settingsT);
+	
+	settingsS.setTexture(textureManager.getTexture("settings"));
 	settingsS.setScale(2, 2);
 
 
-	//Load the texture and set the sprite
-	if (!buyT.loadFromFile("button/buy.png")) {
-		throw runtime_error("Erreur : texture de close introuvable.");
-	}
-	buyS.setTexture(buyT);
+	
+	buyS.setTexture(textureManager.getTexture("buy"));
 	buyS.setScale(2, 2);
 
-	//Load the texture and set the sprite
-	if (!yesT.loadFromFile("button/yes.png")) {
-		throw runtime_error("Erreur : texture de close introuvable.");
-	}
-	yesS.setTexture(yesT);
+	
+	yesS.setTexture(textureManager.getTexture("yes"));
 	yesS.setScale(1.5, 1.5);
-	yes2S.setTexture(yesT);
+	yes2S.setTexture(textureManager.getTexture("yes"));
 	yes2S.setScale(1.5, 1.5);
 
-	//Load the texture and set the sprite
-	if (!noT.loadFromFile("button/no.png")) {
-		throw runtime_error("Erreur : texture de close introuvable.");
-	}
-	noS.setTexture(noT);
+	
+	noS.setTexture(textureManager.getTexture("no"));
 	noS.setScale(1.5, 1.5);
-	no2S.setTexture(noT);
+	no2S.setTexture(textureManager.getTexture("no"));
 	no2S.setScale(1.5, 1.5);
 
-	//Load the texture and set the sprite
-	if (!backT.loadFromFile("button/back.png")) throw runtime_error("Erreur: texture de back introuvable");
-	backS.setTexture(backT);
+	
+	backS.setTexture(textureManager.getTexture("back"));
 	backS.setScale(2, 2);
 
-	//Load the texture and set the sprite
-	if (!shopT.loadFromFile("button/shop.png")) throw runtime_error("Erreur: texture de back introuvable");
-	shopS.setTexture(shopT);
+	//
+	shopS.setTexture(textureManager.getTexture("shop"));
 	shopS.setScale(2, 2);
 
-	//Load the texture and set the sprite
-	if (!continueT.loadFromFile("button/continue.png")) throw runtime_error("Erreur: texture de continue introuvable");
-	continueS.setTexture(continueT);
+	continueS.setTexture(textureManager.getTexture("continue"));
 	continueS.setScale(2, 2);
 
-	//Load the texture and set the sprite
-	if (!resetT.loadFromFile("button/reset.png")) throw runtime_error("Erreur: texture du bouton reset inrouvable");
-	resetS.setTexture(resetT);
+	resetS.setTexture(textureManager.getTexture("reset"));
 	resetS.setScale(2, 2);
 	
-	if (!pauseT.loadFromFile("button/pause.png")) throw runtime_error("Texture du bouton de pause inaccessible");
-	pauseS.setTexture(pauseT);
+	pauseS.setTexture(textureManager.getTexture("pause"));
 	pauseS.setScale(2, 2);
 
 	//Musique de défaite
@@ -190,20 +135,14 @@ Game::Game() : hoveredOption(-1) {
 	currentLevelText.setOutlineThickness(4);
 
 	//Sprites DLC
-	if (!inventoryShipT.loadFromFile("inventory/ship.png")) throw runtime_error("Erreur lors du chargement de la texture d'inventaire du vaisseau par défaut");
-	if (!inventoryShip1T.loadFromFile("inventory/ship1.png")) throw runtime_error("Erreur lors du chargement de la texture d'inventaire du vaisseau 1");
-	if (!inventoryShip2T.loadFromFile("inventory/ship2.png")) throw runtime_error("Erreur lors du chargement de la texture d'inventaire du vaisseau 2");
-	if (!inventoryShip3T.loadFromFile("inventory/ship3.png")) throw runtime_error("Erreur lors du chargement de la texture d'inventaire du vaisseau 3");
-	if (!buyShip1T.loadFromFile("shop/ship1.png")) throw runtime_error("Erreur chargement texture shop ship1");
-	if (!buyShip2T.loadFromFile("shop/ship2.png")) throw runtime_error("Erreur chargement texture shop ship2");
-	if (!buyShip3T.loadFromFile("shop/ship3.png")) throw runtime_error("Erreur chargement texture shop ship3");
-	inventoryShipS.setTexture(inventoryShipT);
-	inventoryShip1S.setTexture(inventoryShip1T);
-	inventoryShip2S.setTexture(inventoryShip2T);
-	inventoryShip3S.setTexture(inventoryShip3T);
-	buyShip1S.setTexture(buyShip1T);
-	buyShip2S.setTexture(buyShip2T);
-	buyShip3S.setTexture(buyShip3T);
+	
+	inventoryShipS.setTexture(textureManager.getTexture("inventoryShip"));
+	inventoryShip1S.setTexture(textureManager.getTexture("inventoryShip1"));
+	inventoryShip2S.setTexture(textureManager.getTexture("inventoryShip2"));
+	inventoryShip3S.setTexture(textureManager.getTexture("inventoryShip3"));
+	buyShip1S.setTexture(textureManager.getTexture("buyShip1"));
+	buyShip2S.setTexture(textureManager.getTexture("buyShip2"));
+	buyShip3S.setTexture(textureManager.getTexture("buyShip3"));
 }
 
 
@@ -217,7 +156,7 @@ void Game::level1A(Player& player, EnemyManager &eManager, ObstacleManager& oMan
 	if (state == niveau1A && loadLevel == true && isFightingBoss == false && Univeau1A == true)
 	{
 		currentLevelText.setString("TIER: 1 - LEVEL: 1");
-		background.setupPalier1();
+		background.setUpTier(textureManager, "palier1");
 		doLoadBackground = false;
 		finalhours.stop();
 		boss.stop();
@@ -227,17 +166,17 @@ void Game::level1A(Player& player, EnemyManager &eManager, ObstacleManager& oMan
 		setGameDuration(240);
 		toKill = 10;
 
-		eManager.creerEnemy(ENNEMI1, 1000, 600);
-		eManager.creerEnemy(ENNEMI1, 2500, 300);
-		eManager.creerEnemy(ENNEMI1, 4000, 700);
+		eManager.creerEnemy(ENNEMI1, 1000, 600, textureManager);
+		eManager.creerEnemy(ENNEMI1, 2500, 300, textureManager);
+		eManager.creerEnemy(ENNEMI1, 4000, 700, textureManager);
 		oManager.creerObstacle(4700, 500);
-		eManager.creerEnemy(ENNEMI1, 5500, 100);
-		eManager.creerEnemy(ENNEMI2, 7000, 800);
-		eManager.creerEnemy(ENNEMI1, 8500, 400);
-		eManager.creerEnemy(ENNEMI1, 10000, 600);
-		eManager.creerEnemy(ENNEMI1, 11500, 300);
-		eManager.creerEnemy(ENNEMI1, 13000, 500);
-		eManager.creerEnemy(ENNEMI3, 14500, 800);
+		eManager.creerEnemy(ENNEMI1, 5500, 100, textureManager);
+		eManager.creerEnemy(ENNEMI2, 7000, 800, textureManager);
+		eManager.creerEnemy(ENNEMI1, 8500, 400, textureManager);
+		eManager.creerEnemy(ENNEMI1, 10000, 600, textureManager);
+		eManager.creerEnemy(ENNEMI1, 11500, 300, textureManager);
+		eManager.creerEnemy(ENNEMI1, 13000, 500, textureManager);
+		eManager.creerEnemy(ENNEMI3, 14500, 800, textureManager);
 		
 		
 		loadLevel = false;
@@ -261,7 +200,7 @@ void Game::level1A(Player& player, EnemyManager &eManager, ObstacleManager& oMan
 			boss.play();
 		isFightingBoss = true;
 		toKill = 1;
-		eManager.creerEnemy(BOSS1, 1400, 700);
+		eManager.creerEnemy(BOSS1, 1400, 700, textureManager);
 		if(player.difficulty != Hardcore)
 		{
 			uManager.creerUtilitary(shield, 2000, 700);
@@ -291,7 +230,7 @@ void Game::level1B(Player& player, EnemyManager& eManager, ObstacleManager& oMan
 	if (state == niveau1B && loadLevel == true && isFightingBoss == false && Univeau1B == true)
 	{
 		currentLevelText.setString("TIER: 1 - LEVEL: 2");
-		background.setupPalier1();
+		background.setUpTier(textureManager, "palier1");
 		doLoadBackground = false;
 		finalhours.stop();
 		boss.stop();
@@ -300,17 +239,17 @@ void Game::level1B(Player& player, EnemyManager& eManager, ObstacleManager& oMan
 		gameClock.restart();
 		setGameDuration(240);
 		toKill = 10;
-		eManager.creerEnemy(ENNEMI1, 1000, 500);
-		eManager.creerEnemy(ENNEMI1, 2500, 300);
-		eManager.creerEnemy(ENNEMI2, 4000, 700);
+		eManager.creerEnemy(ENNEMI1, 1000, 500, textureManager);
+		eManager.creerEnemy(ENNEMI1, 2500, 300, textureManager);
+		eManager.creerEnemy(ENNEMI2, 4000, 700, textureManager);
 		oManager.creerObstacle(4700, 500);
-		eManager.creerEnemy(ENNEMI1, 5500, 100);
-		eManager.creerEnemy(ENNEMI1, 7000, 800);
-		eManager.creerEnemy(ENNEMI2, 8500, 400);
-		eManager.creerEnemy(ENNEMI1, 10000, 600);
-		eManager.creerEnemy(ENNEMI1, 11500, 300);
-		eManager.creerEnemy(ENNEMI1, 13000, 500);
-		eManager.creerEnemy(ENNEMI3, 14500, 800);
+		eManager.creerEnemy(ENNEMI1, 5500, 100, textureManager);
+		eManager.creerEnemy(ENNEMI1, 7000, 800, textureManager);
+		eManager.creerEnemy(ENNEMI2, 8500, 400, textureManager);
+		eManager.creerEnemy(ENNEMI1, 10000, 600, textureManager);
+		eManager.creerEnemy(ENNEMI1, 11500, 300, textureManager);
+		eManager.creerEnemy(ENNEMI1, 13000, 500, textureManager);
+		eManager.creerEnemy(ENNEMI3, 14500, 800, textureManager);
 
 		loadLevel = false;
 	}
@@ -333,7 +272,7 @@ void Game::level1B(Player& player, EnemyManager& eManager, ObstacleManager& oMan
 			boss.play();
 		isFightingBoss = true;
 		toKill = 1;
-		eManager.creerEnemy(BOSS1, 1400, 700);
+		eManager.creerEnemy(BOSS1, 1400, 700, textureManager);
 		if (player.difficulty != Hardcore)
 		{
 			uManager.creerUtilitary(shield, 2000, 700);
@@ -359,7 +298,7 @@ void Game::level1C(Player& player, EnemyManager& eManager, ObstacleManager& oMan
 	if (state == niveau1C && loadLevel == true && isFightingBoss == false && Univeau1C == true)
 	{
 		currentLevelText.setString("TIER: 1 - LEVEL: 3");
-		background.setupPalier1();
+		background.setUpTier(textureManager, "palier1");
 		finalhours.stop();
 		boss.stop();
 		finalBossM.stop();
@@ -367,17 +306,17 @@ void Game::level1C(Player& player, EnemyManager& eManager, ObstacleManager& oMan
 		gameClock.restart();
 		setGameDuration(240);
 		toKill = 10;
-		eManager.creerEnemy(ENNEMI1, 1000, 500);
-		eManager.creerEnemy(ENNEMI1, 2500, 300);
-		eManager.creerEnemy(ENNEMI2, 4000, 700);
+		eManager.creerEnemy(ENNEMI1, 1000, 500, textureManager);
+		eManager.creerEnemy(ENNEMI1, 2500, 300, textureManager);
+		eManager.creerEnemy(ENNEMI2, 4000, 700, textureManager);
 		oManager.creerObstacle(4700, 500);
-		eManager.creerEnemy(ENNEMI1, 5500, 100);
-		eManager.creerEnemy(ENNEMI1, 7000, 800);
-		eManager.creerEnemy(ENNEMI2, 8500, 400);
-		eManager.creerEnemy(ENNEMI1, 10000, 600);
-		eManager.creerEnemy(ENNEMI2, 11500, 300);
-		eManager.creerEnemy(ENNEMI1, 13000, 500);
-		eManager.creerEnemy(ENNEMI3, 14500, 800);
+		eManager.creerEnemy(ENNEMI1, 5500, 100, textureManager);
+		eManager.creerEnemy(ENNEMI1, 7000, 800, textureManager);
+		eManager.creerEnemy(ENNEMI2, 8500, 400, textureManager);
+		eManager.creerEnemy(ENNEMI1, 10000, 600, textureManager);
+		eManager.creerEnemy(ENNEMI2, 11500, 300, textureManager);
+		eManager.creerEnemy(ENNEMI1, 13000, 500, textureManager);
+		eManager.creerEnemy(ENNEMI3, 14500, 800, textureManager);
 
 		loadLevel = false;
 	}
@@ -400,7 +339,7 @@ void Game::level1C(Player& player, EnemyManager& eManager, ObstacleManager& oMan
 			boss.play();
 		isFightingBoss = true;
 		toKill = 1;
-		eManager.creerEnemy(BOSS1, 1400, 700);
+		eManager.creerEnemy(BOSS1, 1400, 700, textureManager);
 		if (player.difficulty != Hardcore)
 		{
 			uManager.creerUtilitary(shield, 2000, 700);
@@ -427,7 +366,7 @@ void Game::level2A(Player& player, EnemyManager& eManager, ObstacleManager& oMan
 	if (state == niveau2A && loadLevel == true && isFightingBoss == false && Univeau2A == true)
 	{
 		currentLevelText.setString("TIER: 2 - LEVEL: 1");
-		background.setupPalier2();
+		background.setUpTier(textureManager, "palier2");
 		finalhours.stop();
 		boss.stop();
 		finalBossM.stop();
@@ -435,17 +374,17 @@ void Game::level2A(Player& player, EnemyManager& eManager, ObstacleManager& oMan
 		gameClock.restart();
 		setGameDuration(240);
 		toKill = 10;
-		eManager.creerEnemy(ENNEMI2, 1000, 500);
-		eManager.creerEnemy(ENNEMI2, 2500, 300);
-		eManager.creerEnemy(ENNEMI2, 4000, 700);
+		eManager.creerEnemy(ENNEMI2, 1000, 500, textureManager);
+		eManager.creerEnemy(ENNEMI2, 2500, 300, textureManager);
+		eManager.creerEnemy(ENNEMI2, 4000, 700, textureManager);
 		oManager.creerObstacle(4700, 500);
-		eManager.creerEnemy(ENNEMI2, 5500, 100);
-		eManager.creerEnemy(ENNEMI3, 7000, 800);
-		eManager.creerEnemy(ENNEMI2, 8500, 400);
-		eManager.creerEnemy(ENNEMI2, 10000, 600);
-		eManager.creerEnemy(ENNEMI2, 11500, 300);
-		eManager.creerEnemy(ENNEMI2, 13000, 500);
-		eManager.creerEnemy(ENNEMI3, 14500, 800);
+		eManager.creerEnemy(ENNEMI2, 5500, 100, textureManager);
+		eManager.creerEnemy(ENNEMI3, 7000, 800, textureManager);
+		eManager.creerEnemy(ENNEMI2, 8500, 400, textureManager);
+		eManager.creerEnemy(ENNEMI2, 10000, 600, textureManager);
+		eManager.creerEnemy(ENNEMI2, 11500, 300, textureManager);
+		eManager.creerEnemy(ENNEMI2, 13000, 500, textureManager);
+		eManager.creerEnemy(ENNEMI3, 14500, 800, textureManager);
 
 		loadLevel = false;
 	}
@@ -468,7 +407,7 @@ void Game::level2A(Player& player, EnemyManager& eManager, ObstacleManager& oMan
 			boss.play();
 		isFightingBoss = true;
 		toKill = 1;
-		eManager.creerEnemy(BOSS2, 1400, 700);
+		eManager.creerEnemy(BOSS2, 1400, 700, textureManager);
 		if (player.difficulty != Hardcore)
 		{
 			uManager.creerUtilitary(shield, 2000, 700);
@@ -495,7 +434,7 @@ void Game::level2B(Player& player, EnemyManager& eManager, ObstacleManager& oMan
 	if (state == niveau2B && loadLevel == true && isFightingBoss == false && Univeau2B == true)
 	{
 		currentLevelText.setString("TIER: 2 - LEVEL: 2");
-		background.setupPalier2();
+		background.setUpTier(textureManager, "palier2");
 		finalhours.stop();
 		boss.stop();
 		finalBossM.stop();
@@ -503,17 +442,17 @@ void Game::level2B(Player& player, EnemyManager& eManager, ObstacleManager& oMan
 		gameClock.restart();
 		setGameDuration(240);
 		toKill = 10;
-		eManager.creerEnemy(ENNEMI2, 1000, 500);
-		eManager.creerEnemy(ENNEMI2, 2500, 300);
-		eManager.creerEnemy(ENNEMI2, 4000, 700);
+		eManager.creerEnemy(ENNEMI2, 1000, 500, textureManager);
+		eManager.creerEnemy(ENNEMI2, 2500, 300, textureManager);
+		eManager.creerEnemy(ENNEMI2, 4000, 700, textureManager);
 		oManager.creerObstacle(4700, 500);
-		eManager.creerEnemy(ENNEMI2, 5500, 100);
-		eManager.creerEnemy(ENNEMI3, 7000, 800);
-		eManager.creerEnemy(ENNEMI2, 8500, 400);
-		eManager.creerEnemy(ENNEMI2, 10000, 600);
-		eManager.creerEnemy(ENNEMI3, 11500, 300);
-		eManager.creerEnemy(ENNEMI2, 13000, 500);
-		eManager.creerEnemy(ENNEMI3, 14500, 800);
+		eManager.creerEnemy(ENNEMI2, 5500, 100, textureManager);
+		eManager.creerEnemy(ENNEMI3, 7000, 800, textureManager);
+		eManager.creerEnemy(ENNEMI2, 8500, 400, textureManager);
+		eManager.creerEnemy(ENNEMI2, 10000, 600, textureManager);
+		eManager.creerEnemy(ENNEMI3, 11500, 300, textureManager);
+		eManager.creerEnemy(ENNEMI2, 13000, 500, textureManager);
+		eManager.creerEnemy(ENNEMI3, 14500, 800, textureManager);
 
 		loadLevel = false;
 	}
@@ -536,7 +475,7 @@ void Game::level2B(Player& player, EnemyManager& eManager, ObstacleManager& oMan
 			boss.play();
 		isFightingBoss = true;
 		toKill = 1;
-		eManager.creerEnemy(BOSS2, 1400, 700);
+		eManager.creerEnemy(BOSS2, 1400, 700, textureManager);
 		if (player.difficulty != Hardcore)
 		{
 			uManager.creerUtilitary(shield, 2000, 700);
@@ -563,7 +502,7 @@ void Game::level2C(Player& player, EnemyManager& eManager, ObstacleManager& oMan
 	if (state == niveau2C && loadLevel == true && isFightingBoss == false && Univeau2C == true)
 	{
 		currentLevelText.setString("TIER: 2 - LEVEL: 3");
-		background.setupPalier2();
+		background.setUpTier(textureManager, "palier2");
 		finalhours.stop();
 		boss.stop();
 		finalBossM.stop();
@@ -571,17 +510,17 @@ void Game::level2C(Player& player, EnemyManager& eManager, ObstacleManager& oMan
 		gameClock.restart();
 		setGameDuration(240);
 		toKill = 10;
-		eManager.creerEnemy(ENNEMI3, 1000, 500);
-		eManager.creerEnemy(ENNEMI2, 2500, 300);
-		eManager.creerEnemy(ENNEMI2, 4000, 700);
+		eManager.creerEnemy(ENNEMI3, 1000, 500, textureManager);
+		eManager.creerEnemy(ENNEMI2, 2500, 300, textureManager);
+		eManager.creerEnemy(ENNEMI2, 4000, 700, textureManager);
 		oManager.creerObstacle(4700, 500);
-		eManager.creerEnemy(ENNEMI2, 5500, 100);
-		eManager.creerEnemy(ENNEMI3, 7000, 800);
-		eManager.creerEnemy(ENNEMI2, 8500, 400);
-		eManager.creerEnemy(ENNEMI2, 10000, 600);
-		eManager.creerEnemy(ENNEMI3, 11500, 300);
-		eManager.creerEnemy(ENNEMI2, 13000, 500);
-		eManager.creerEnemy(ENNEMI3, 14500, 800);
+		eManager.creerEnemy(ENNEMI2, 5500, 100, textureManager);
+		eManager.creerEnemy(ENNEMI3, 7000, 800, textureManager);
+		eManager.creerEnemy(ENNEMI2, 8500, 400, textureManager);
+		eManager.creerEnemy(ENNEMI2, 10000, 600, textureManager);
+		eManager.creerEnemy(ENNEMI3, 11500, 300, textureManager);
+		eManager.creerEnemy(ENNEMI2, 13000, 500, textureManager);
+		eManager.creerEnemy(ENNEMI3, 14500, 800, textureManager);
 
 		loadLevel = false;
 	}
@@ -604,7 +543,7 @@ void Game::level2C(Player& player, EnemyManager& eManager, ObstacleManager& oMan
 			boss.play();
 		isFightingBoss = true;
 		toKill = 1;
-		eManager.creerEnemy(BOSS2, 1400, 700);
+		eManager.creerEnemy(BOSS2, 1400, 700, textureManager);
 		if (player.difficulty != Hardcore)
 		{
 			uManager.creerUtilitary(shield, 2000, 700);
@@ -631,7 +570,7 @@ void Game::level3A(Player& player, EnemyManager& eManager, ObstacleManager& oMan
 	if (state == niveau3A && loadLevel == true && isFightingBoss == false && Univeau3A == true)
 	{
 		currentLevelText.setString("TIER: 3 - LEVEL: 1");
-		background.setupPalier3();
+		background.setUpTier(textureManager, "palier3");
 		finalhours.stop();
 		boss.stop();
 		finalBossM.stop();
@@ -639,18 +578,18 @@ void Game::level3A(Player& player, EnemyManager& eManager, ObstacleManager& oMan
 		gameClock.restart();
 		setGameDuration(240);
 		toKill = 10;
-		eManager.creerEnemy(ENNEMI3, 1000, 500);
-		eManager.creerEnemy(ENNEMI3, 2500, 300);
-		eManager.creerEnemy(ENNEMI3, 4000, 700);
+		eManager.creerEnemy(ENNEMI3, 1000, 500, textureManager);
+		eManager.creerEnemy(ENNEMI3, 2500, 300, textureManager);
+		eManager.creerEnemy(ENNEMI3, 4000, 700, textureManager);
 		oManager.creerObstacle(4700, 500);
-		eManager.creerEnemy(ENNEMI3, 5500, 100);
-		eManager.creerEnemy(ENNEMI3, 7000, 800);
-		eManager.creerEnemy(ENNEMI3, 8500, 400);
-		eManager.creerEnemy(ENNEMI3, 10000, 600);
+		eManager.creerEnemy(ENNEMI3, 5500, 100, textureManager);
+		eManager.creerEnemy(ENNEMI3, 7000, 800, textureManager);
+		eManager.creerEnemy(ENNEMI3, 8500, 400, textureManager);
+		eManager.creerEnemy(ENNEMI3, 10000, 600, textureManager);
 		oManager.creerObstacle(6000, 500);
-		eManager.creerEnemy(ENNEMI3, 11500, 300);
-		eManager.creerEnemy(ENNEMI3, 13000, 500);
-		eManager.creerEnemy(ENNEMI3, 14500, 800);
+		eManager.creerEnemy(ENNEMI3, 11500, 300, textureManager);
+		eManager.creerEnemy(ENNEMI3, 13000, 500, textureManager);
+		eManager.creerEnemy(ENNEMI3, 14500, 800, textureManager);
 
 		loadLevel = false;
 	}
@@ -673,7 +612,7 @@ void Game::level3A(Player& player, EnemyManager& eManager, ObstacleManager& oMan
 			boss.play();
 		isFightingBoss = true;
 		toKill = 1;
-		eManager.creerEnemy(BOSS3, 1400, 700);
+		eManager.creerEnemy(BOSS3, 1400, 700, textureManager);
 		if (player.difficulty != Hardcore)
 		{
 			uManager.creerUtilitary(shield, 2000, 700);
@@ -700,7 +639,7 @@ void Game::level3B(Player& player, EnemyManager& eManager, ObstacleManager& oMan
 	if (state == niveau3B && loadLevel == true && isFightingBoss == false && Univeau3B == true)
 	{
 		currentLevelText.setString("TIER: 3 - LEVEL: 2");
-		background.setupPalier3();
+		background.setUpTier(textureManager, "palier3");
 		finalhours.stop();
 		boss.stop();
 		finalBossM.stop();
@@ -708,23 +647,23 @@ void Game::level3B(Player& player, EnemyManager& eManager, ObstacleManager& oMan
 		gameClock.restart();
 		setGameDuration(300);
 		toKill = 15;
-		eManager.creerEnemy(ENNEMI3, 1000, 500);
-		eManager.creerEnemy(ENNEMI3, 900, 700);
-		eManager.creerEnemy(ENNEMI3, 2500, 300);
-		eManager.creerEnemy(ENNEMI3, 2400, 500);
-		eManager.creerEnemy(ENNEMI3, 4000, 700);
+		eManager.creerEnemy(ENNEMI3, 1000, 500, textureManager);
+		eManager.creerEnemy(ENNEMI3, 900, 700, textureManager);
+		eManager.creerEnemy(ENNEMI3, 2500, 300, textureManager);
+		eManager.creerEnemy(ENNEMI3, 2400, 500, textureManager);
+		eManager.creerEnemy(ENNEMI3, 4000, 700, textureManager);
 		oManager.creerObstacle(4700, 500);
-		eManager.creerEnemy(ENNEMI3, 5500, 100);
-		eManager.creerEnemy(ENNEMI3, 7000, 800);
-		eManager.creerEnemy(ENNEMI3, 6900, 500);
-		eManager.creerEnemy(ENNEMI3, 8500, 400);
-		eManager.creerEnemy(ENNEMI3, 10000, 600);
+		eManager.creerEnemy(ENNEMI3, 5500, 100, textureManager);
+		eManager.creerEnemy(ENNEMI3, 7000, 800, textureManager);
+		eManager.creerEnemy(ENNEMI3, 6900, 500, textureManager);
+		eManager.creerEnemy(ENNEMI3, 8500, 400, textureManager);
+		eManager.creerEnemy(ENNEMI3, 10000, 600, textureManager);
 		oManager.creerObstacle(6000, 500);
-		eManager.creerEnemy(ENNEMI3, 11500, 300);
-		eManager.creerEnemy(ENNEMI3, 11400, 700);
-		eManager.creerEnemy(ENNEMI3, 13000, 500);
-		eManager.creerEnemy(ENNEMI3, 14500, 800);
-		eManager.creerEnemy(ENNEMI3, 14400, 500);
+		eManager.creerEnemy(ENNEMI3, 11500, 300, textureManager);
+		eManager.creerEnemy(ENNEMI3, 11400, 700, textureManager);
+		eManager.creerEnemy(ENNEMI3, 13000, 500, textureManager);
+		eManager.creerEnemy(ENNEMI3, 14500, 800, textureManager);
+		eManager.creerEnemy(ENNEMI3, 14400, 500, textureManager);
 
 		loadLevel = false;
 	}
@@ -747,7 +686,7 @@ void Game::level3B(Player& player, EnemyManager& eManager, ObstacleManager& oMan
 			boss.play();
 		isFightingBoss = true;
 		toKill = 1;
-		eManager.creerEnemy(BOSS3, 1400, 700);
+		eManager.creerEnemy(BOSS3, 1400, 700, textureManager);
 		if (player.difficulty != Hardcore)
 		{
 			uManager.creerUtilitary(shield, 2000, 700);
@@ -774,7 +713,7 @@ void Game::level3C(Player& player, EnemyManager& eManager, ObstacleManager& oMan
 	if (state == niveau3C && loadLevel == true && isFightingBoss == false && Univeau3C == true)
 	{
 		currentLevelText.setString("TIER: 3 - LEVEL: 3");
-		background.setupPalier3();
+		background.setUpTier(textureManager, "palier3");
 		finalhours.stop();
 		boss.stop();
 		finalBossM.stop();
@@ -782,28 +721,28 @@ void Game::level3C(Player& player, EnemyManager& eManager, ObstacleManager& oMan
 		gameClock.restart();
 		setGameDuration(360);
 		toKill = 20;
-		eManager.creerEnemy(ENNEMI3, 1000, 500);
-		eManager.creerEnemy(ENNEMI3, 900, 700);
-		eManager.creerEnemy(ENNEMI3, 800, 300);
-		eManager.creerEnemy(ENNEMI3, 2500, 300);
-		eManager.creerEnemy(ENNEMI3, 2400, 500);
-		eManager.creerEnemy(ENNEMI3, 2300, 700);
-		eManager.creerEnemy(ENNEMI3, 4000, 700);
+		eManager.creerEnemy(ENNEMI3, 1000, 500, textureManager);
+		eManager.creerEnemy(ENNEMI3, 900, 700, textureManager);
+		eManager.creerEnemy(ENNEMI3, 800, 300, textureManager);
+		eManager.creerEnemy(ENNEMI3, 2500, 300, textureManager);
+		eManager.creerEnemy(ENNEMI3, 2400, 500, textureManager);
+		eManager.creerEnemy(ENNEMI3, 2300, 700, textureManager);
+		eManager.creerEnemy(ENNEMI3, 4000, 700, textureManager);
 		oManager.creerObstacle(4700, 500);
-		eManager.creerEnemy(ENNEMI3, 5500, 100);
-		eManager.creerEnemy(ENNEMI3, 7000, 800);
-		eManager.creerEnemy(ENNEMI3, 6900, 500);
-		eManager.creerEnemy(ENNEMI3, 6800, 200);
-		eManager.creerEnemy(ENNEMI3, 8500, 400);
-		eManager.creerEnemy(ENNEMI3, 10000, 600);
+		eManager.creerEnemy(ENNEMI3, 5500, 100, textureManager);
+		eManager.creerEnemy(ENNEMI3, 7000, 800, textureManager);
+		eManager.creerEnemy(ENNEMI3, 6900, 500, textureManager);
+		eManager.creerEnemy(ENNEMI3, 6800, 200, textureManager);
+		eManager.creerEnemy(ENNEMI3, 8500, 400, textureManager);
+		eManager.creerEnemy(ENNEMI3, 10000, 600, textureManager);
 		oManager.creerObstacle(6000, 500);
-		eManager.creerEnemy(ENNEMI3, 11500, 300);
-		eManager.creerEnemy(ENNEMI3, 11400, 700);
-		eManager.creerEnemy(ENNEMI3, 11300, 500);
-		eManager.creerEnemy(ENNEMI3, 13000, 500);
-		eManager.creerEnemy(ENNEMI3, 14500, 800);
-		eManager.creerEnemy(ENNEMI3, 14400, 500);
-		eManager.creerEnemy(ENNEMI3, 14300, 200);
+		eManager.creerEnemy(ENNEMI3, 11500, 300, textureManager);
+		eManager.creerEnemy(ENNEMI3, 11400, 700, textureManager);
+		eManager.creerEnemy(ENNEMI3, 11300, 500, textureManager);
+		eManager.creerEnemy(ENNEMI3, 13000, 500, textureManager);
+		eManager.creerEnemy(ENNEMI3, 14500, 800, textureManager);
+		eManager.creerEnemy(ENNEMI3, 14400, 500, textureManager);
+		eManager.creerEnemy(ENNEMI3, 14300, 200, textureManager);
 
 		loadLevel = false;
 	}
@@ -826,7 +765,7 @@ void Game::level3C(Player& player, EnemyManager& eManager, ObstacleManager& oMan
 			boss.play();
 		isFightingBoss = true;
 		toKill = 1;
-		eManager.creerEnemy(BOSS3, 1400, 700);
+		eManager.creerEnemy(BOSS3, 1400, 700, textureManager);
 		if (player.difficulty != Hardcore)
 		{
 			uManager.creerUtilitary(shield, 2000, 700);
@@ -852,7 +791,7 @@ void Game::level4(Player& player, EnemyManager& eManager, ObstacleManager& oMana
 	if (state == finalBoss && loadLevel == true && isFightingBoss == false && UfinalBoss == true)
 	{
 		currentLevelText.setString("FINAL BOSS");
-		background.setupPalier4();
+		background.setUpTier(textureManager, "palier4");
 		star.sprite.setColor(Color(245, 194, 254));
 		star.sprite2.setColor(Color(245, 194, 254));
 		faststar.sprite.setColor(Color(245, 194, 254));
@@ -887,7 +826,7 @@ void Game::level4(Player& player, EnemyManager& eManager, ObstacleManager& oMana
 		toKill = 1;
 		oManager.creerObstacle(1000, 100);
 		oManager.creerObstacle(1000, 900);
-		eManager.creerEnemy(BOSS4, 1400, 700);
+		eManager.creerEnemy(BOSS4, 1400, 700, textureManager);
 		if (player.difficulty != Hardcore)
 		{
 			uManager.creerUtilitary(shield, 2000, 700);
@@ -915,7 +854,7 @@ void Game::levelP(Player& player, EnemyManager& eManager, ObstacleManager& oMana
 	if (state == niveauEDIT && loadLevel == true && isFightingBoss == false)
 	{
 		currentLevelText.setString("EDITED LEVEL");
-		background.setupPalier1();
+		background.setUpTier(textureManager, "palier1");
 		boss.stop();
 		finalBossM.stop();
 		playing.play();
@@ -925,16 +864,16 @@ void Game::levelP(Player& player, EnemyManager& eManager, ObstacleManager& oMana
 
 		if(EloadObstacle == true)
 			oManager.creerObstacle(4700, 500);
-		eManager.creerEnemy(nb1, 1000, 600);
-		eManager.creerEnemy(nb2, 2500, 300);
-		eManager.creerEnemy(nb3, 4000, 700);
-		eManager.creerEnemy(nb4, 5500, 100);
-		eManager.creerEnemy(nb5, 7000, 800);
-		eManager.creerEnemy(nb6, 8500, 400);
-		eManager.creerEnemy(nb7, 10000, 600);
-		eManager.creerEnemy(nb8, 11500, 300);
-		eManager.creerEnemy(nb9, 13000, 500);
-		eManager.creerEnemy(nb10, 14500, 800);
+		eManager.creerEnemy(nb1, 1000, 600, textureManager);
+		eManager.creerEnemy(nb2, 2500, 300, textureManager);
+		eManager.creerEnemy(nb3, 4000, 700, textureManager);
+		eManager.creerEnemy(nb4, 5500, 100, textureManager);
+		eManager.creerEnemy(nb5, 7000, 800, textureManager);
+		eManager.creerEnemy(nb6, 8500, 400, textureManager);
+		eManager.creerEnemy(nb7, 10000, 600, textureManager);
+		eManager.creerEnemy(nb8, 11500, 300, textureManager);
+		eManager.creerEnemy(nb9, 13000, 500, textureManager);
+		eManager.creerEnemy(nb10, 14500, 800, textureManager);
 
 		loadLevel = false;
 	}
@@ -957,7 +896,7 @@ void Game::levelP(Player& player, EnemyManager& eManager, ObstacleManager& oMana
 			boss.play();
 		isFightingBoss = true;
 		toKill = 1;
-		eManager.creerEnemy(bossID, 1400, 700);
+		eManager.creerEnemy(bossID, 1400, 700, textureManager);
 		if (EloadPowerups == true)
 		{
 			if (player.difficulty == Easy)
@@ -1417,7 +1356,7 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 		editorM.stop();
 		if (titleScreenM.getStatus() != Sound::Playing)
 			titleScreenM.play();
-		backgroundSprite.setTexture(backgroundTexture);
+		backgroundSprite.setTexture(textureManager.getTexture("mainmenu"));
 		backgroundSprite.setPosition(0, 0);
 
 		// title
@@ -2392,13 +2331,13 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 		yesS.setPosition(1480, 359);
 		yes2S.setPosition(1480, 655);
 		if (EloadObstacle == true)
-			yesS.setTexture(yesT);
+			yesS.setTexture(textureManager.getTexture("yes"));
 		else
-			yesS.setTexture(noT);
+			yesS.setTexture(textureManager.getTexture("no"));
 		if (EloadPowerups == true)
-			yes2S.setTexture(yesT);
+			yes2S.setTexture(textureManager.getTexture("yes"));
 		else
-			yes2S.setTexture(noT);
+			yes2S.setTexture(textureManager.getTexture("no"));
 		alias = &IDlist[currentID];
 		switch (*alias)
 		{

@@ -183,6 +183,7 @@ gdi32.lib;sfml-graphics-s.lib;sfml-window-s.lib;sfml-network-s.lib;sfml-audio-s.
     <ClCompile Include="obstacle.cpp" />
     <ClCompile Include="powerups.cpp" />
     <ClCompile Include="score.cpp" />
+    <ClCompile Include="textureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="background.hpp" />
