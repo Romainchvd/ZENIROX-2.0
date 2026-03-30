@@ -5,6 +5,8 @@
 #include <SFML/Graphics.hpp>
 #include "player.hpp"
 #include "enemyManager.hpp"
+#include <memory>
+#include <utility>
 
 using namespace std;
 using namespace sf;
@@ -29,15 +31,15 @@ public:
 
 class UtilitaryManager {
 private:
-	vector<Utilitary*> utilitaryList;
+	vector<unique_ptr<Utilitary>> utilitaryList;
 	TextureManager& textureManager;
 public:
 	UtilitaryManager(TextureManager& manager);
-	~UtilitaryManager();
-	Utilitary* creerUtilitary(Powerup type, float width, float height);
-	void detruireUtilitary(Utilitary* utilitary);
-	vector<Utilitary* > getUtilitaryList();
-	void checkUtilitary(Utilitary* h, Player& player, EnemyManager& eManager);
+	void creerUtilitary(Powerup type, float width, float height);
+	void detruireUtilitary(unique_ptr<Utilitary>& utilitary);
+	vector<unique_ptr<Utilitary>>& getUtilitaryList();
+	void checkUtilitary(unique_ptr<Utilitary>& h, Player& player, EnemyManager& eManager);
+	void clear();
 };
 
 

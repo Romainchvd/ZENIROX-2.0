@@ -75,7 +75,7 @@ void Healthbar::setHealthbar(Player player)
 	}
 
 
-void Healthbar::setHealthbar(Enemy* enemy)
+void Healthbar::setHealthbar(unique_ptr<Enemy>& enemy)
 {
 	esprite.setScale(0.4, 0.4);
 	esprite.setPosition(1600, 0);

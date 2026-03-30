@@ -35,41 +35,31 @@ void Utilitary::moveUtilitary()
 
 UtilitaryManager::UtilitaryManager(TextureManager& manager) : textureManager(manager) {}
 
-UtilitaryManager::~UtilitaryManager()
-{
-	for (auto h : utilitaryList)
-	{
-		delete h;
-	}
-	utilitaryList.clear();
-}
 
-Utilitary* UtilitaryManager::creerUtilitary(Powerup defType, float width, float height) {
-	Utilitary* h = new Utilitary();
+void UtilitaryManager::creerUtilitary(Powerup defType, float width, float height) {
+	auto h = make_unique<Utilitary>();
 	h->type = defType;
 	h->setUtilitary(textureManager);
 	h->sprite.setPosition(width, height);
 	h->sprite.setScale(0.5,0.5);
 	if (defType == shield || defType == evilShield)
 		h->sprite.setScale(1, 1);
-	utilitaryList.push_back(h);
-	return h;
+	utilitaryList.push_back(move(h));
 
 }
 
-vector<Utilitary*> UtilitaryManager::getUtilitaryList()
+vector<unique_ptr<Utilitary>>& UtilitaryManager::getUtilitaryList()
 {
 	return utilitaryList;
 }
-void UtilitaryManager::detruireUtilitary(Utilitary* h)
+void UtilitaryManager::detruireUtilitary(unique_ptr<Utilitary>& h)
 {
-	auto it = find(utilitaryList.begin(), utilitaryList.end(), h);
+	auto it = find_if(utilitaryList.begin(), utilitaryList.end(), h.get());
 	if (it != utilitaryList.end()) {
-		delete* it;
 		utilitaryList.erase(it);
 	}
 }
-void UtilitaryManager::checkUtilitary(Utilitary* h, Player& player, EnemyManager& eManager)
+void UtilitaryManager::checkUtilitary(unique_ptr<Utilitary>& h, Player& player, EnemyManager& eManager)
 {
 	cout << h->sprite.getPosition().x << endl;
 	if (h->sprite.getGlobalBounds().intersects(player.sprite.getGlobalBounds()))

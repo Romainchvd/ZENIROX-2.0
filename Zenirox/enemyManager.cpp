@@ -1,16 +1,9 @@
 #include "enemyManager.hpp"
 
-EnemyManager::~EnemyManager() {
-	for (auto enemy : enemies)
-	{
-		delete enemy;
-	}
-	enemies.clear();
-}
 
-Enemy* EnemyManager::creerEnemy(ID defLevel, float width, float height, TextureManager& manager)
+void EnemyManager::creerEnemy(ID defLevel, float width, float height, TextureManager& manager)
 {
-	Enemy* e = new Enemy();
+	auto e = make_unique<Enemy>();
 	e->id = defLevel;
 	e->setTexture(manager);
 	e->setAttackAndHP();
@@ -51,58 +44,59 @@ Enemy* EnemyManager::creerEnemy(ID defLevel, float width, float height, TextureM
 	switch (e->id)
 	{
 	case ENNEMI1:
-		e->attackCooldown = seconds(3);
-		e->rechargeCooldown = seconds(0);
+		e->attackCooldown = seconds(3.f);
+		e->rechargeCooldown = seconds(0.f);
 		break;
 	case ENNEMI2:
-		e->attackCooldown = seconds(1.5);
-		e->rechargeCooldown = seconds(0);
+		e->attackCooldown = seconds(1.5f);
+		e->rechargeCooldown = seconds(0.f);
 		break;
 	case ENNEMI3:
-		e->attackCooldown = seconds(1);
-		e->rechargeCooldown = seconds(1);
+		e->attackCooldown = seconds(1.f);
+		e->rechargeCooldown = seconds(1.f);
 		break;
 	case BOSS1:
-		e->attackCooldown = seconds(0.08);
-		e->rechargeCooldown = seconds(2);
+		e->attackCooldown = seconds(0.08f);
+		e->rechargeCooldown = seconds(2.f);
 		e->velocity = 3;
 		break;
 	case BOSS2:
-		e->attackCooldown = seconds(0.2);
-		e->rechargeCooldown = seconds(2);
+		e->attackCooldown = seconds(0.2f);
+		e->rechargeCooldown = seconds(2.f);
 		e->velocity = 5;
 		break;
 	case BOSS3:
-		e->attackCooldown = seconds(0.2);
-		e->rechargeCooldown = seconds(2);
+		e->attackCooldown = seconds(0.2f);
+		e->rechargeCooldown = seconds(2.f);
 		break;
 	case BOSS4:
-		e->attackCooldown = seconds(0.06);
-		e->rechargeCooldown = seconds(2);
+		e->attackCooldown = seconds(0.06f);
+		e->rechargeCooldown = seconds(2.f);
 		e->velocity = 6;
 		break;
 	}
-	enemies.push_back(e);
-	return e;
+	enemies.push_back(move(e));
 }
-void EnemyManager::detruireEnemy(Enemy* enemy) {
-	auto it = find(enemies.begin(), enemies.end(), enemy);
+void EnemyManager::detruireEnemy(unique_ptr<Enemy>& enemy) {
+	auto it = find_if(enemies.begin(), enemies.end(), enemy.get());
 	if (it != enemies.end()) {
-		delete* it;
 		enemies.erase(it);
 	}
 }
 
 
-void EnemyManager::checkEnemy(Enemy* enemy, int& toKill, ExplosionManager& exManager)
+void EnemyManager::checkEnemy(unique_ptr<Enemy>& enemy, int& toKill, ExplosionManager& exManager)
 {
 	if (enemy->HP < 1)
 	{
 		exManager.creerExplosion(enemy);
 		detruireEnemy(enemy);
-		--toKill;
 	}
 }
-vector<Enemy* > EnemyManager::getEnemies() {
+void EnemyManager::clear()
+{
+	enemies.clear();
+}
+vector<unique_ptr<Enemy>>& EnemyManager::getEnemies() {
 	return enemies;
 }

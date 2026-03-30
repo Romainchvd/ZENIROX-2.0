@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include "textureManager.hpp"
 #include "player.hpp"
+#include <memory>
 using namespace std;
 using namespace sf;
 
@@ -24,14 +25,14 @@ public:
 
 class ObstacleManager {
 private:
-	vector<Obstacle*> obstacles;
+	vector<unique_ptr<Obstacle>> obstacles;
 	TextureManager& manager;
 public:
 	ObstacleManager(TextureManager& manager) : manager(manager) {}
-	~ObstacleManager();
-	Obstacle* creerObstacle(float width, float height);
-	void detruireObstacle(Obstacle* obstacle);
-	vector<Obstacle* > getObstacles();
+	void creerObstacle(float width, float height);
+	void detruireObstacle(unique_ptr<Obstacle>& obstacle);
+	vector<unique_ptr<Obstacle>>& getObstacles();
+	void clear();
 };
 
 

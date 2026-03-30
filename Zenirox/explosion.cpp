@@ -57,7 +57,7 @@ ExplosionManager::~ExplosionManager()
 	explosions.clear();
 }
 
-Explosion* ExplosionManager::creerExplosion(Enemy* enemy) {
+Explosion* ExplosionManager::creerExplosion(unique_ptr<Enemy>& enemy) {
 	Explosion* e = new Explosion();
 	e->setExplosion();
 	e->sprite.setPosition(enemy->sprite.getPosition().x, enemy->sprite.getPosition().y);

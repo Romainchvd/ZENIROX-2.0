@@ -51,35 +51,27 @@ void Obstacle::checkObstacle(Player& player)
 }
 
 
-
-ObstacleManager::~ObstacleManager()
-{
-	for (auto obstacle : obstacles)
-	{
-		delete obstacle;
-	}
-	obstacles.clear();
-}
-
-Obstacle* ObstacleManager::creerObstacle(float width, float height) {
-	Obstacle* o = new Obstacle();
+void ObstacleManager::creerObstacle(float width, float height) {
+	auto o = make_unique<Obstacle>();
 	o->setTexture(manager);
 	o->sprite.setPosition(width, height);
 	o->sprite.setScale(0.25, 0.25);
-	obstacles.push_back(o);
-	return o;
+	obstacles.push_back(move(o));
 	
 }
 
-vector<Obstacle*> ObstacleManager::getObstacles()
+vector<unique_ptr<Obstacle>>& ObstacleManager::getObstacles()
 {
 	return obstacles;
 }
-void ObstacleManager::detruireObstacle(Obstacle* obstacle)
+void ObstacleManager::clear()
 {
-	auto it = find(obstacles.begin(), obstacles.end(), obstacle);
+	obstacles.clear();
+}
+void ObstacleManager::detruireObstacle(unique_ptr<Obstacle>& obstacle)
+{
+	auto it = find_if(obstacles.begin(), obstacles.end(), obstacle.get());
 	if (it != obstacles.end()) {
-		delete* it;
 		obstacles.erase(it);
 	}
 }

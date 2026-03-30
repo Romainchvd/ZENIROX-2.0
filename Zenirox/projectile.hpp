@@ -3,6 +3,7 @@
 #include "enemyManager.hpp"
 #include "player.hpp"
 #include "globalvar.hpp"
+#include <memory>
 using namespace sf;
 using namespace std;
 
@@ -20,16 +21,16 @@ public:
 
 class ProjectileManager {
 private:
-	vector<Projectile*> projectiles;
+	vector<unique_ptr<Projectile>> projectiles;
 	TextureManager& textureManager;
 public:
 	ProjectileManager(TextureManager& manager) : textureManager(manager) {}
-	~ProjectileManager();
-	Projectile* creerProjectile(Player player);
-	Projectile* creerProjectile(Enemy* enemy, int defVelocity);
-	void detruireProjectile(Projectile* projectile);
-	void checkProjectileOutOfScreen(Projectile* projectile, EnemyManager &manager, Player &player, Text &scoreText);
-	vector<Projectile* > getProjectiles();
+	void creerProjectile(Player player);
+	void creerProjectile(unique_ptr<Enemy>& enemy, int defVelocity);
+	void detruireProjectile(unique_ptr<Projectile>& projectile);
+	void checkProjectileOutOfScreen(unique_ptr<Projectile>& projectile, EnemyManager &manager, Player &player, Text &scoreText);
+	void clear();
+	const vector<unique_ptr<Projectile>>& getProjectiles() const;
 };
 
 #endif

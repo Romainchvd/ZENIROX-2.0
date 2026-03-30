@@ -29,7 +29,7 @@ private:
 	vector<Explosion* > explosions;
 public:
 	~ExplosionManager();
-	Explosion* creerExplosion(Enemy* enemy);
+	Explosion* creerExplosion(unique_ptr<Enemy>& enemy);
 	Explosion* creerExplosion(Player player);
 	vector<Explosion* > getExplosions();
 	void detruireExplosion(Explosion* explosion);

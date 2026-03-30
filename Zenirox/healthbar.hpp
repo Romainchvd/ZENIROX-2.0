@@ -18,7 +18,7 @@ public:
 	vector <Texture> PtextureList{ 20 };
 	vector <Texture> EtextureList{ 20 };
 	void setHealthbar(Player player);
-	void setHealthbar(Enemy* enemy);
+	void setHealthbar(unique_ptr<Enemy>& enemy);
 	int setTextureList();
 };
 

@@ -1,13 +1,13 @@
 #pragma once
 #include "enemy.hpp"
-
+#include <memory>
 class EnemyManager {
 private:
-	vector<Enemy*> enemies;
+	vector<unique_ptr<Enemy>> enemies;
 public:
-	~EnemyManager();
-	Enemy* creerEnemy(ID defLevel, float width, float height, TextureManager& manager);
-	void detruireEnemy(Enemy* enemy);
-	void checkEnemy(Enemy* enemy, int& toKill, ExplosionManager& exManager);
-	vector<Enemy* > getEnemies();
+	void creerEnemy(ID defLevel, float width, float height, TextureManager& manager);
+	void detruireEnemy(unique_ptr<Enemy>& enemy);
+	void checkEnemy(unique_ptr<Enemy>& enemy, int& toKill, ExplosionManager& exManager);
+	void clear();
+	vector<unique_ptr<Enemy>>& getEnemies();
 };

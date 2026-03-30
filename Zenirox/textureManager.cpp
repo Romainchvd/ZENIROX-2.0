@@ -12,14 +12,28 @@ bool TextureManager::loadTexture(const std::string& name, const std::string& fil
 
 sf::Texture& TextureManager::getTexture(const std::string& name)
 {
-	return textures.at(name);
+	auto it = textures.find(name);
+	if (it != textures.end()) {
+		return it->second;
+	}
+
+	auto pathIt = filePaths.find(name);
+	if (pathIt == filePaths.end()) {
+		throw std::runtime_error("Texture name not found in paths: " + name);
+	}
+
+	sf::Texture texture;
+	if (!texture.loadFromFile(pathIt->second)) {
+		throw std::runtime_error("Failed to load texture file: " + pathIt->second);
+	}
+
+	textures[name] = std::move(texture);
+	return textures[name];
 }
 
 TextureManager::TextureManager()
 {
-
-	sf::Texture texture;
-	std::vector<std::pair<std::string, std::string>> textureFiles = {
+	filePaths = {
 		{"palier1", "palier1.jpg"},
 		{"palier2", "palier2.jpg"},
 		{"palier3", "palier3.jpg"},
@@ -74,17 +88,9 @@ TextureManager::TextureManager()
 		{"ship2", "ship2.png" },
 		{"ship3", "ship3.png" },
 	};
-	for (const auto& pair : textureFiles) {
-		if (!texture.loadFromFile(pair.second)) {
-			throw std::runtime_error("Failed to load texture: " + pair.second);
-		}
-		addTexture(pair.first, texture);
-	}
-
-
 }
 
-void TextureManager::addTexture(const std::string name, const sf::Texture texture)
+void TextureManager::addTexture(const std::string& name, const sf::Texture& texture)
 {
 	textures[name] = texture;
 }
