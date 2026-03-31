@@ -5,6 +5,7 @@
 #include "textureManager.hpp"
 #include "player.hpp"
 #include <memory>
+#include <algorithm>
 using namespace std;
 using namespace sf;
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "enemy.hpp"
 #include <memory>
+#include <algorithm>
 class EnemyManager {
 private:
 	vector<unique_ptr<Enemy>> enemies;

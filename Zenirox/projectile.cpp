@@ -65,10 +65,7 @@ void ProjectileManager::creerProjectile(unique_ptr<Enemy>& enemy, int defVelocit
 }
 void ProjectileManager::detruireProjectile(unique_ptr<Projectile>& projectile)
 {
-	auto it = find_if(projectiles.begin(), projectiles.end(), projectile.get());
-	if (it != projectiles.end()) {
-		projectiles.erase(it);
-	}
+	erase_if(projectiles, [&projectile](const unique_ptr<Projectile>& p) {return p.get() == projectile.get(); });
 }
 const vector<unique_ptr<Projectile>>& ProjectileManager::getProjectiles() const { return projectiles; }
 void ProjectileManager::clear() {

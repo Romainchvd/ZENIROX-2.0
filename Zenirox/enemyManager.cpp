@@ -78,10 +78,7 @@ void EnemyManager::creerEnemy(ID defLevel, float width, float height, TextureMan
 	enemies.push_back(move(e));
 }
 void EnemyManager::detruireEnemy(unique_ptr<Enemy>& enemy) {
-	auto it = find_if(enemies.begin(), enemies.end(), enemy.get());
-	if (it != enemies.end()) {
-		enemies.erase(it);
-	}
+	erase_if(enemies, [&enemy](const unique_ptr<Enemy>& e) { return e.get() == enemy.get(); });
 }
 
 

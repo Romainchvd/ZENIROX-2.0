@@ -4,6 +4,7 @@
 #include "player.hpp"
 #include "globalvar.hpp"
 #include <memory>
+#include <algorithm>
 using namespace sf;
 using namespace std;
 
