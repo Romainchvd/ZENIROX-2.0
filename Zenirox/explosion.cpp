@@ -1,10 +1,9 @@
 #include "player.hpp"
 #include "enemy.hpp"
 #include "explosion.hpp"
-void Explosion::setExplosion()
+void Explosion::setExplosion(TextureManager& textureManager)
 {
-	if (!texture.loadFromFile("explosion.png")) { throw runtime_error("Erreur de chargement des explosions"); }
-	sprite.setTexture(texture);
+	sprite.setTexture(textureManager.getTexture("explosion"));
 	sprite.setTextureRect(IntRect(0, 0, 133, 200));
 	sprite.setPosition(0, 0);
 	if (!boomB.loadFromFile("sounds/explosion.ogg")) { throw runtime_error("Erreur de chargement du bruit de l'explosion."); }
@@ -47,41 +46,35 @@ void Explosion::animate()
 		
 	}
 }
-
-ExplosionManager::~ExplosionManager()
+void ExplosionManager::clear()
 {
-	for (auto Explosion : explosions)
-	{
-		delete Explosion;
-	}
 	explosions.clear();
 }
 
-Explosion* ExplosionManager::creerExplosion(unique_ptr<Enemy>& enemy) {
-	Explosion* e = new Explosion();
-	e->setExplosion();
-	e->sprite.setPosition(enemy->sprite.getPosition().x, enemy->sprite.getPosition().y);
-	explosions.push_back(e);
-	return e;
-}
-Explosion* ExplosionManager::creerExplosion(Player player)
+
+ExplosionManager::ExplosionManager(TextureManager& tm) : textureManager(tm)
 {
-	Explosion* e = new Explosion();
-	e->setExplosion();
-	e->sprite.setPosition(player.sprite.getPosition().x, player.sprite.getPosition().y);
-	explosions.push_back(e);
-	return e;
 }
 
-vector<Explosion*> ExplosionManager::getExplosions()
+void ExplosionManager::creerExplosion(unique_ptr<Enemy>& enemy) {
+	auto e = make_unique<Explosion>();
+	e->setExplosion(textureManager);
+	e->sprite.setPosition(enemy->sprite.getPosition().x, enemy->sprite.getPosition().y);
+	explosions.push_back(move(e));
+}
+void ExplosionManager::creerExplosion(Player player)
+{
+	auto e = make_unique<Explosion>();
+	e->setExplosion(textureManager);
+	e->sprite.setPosition(player.sprite.getPosition().x, player.sprite.getPosition().y);
+	explosions.push_back(move(e));
+}
+
+vector<unique_ptr<Explosion>>& ExplosionManager::getExplosions()
 {
 	return explosions;
 }
-void ExplosionManager::detruireExplosion(Explosion* Explosion)
+void ExplosionManager::detruireExplosion(unique_ptr<Explosion>& Explosion)
 {
-	auto it = find(explosions.begin(), explosions.end(), Explosion);
-	if (it != explosions.end()) {
-		delete* it;
-		explosions.erase(it);
-	}
+	erase_if(explosions, [])
 }
