@@ -28,8 +28,8 @@ public:
 	ProjectileManager(TextureManager& manager) : textureManager(manager) {}
 	void creerProjectile(Player player);
 	void creerProjectile(unique_ptr<Enemy>& enemy, int defVelocity);
-	void detruireProjectile(unique_ptr<Projectile>& projectile);
-	void checkProjectileOutOfScreen(unique_ptr<Projectile>& projectile, EnemyManager &manager, Player &player, Text &scoreText);
+	void detruireProjectile(const unique_ptr<Projectile>& projectile);
+	void checkProjectileOutOfScreen(const unique_ptr<Projectile>& projectile, EnemyManager &manager, Player &player, Text &scoreText);
 	void clear();
 	const vector<unique_ptr<Projectile>>& getProjectiles() const;
 };

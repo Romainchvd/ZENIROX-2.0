@@ -21,7 +21,7 @@ public:
 	Sound boom;
 	SoundBuffer boomB;
 	Clock explosionClock;
-	Time frameDuration = seconds(0.05);
+	Time frameDuration = seconds(0.05f);
 	int frame = 0;
 	void setExplosion(TextureManager& textureManager);
 	void animate();

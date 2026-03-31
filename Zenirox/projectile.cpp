@@ -64,7 +64,7 @@ void ProjectileManager::creerProjectile(unique_ptr<Enemy>& enemy, int defVelocit
 	}
 	projectiles.push_back(p);
 }
-void ProjectileManager::detruireProjectile(unique_ptr<Projectile>& projectile)
+void ProjectileManager::detruireProjectile(const unique_ptr<Projectile>& projectile)
 {
 	erase_if(projectiles, [&projectile](const unique_ptr<Projectile>& p) {return p.get() == projectile.get(); });
 }
@@ -73,7 +73,7 @@ void ProjectileManager::clear() {
 	projectiles.clear();
 }
 
-void ProjectileManager::checkProjectileOutOfScreen(unique_ptr<Projectile>& projectile, EnemyManager &manager, Player &player, Text &scoreText) {
+void ProjectileManager::checkProjectileOutOfScreen(const unique_ptr<Projectile>& projectile, EnemyManager &manager, Player &player, Text &scoreText) {
 	if (projectile->sprite.getPosition().y > HEIGHT || projectile->sprite.getPosition().y < 0 || projectile->sprite.getPosition().x > WIDTH || projectile->sprite.getPosition().x < 0)
 	detruireProjectile(projectile);
 	else

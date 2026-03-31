@@ -975,18 +975,18 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 			Sprite shopBackgroundS;
 			Texture shopBackgroundT;
 			if (!shopBackgroundT.loadFromFile("shop.png")) throw runtime_error("Erreur chargement fond shop");
-			buyShip1S.setPosition(112, 351);
-			buyShip2S.setPosition(810, 351);
-			buyShip3S.setPosition(1508, 351);
-			backS.setScale(2, 2);
-			backS.setPosition(360, 860);
-			settingsS.setPosition(1163, 860);
-			settingsS.setScale(2, 2);
-			coin.setScale(0.26, 0.26);
-			coin.setPosition(880, 5);
-			totalScoreText.setScale(1, 1);
+			buyShip1S.setPosition(112.f, 351.f);
+			buyShip2S.setPosition(810.f, 351.f);
+			buyShip3S.setPosition(1508.f, 351.f);
+			backS.setScale(2.f, 2.f);
+			backS.setPosition(360.f, 860.f);
+			settingsS.setPosition(1163.f, 860.f);
+			settingsS.setScale(2.f, 2.f);
+			coin.setScale(0.26f, 0.26f);
+			coin.setPosition(880.f, 5.f);
+			totalScoreText.setScale(1.f, 1.f);
 			setTotalScoreText(player, scoreFont, totalScoreText);
-			totalScoreText.setPosition(880, 0);
+			totalScoreText.setPosition(880.f, 0.f);
 			
 
 
@@ -2002,8 +2002,8 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 						break;
 					}
 					player.currentScore = 0;
-					coin.setPosition(0, 50);
-					coin.setScale(0.2, 0.2);
+					coin.setPosition(0.f, 50.f);
+					coin.setScale(0.2f, 0.2f);
 					if(state != niveauEDIT)
 					{
 						previousScreen = screen;
@@ -2096,8 +2096,8 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 					saveCurrentScore(player);
 					saveData(player, *this);
 					player.currentScore = 0;
-					coin.setPosition(0, 50);
-					coin.setScale(0.2, 0.2);
+					coin.setPosition(0.f, 50.f);
+					coin.setScale(0.2f, 0.2f);
 					if (state != niveauEDIT)
 					{
 						previousScreen = screen;
@@ -2271,8 +2271,8 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 					}
 					saveCurrentScore(player);
 					saveData(player, *this);
-					coin.setPosition(0, 50);
-					coin.setScale(0.2, 0.2);
+					coin.setPosition(0.f, 50.f);
+					coin.setScale(0.2f, 0.2f);
 					previousScreen = screen;
 					nextLevelM.stop();
 					screen = Menu;
@@ -2315,21 +2315,21 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 		if (!downT.loadFromFile("button/down.png")) throw runtime_error("Impossible de charger le bouton bas");
 		up.setTexture(upT);
 		down.setTexture(downT);
-		up.setPosition(500, 400);
-		down.setPosition(500, 600);
+		up.setPosition(500.f, 400.f);
+		down.setPosition(500.f, 600.f);
 		Sprite enemySprite;
 		Texture enemyTexture;
-		enemySprite.setPosition(900, 500);
-		settingsS.setScale(1.5, 1.5);
-		settingsS.setPosition(1480, 835);
-		confirmS.setScale(1.5, 1.5);
-		confirmS.setPosition(140, 290);
-		backS.setScale(1.5, 1.5);
-		backS.setPosition(140, 835);
-		cancelS.setScale(1.5, 1.5);
-		cancelS.setPosition(140, 480);
-		yesS.setPosition(1480, 359);
-		yes2S.setPosition(1480, 655);
+		enemySprite.setPosition(900.f, 500.f);
+		settingsS.setScale(1.5f, 1.5f);
+		settingsS.setPosition(1480.f, 835.f);
+		confirmS.setScale(1.5f, 1.5f);
+		confirmS.setPosition(140.f, 290.f);
+		backS.setScale(1.5f, 1.5f);
+		backS.setPosition(140.f, 835.f);
+		cancelS.setScale(1.5f, 1.5f);
+		cancelS.setPosition(140.f, 480.f);
+		yesS.setPosition(1480.f, 359.f);
+		yes2S.setPosition(1480.f, 655.f);
 		if (EloadObstacle == true)
 			yesS.setTexture(textureManager.getTexture("yes"));
 		else
