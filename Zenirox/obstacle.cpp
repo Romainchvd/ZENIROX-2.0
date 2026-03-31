@@ -70,8 +70,5 @@ void ObstacleManager::clear()
 }
 void ObstacleManager::detruireObstacle(unique_ptr<Obstacle>& obstacle)
 {
-	auto it = find_if(obstacles.begin(), obstacles.end(), obstacle.get());
-	if (it != obstacles.end()) {
-		obstacles.erase(it);
-	}
+	erase_if(obstacles, [&obstacle](const unique_ptr<Obstacle>& o) {return obstacle.get() == o.get(); });
 }

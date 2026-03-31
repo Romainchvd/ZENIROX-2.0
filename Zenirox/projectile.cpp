@@ -25,7 +25,7 @@ void ProjectileManager::creerProjectile(Player player) {
 	p->sprite.setOrigin(p->sprite.getGlobalBounds().width / 2, p->sprite.getGlobalBounds().height / 2);
 	p->id = player.id;
 	p->setProjectile();
-	projectiles.push_back(move(p));
+	projectiles.push_back(p);
 }
 
 void ProjectileManager::creerProjectile(unique_ptr<Enemy>& enemy, int defVelocity) {
@@ -35,7 +35,7 @@ void ProjectileManager::creerProjectile(unique_ptr<Enemy>& enemy, int defVelocit
 	p->id = enemy->id;
 	p->setProjectile();
 	p->velocity = defVelocity;
-	projectiles.push_back(move(p));
+	;
 	switch (enemy->id)
 	{
 	case ENNEMI1:
@@ -62,6 +62,7 @@ void ProjectileManager::creerProjectile(unique_ptr<Enemy>& enemy, int defVelocit
 	default:
 		break;
 	}
+	projectiles.push_back(p);
 }
 void ProjectileManager::detruireProjectile(unique_ptr<Projectile>& projectile)
 {

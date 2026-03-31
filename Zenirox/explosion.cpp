@@ -74,7 +74,7 @@ vector<unique_ptr<Explosion>>& ExplosionManager::getExplosions()
 {
 	return explosions;
 }
-void ExplosionManager::detruireExplosion(unique_ptr<Explosion>& Explosion)
+void ExplosionManager::detruireExplosion(unique_ptr<Explosion>& explosion)
 {
-	erase_if(explosions, [])
+	erase_if(explosions, [&explosion](const unique_ptr<Explosion>& e) {return e.get() == explosion.get(); });
 }

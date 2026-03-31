@@ -7,6 +7,7 @@
 #include "enemyManager.hpp"
 #include <memory>
 #include <utility>
+#include <algorithm>
 
 using namespace std;
 using namespace sf;

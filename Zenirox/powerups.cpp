@@ -54,10 +54,7 @@ vector<unique_ptr<Utilitary>>& UtilitaryManager::getUtilitaryList()
 }
 void UtilitaryManager::detruireUtilitary(unique_ptr<Utilitary>& h)
 {
-	auto it = find_if(utilitaryList.begin(), utilitaryList.end(), h.get());
-	if (it != utilitaryList.end()) {
-		utilitaryList.erase(it);
-	}
+	erase_if(utilitaryList, [&h](const unique_ptr<Utilitary>& utilitary) {return h.get() == utilitary.get(); });
 }
 void UtilitaryManager::checkUtilitary(unique_ptr<Utilitary>& h, Player& player, EnemyManager& eManager)
 {
