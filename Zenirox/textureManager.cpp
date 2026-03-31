@@ -87,6 +87,7 @@ TextureManager::TextureManager()
 		{"ship1", "ship1.png" },
 		{"ship2", "ship2.png" },
 		{"ship3", "ship3.png" },
+		{"explosion", "explosion.png"}
 	};
 }
 

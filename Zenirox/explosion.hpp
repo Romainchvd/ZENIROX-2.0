@@ -4,6 +4,9 @@
 #include <iostream>
 #include <vector>
 #include <SFML/Audio.hpp>
+#include <memory>
+#include <algorithm>
+#include "textureManager.hpp"
 
 using namespace std;
 using namespace sf;
@@ -13,26 +16,28 @@ class Player;
 
 class Explosion {
 public:
+	
 	Sprite sprite;
-	Texture texture;
 	Sound boom;
 	SoundBuffer boomB;
 	Clock explosionClock;
 	Time frameDuration = seconds(0.05);
 	int frame = 0;
-	void setExplosion();
+	void setExplosion(TextureManager& textureManager);
 	void animate();
 };
 
 class ExplosionManager {
 private:
-	vector<Explosion* > explosions;
+	vector<unique_ptr<Explosion>> explosions;
 public:
-	~ExplosionManager();
-	Explosion* creerExplosion(unique_ptr<Enemy>& enemy);
-	Explosion* creerExplosion(Player player);
-	vector<Explosion* > getExplosions();
-	void detruireExplosion(Explosion* explosion);
+	TextureManager& textureManager;
+	ExplosionManager(TextureManager& tm);
+	void creerExplosion(unique_ptr<Enemy>& enemy);
+	void creerExplosion(Player player);
+	vector<unique_ptr<Explosion>>& getExplosions();
+	void detruireExplosion(unique_ptr<Explosion>& explosion);
+	void clear();
 };
 
 #endif 
