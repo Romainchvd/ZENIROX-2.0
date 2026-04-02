@@ -143,6 +143,7 @@ Game::Game() : hoveredOption(-1) {
 	buyShip1S.setTexture(textureManager.getTexture("buyShip1"));
 	buyShip2S.setTexture(textureManager.getTexture("buyShip2"));
 	buyShip3S.setTexture(textureManager.getTexture("buyShip3"));
+	initLevelDatabase();
 }
 
 
@@ -151,702 +152,220 @@ void Game::setGameDuration(float duration) {
 	gameDuration = seconds(duration);
 }
 
-void Game::level1A(Player& player, EnemyManager &eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background)
-{
-	if (state == niveau1A && loadLevel == true && isFightingBoss == false && Univeau1A == true)
-	{
-		currentLevelText.setString("TIER: 1 - LEVEL: 1");
-		background.setUpTier(textureManager, "palier1");
-		doLoadBackground = false;
-		finalhours.stop();
-		boss.stop();
-		finalBossM.stop();
-		playing.play();
-		gameClock.restart();
-		setGameDuration(240);
-		
+void Game::initLevelDatabase() {
+	levelDatabase[niveau1A] = {
+		"TIER: 1 - LEVEL: 1",
+		"palier1",
+		240.0f,
+		11,
+		BOSS1,
+		{
+			{ENNEMI1, 1000, 600}, {ENNEMI1, 2500, 300}, {ENNEMI1, 4000, 700},
+			{ENNEMI1, 5500, 100}, {ENNEMI2, 7000, 800}, {ENNEMI1, 8500, 400},
+			{ENNEMI1, 10000, 600}, {ENNEMI1, 11500, 300}, {ENNEMI1, 13000, 500},
+			{ENNEMI3, 14500, 800}
+		},
+		{ {4700, 500} }
+	};
 
-		eManager.creerEnemy(ENNEMI1, 1000, 600, textureManager);
-		eManager.creerEnemy(ENNEMI1, 2500, 300, textureManager);
-		eManager.creerEnemy(ENNEMI1, 4000, 700, textureManager);
-		oManager.creerObstacle(4700, 500);
-		eManager.creerEnemy(ENNEMI1, 5500, 100, textureManager);
-		eManager.creerEnemy(ENNEMI2, 7000, 800, textureManager);
-		eManager.creerEnemy(ENNEMI1, 8500, 400, textureManager);
-		eManager.creerEnemy(ENNEMI1, 10000, 600, textureManager);
-		eManager.creerEnemy(ENNEMI1, 11500, 300, textureManager);
-		eManager.creerEnemy(ENNEMI1, 13000, 500, textureManager);
-		eManager.creerEnemy(ENNEMI3, 14500, 800, textureManager);
-		
-		loadLevel = false;
-	}
-	if (gameClock.getElapsedTime().asSeconds() > gameDuration.asSeconds())
-	{
-		player.HP = 0;
-	}
-	if (gameClock.getElapsedTime().asSeconds() > gameDuration.asSeconds() - gameDuration.asSeconds() / 4 && finalhours.getStatus() != Sound::Playing && player.HP >= 0 && lose.getStatus() != Sound::Playing)
-	{
-		playing.stop();
-		finalBossM.stop();
-		boss.stop();
-		finalhours.play();
-	}
-	else if (state == niveau1A && eManager.getEnemies().size() == 0 && isFightingBoss == false)
-	{
-		playing.stop(); 
-		finalBossM.stop();
-		if(finalhours.getStatus() != Sound::Playing)
-			boss.play();
-		isFightingBoss = true;
-		toKill = 1;
-		eManager.creerEnemy(BOSS1, 1400, 700, textureManager);
-		if(player.difficulty != Hardcore)
+	levelDatabase[niveau1B] = {
+		"TIER: 1 - LEVEL: 2", "palier1", 240.0f, 11, BOSS1,
 		{
-			uManager.creerUtilitary(shield, 2000, 700);
-			uManager.creerUtilitary(battery, 6000, 500);
-			uManager.creerUtilitary(heart, 10000, 300);
-		}
-		if (player.difficulty == Hardcore)
+			{ENNEMI1, 1000, 500}, {ENNEMI1, 2500, 300}, {ENNEMI2, 4000, 700},
+			{ENNEMI1, 5500, 100}, {ENNEMI1, 7000, 800}, {ENNEMI2, 8500, 400},
+			{ENNEMI1, 10000, 600}, {ENNEMI1, 11500, 300}, {ENNEMI1, 13000, 500},
+			{ENNEMI3, 14500, 800}
+		},
+		{ {4700, 500} }
+	};
+
+	levelDatabase[niveau1C] = {
+		"TIER: 1 - LEVEL: 3",
+		"palier1",
+		240.0f,
+		11, // 10 ennemis + 1 boss
+		BOSS1,
 		{
-			uManager.creerUtilitary(evilBattery, 2000, 200);
-			uManager.creerUtilitary(evilShield, 6000, 300);
-			uManager.creerUtilitary(evilHeart, 10000, 700);
-		}
-		
-		
-		//Ecran de victoire...
-	}
-	if (isFightingBoss == true && eManager.getEnemies().size() == 0 && Univeau1A == true && state == niveau1A)
+			{ENNEMI1, 1000, 500}, {ENNEMI1, 2500, 300}, {ENNEMI2, 4000, 700},
+			{ENNEMI1, 5500, 100}, {ENNEMI1, 7000, 800}, {ENNEMI2, 8500, 400},
+			{ENNEMI1, 10000, 600}, {ENNEMI2, 11500, 300}, {ENNEMI1, 13000, 500},
+			{ENNEMI3, 14500, 800}
+		},
+		{ {4700, 500} }
+	};
+	levelDatabase[niveau2A] = {
+		"TIER: 2 - LEVEL: 1",
+		"palier2",           
+		240.0f,
+		11,                   
+		BOSS2,                
+		{
+			{ENNEMI2, 1000, 500}, {ENNEMI2, 2500, 300}, {ENNEMI2, 4000, 700},
+			{ENNEMI2, 5500, 100}, {ENNEMI3, 7000, 800}, {ENNEMI2, 8500, 400},
+			{ENNEMI2, 10000, 600}, {ENNEMI2, 11500, 300}, {ENNEMI2, 13000, 500},
+			{ENNEMI3, 14500, 800}
+		},
+		{ {4700, 500} }
+	};
+	levelDatabase[niveau2B] = {
+	"TIER: 2 - LEVEL: 2",
+	"palier2",
+	240.0f,
+	11,
+	BOSS2,
 	{
-		previousScreen = screen;
-		screen = NextLevel;
-		exManager.clear();
-	}
+		{ENNEMI2, 1000, 500}, {ENNEMI2, 2500, 300}, {ENNEMI2, 4000, 700},
+		{ENNEMI2, 5500, 100}, {ENNEMI3, 7000, 800}, {ENNEMI2, 8500, 400},
+		{ENNEMI2, 10000, 600}, {ENNEMI3, 11500, 300}, {ENNEMI2, 13000, 500},
+		{ENNEMI3, 14500, 800}
+	},
+	{ {4700, 500} }
+	};
+
+	levelDatabase[niveau2C] = {
+		"TIER: 2 - LEVEL: 3",
+		"palier2",
+		240.0f,
+		11,
+		BOSS2,
+		{
+			{ENNEMI3, 1000, 500}, {ENNEMI2, 2500, 300}, {ENNEMI2, 4000, 700},
+			{ENNEMI2, 5500, 100}, {ENNEMI3, 7000, 800}, {ENNEMI2, 8500, 400},
+			{ENNEMI2, 10000, 600}, {ENNEMI3, 11500, 300}, {ENNEMI2, 13000, 500},
+			{ENNEMI3, 14500, 800}
+		},
+		{ {4700, 500} }
+	};
+
+	levelDatabase[niveau3A] = {
+		"TIER: 3 - LEVEL: 1", "palier3", 240.0f, 11, BOSS3,
+		{
+			{ENNEMI3, 1000, 500}, {ENNEMI3, 2500, 300}, {ENNEMI3, 4000, 700},
+			{ENNEMI3, 5500, 100}, {ENNEMI3, 7000, 800}, {ENNEMI3, 8500, 400},
+			{ENNEMI3, 10000, 600}, {ENNEMI3, 11500, 300}, {ENNEMI3, 13000, 500},
+			{ENNEMI3, 14500, 800}
+		},
+		{ {4700, 500}, {6000, 500} }
+	};
+
+	levelDatabase[niveau3B] = {
+		"TIER: 3 - LEVEL: 2", "palier3", 300.0f, 16, BOSS3,
+		{
+			{ENNEMI3, 1000, 500}, {ENNEMI3, 900, 700}, {ENNEMI3, 2500, 300},
+			{ENNEMI3, 2400, 500}, {ENNEMI3, 4000, 700}, {ENNEMI3, 5500, 100},
+			{ENNEMI3, 7000, 800}, {ENNEMI3, 6900, 500}, {ENNEMI3, 8500, 400},
+			{ENNEMI3, 10000, 600}, {ENNEMI3, 11500, 300}, {ENNEMI3, 11400, 700},
+			{ENNEMI3, 13000, 500}, {ENNEMI3, 14500, 800}, {ENNEMI3, 14400, 500}
+		},
+		{ {4700, 500}, {6000, 500} }
+	};
+
+	levelDatabase[niveau3C] = {
+		"TIER: 3 - LEVEL: 3", "palier3", 360.0f, 21, BOSS3,
+		{
+			{ENNEMI3, 1000, 500}, {ENNEMI3, 900, 700}, {ENNEMI3, 800, 300},
+			{ENNEMI3, 2500, 300}, {ENNEMI3, 2400, 500}, {ENNEMI3, 2300, 700},
+			{ENNEMI3, 4000, 700}, {ENNEMI3, 5500, 100}, {ENNEMI3, 7000, 800},
+			{ENNEMI3, 6900, 500}, {ENNEMI3, 6800, 200}, {ENNEMI3, 8500, 400},
+			{ENNEMI3, 10000, 600}, {ENNEMI3, 11500, 300}, {ENNEMI3, 11400, 700},
+			{ENNEMI3, 11300, 500}, {ENNEMI3, 13000, 500}, {ENNEMI3, 14500, 800},
+			{ENNEMI3, 14400, 500}, {ENNEMI3, 14300, 200}
+		},
+		{ {4700, 500}, {6000, 500} }
+	};
+
+	levelDatabase[finalBoss] = {
+	"FINAL BOSS",
+	"palier4",
+	360.0f,
+	0,
+	BOSS4,
+	{},
+	{ {1000, 100}, {1000, 900} }
+	};
 }
 
-void Game::level1B(Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background)
-{
-	if (state == niveau1B && loadLevel == true && isFightingBoss == false && Univeau1B == true)
-	{
-		currentLevelText.setString("TIER: 1 - LEVEL: 2");
-		background.setUpTier(textureManager, "palier1");
-		doLoadBackground = false;
-		finalhours.stop();
-		boss.stop();
-		finalBossM.stop();
-		playing.play();
-		gameClock.restart();
-		setGameDuration(240);
-		toKill = 10;
-		eManager.creerEnemy(ENNEMI1, 1000, 500, textureManager);
-		eManager.creerEnemy(ENNEMI1, 2500, 300, textureManager);
-		eManager.creerEnemy(ENNEMI2, 4000, 700, textureManager);
-		oManager.creerObstacle(4700, 500);
-		eManager.creerEnemy(ENNEMI1, 5500, 100, textureManager);
-		eManager.creerEnemy(ENNEMI1, 7000, 800, textureManager);
-		eManager.creerEnemy(ENNEMI2, 8500, 400, textureManager);
-		eManager.creerEnemy(ENNEMI1, 10000, 600, textureManager);
-		eManager.creerEnemy(ENNEMI1, 11500, 300, textureManager);
-		eManager.creerEnemy(ENNEMI1, 13000, 500, textureManager);
-		eManager.creerEnemy(ENNEMI3, 14500, 800, textureManager);
-
-		loadLevel = false;
-	}
-	if (gameClock.getElapsedTime().asSeconds() > gameDuration.asSeconds())
-	{
-		player.HP = 0;
-	}
-	if (gameClock.getElapsedTime().asSeconds() > gameDuration.asSeconds() - gameDuration.asSeconds() / 4 && finalhours.getStatus() != Sound::Playing && player.HP >= 0 && lose.getStatus() != Sound::Playing)
-	{
-		playing.stop();
-		finalBossM.stop();
-		boss.stop();
-		finalhours.play();
-	}
-	if (state == niveau1B && toKill == 0 && isFightingBoss == false)
-	{
-		playing.stop();
-		finalBossM.stop();
-		if (finalhours.getStatus() != Sound::Playing)
-			boss.play();
-		isFightingBoss = true;
-		toKill = 1;
-		eManager.creerEnemy(BOSS1, 1400, 700, textureManager);
-		if (player.difficulty != Hardcore)
-		{
-			uManager.creerUtilitary(shield, 2000, 700);
-			uManager.creerUtilitary(battery, 6000, 500);
-			uManager.creerUtilitary(heart, 10000, 300);
-		}
-		if (player.difficulty == Hardcore)
-		{
-			uManager.creerUtilitary(evilBattery, 2000, 200);
-			uManager.creerUtilitary(evilShield, 6000, 300);
-			uManager.creerUtilitary(evilHeart, 10000, 700);
-		}
-	}
-	if (isFightingBoss == true && toKill == 0 && Univeau1B == true && state == niveau1B)
-	{
-		previousScreen = screen;
-		screen = NextLevel;
-	}
-}
-
-void Game::level1C(Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background)
-{
-	if (state == niveau1C && loadLevel == true && isFightingBoss == false && Univeau1C == true)
-	{
-		currentLevelText.setString("TIER: 1 - LEVEL: 3");
-		background.setUpTier(textureManager, "palier1");
-		finalhours.stop();
-		boss.stop();
-		finalBossM.stop();
-		playing.play();
-		gameClock.restart();
-		setGameDuration(240);
-		toKill = 10;
-		eManager.creerEnemy(ENNEMI1, 1000, 500, textureManager);
-		eManager.creerEnemy(ENNEMI1, 2500, 300, textureManager);
-		eManager.creerEnemy(ENNEMI2, 4000, 700, textureManager);
-		oManager.creerObstacle(4700, 500);
-		eManager.creerEnemy(ENNEMI1, 5500, 100, textureManager);
-		eManager.creerEnemy(ENNEMI1, 7000, 800, textureManager);
-		eManager.creerEnemy(ENNEMI2, 8500, 400, textureManager);
-		eManager.creerEnemy(ENNEMI1, 10000, 600, textureManager);
-		eManager.creerEnemy(ENNEMI2, 11500, 300, textureManager);
-		eManager.creerEnemy(ENNEMI1, 13000, 500, textureManager);
-		eManager.creerEnemy(ENNEMI3, 14500, 800, textureManager);
-
-		loadLevel = false;
-	}
-	if (gameClock.getElapsedTime().asSeconds() > gameDuration.asSeconds())
-	{
-		player.HP = 0;
-	}
-	if (gameClock.getElapsedTime().asSeconds() > gameDuration.asSeconds() - gameDuration.asSeconds() / 4 && finalhours.getStatus() != Sound::Playing && player.HP >= 0 && lose.getStatus() != Sound::Playing)
-	{
-		playing.stop();
-		finalBossM.stop();
-		boss.stop();
-		finalhours.play();
-	}
-	if (state == niveau1C && toKill == 0 && isFightingBoss == false)
-	{
-		playing.stop();
-		finalBossM.stop();
-		if (finalhours.getStatus() != Sound::Playing)
-			boss.play();
-		isFightingBoss = true;
-		toKill = 1;
-		eManager.creerEnemy(BOSS1, 1400, 700, textureManager);
-		if (player.difficulty != Hardcore)
-		{
-			uManager.creerUtilitary(shield, 2000, 700);
-			uManager.creerUtilitary(battery, 6000, 500);
-			uManager.creerUtilitary(heart, 10000, 300);
-		}
-		if (player.difficulty == Hardcore)
-		{
-			uManager.creerUtilitary(evilBattery, 2000, 200);
-			uManager.creerUtilitary(evilShield, 6000, 300);
-			uManager.creerUtilitary(evilHeart, 10000, 700);
-		}
-	}
-	if (isFightingBoss == true && toKill == 0 && Univeau1C == true && state == niveau1C)
-	{
-		previousScreen = screen;
-		screen = NextLevel;
-	}
-}
-
-void Game::level2A(Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background)
+void Game::playLevel(gameState levelState, Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background)
 {
 	
-	if (state == niveau2A && loadLevel == true && isFightingBoss == false && Univeau2A == true)
-	{
-		currentLevelText.setString("TIER: 2 - LEVEL: 1");
-		background.setUpTier(textureManager, "palier2");
-		finalhours.stop();
-		boss.stop();
-		finalBossM.stop();
+	//Does the level exists
+	if (levelDatabase.find(levelState) == levelDatabase.end()) return;
+	const LevelConfig& config = levelDatabase[levelState];
+
+	// Loading
+	if (state == levelState && loadLevel == true && isFightingBoss == false) {
+		currentLevelText.setString(config.title);
+		background.setUpTier(textureManager, config.tierName);
+
+		// Reset sounds and clock
+		finalhours.stop(); boss.stop(); finalBossM.stop();
 		playing.play();
 		gameClock.restart();
-		setGameDuration(240);
-		toKill = 10;
-		eManager.creerEnemy(ENNEMI2, 1000, 500, textureManager);
-		eManager.creerEnemy(ENNEMI2, 2500, 300, textureManager);
-		eManager.creerEnemy(ENNEMI2, 4000, 700, textureManager);
-		oManager.creerObstacle(4700, 500);
-		eManager.creerEnemy(ENNEMI2, 5500, 100, textureManager);
-		eManager.creerEnemy(ENNEMI3, 7000, 800, textureManager);
-		eManager.creerEnemy(ENNEMI2, 8500, 400, textureManager);
-		eManager.creerEnemy(ENNEMI2, 10000, 600, textureManager);
-		eManager.creerEnemy(ENNEMI2, 11500, 300, textureManager);
-		eManager.creerEnemy(ENNEMI2, 13000, 500, textureManager);
-		eManager.creerEnemy(ENNEMI3, 14500, 800, textureManager);
+		setGameDuration(config.duration);
+
+		// Spawning enemies via configuration
+		for (const auto& e : config.enemies) {
+			eManager.creerEnemy(e.id, e.x, e.y, textureManager);
+		}
+		for (const auto& o : config.obstacles) {
+			oManager.creerObstacle(o.x, o.y);
+		}
 
 		loadLevel = false;
 	}
-	if (gameClock.getElapsedTime().asSeconds() > gameDuration.asSeconds())
-	{
-		player.HP = 0;
-	}
-	if (gameClock.getElapsedTime().asSeconds() > gameDuration.asSeconds() - gameDuration.asSeconds() / 4 && finalhours.getStatus() != Sound::Playing && player.HP >= 0 && lose.getStatus() != Sound::Playing)
-	{
+
+	// Death
+	float elapsed = gameClock.getElapsedTime().asSeconds();
+	if (elapsed > gameDuration.asSeconds()) player.HP = 0;
+
+	//Boss
+	if (state == levelState && eManager.getEnemies().empty() && !isFightingBoss) {
 		playing.stop();
-		finalBossM.stop();
-		boss.stop();
-		finalhours.play();
-	}
-	if (state == niveau2A && toKill == 0 && isFightingBoss == false)
-	{
-		playing.stop();
-		finalBossM.stop();
-		if (finalhours.getStatus() != Sound::Playing)
-			boss.play();
+		if (state == finalBoss) {
+			finalBossM.play();
+		}
+		else {
+			if (finalhours.getStatus() != Sound::Playing) boss.play();
+		}
 		isFightingBoss = true;
 		toKill = 1;
-		eManager.creerEnemy(BOSS2, 1400, 700, textureManager);
-		if (player.difficulty != Hardcore)
-		{
-			uManager.creerUtilitary(shield, 2000, 700);
-			uManager.creerUtilitary(battery, 6000, 500);
-			uManager.creerUtilitary(heart, 10000, 300);
-		}
-		if (player.difficulty == Hardcore)
-		{
-			uManager.creerUtilitary(evilBattery, 2000, 200);
-			uManager.creerUtilitary(evilShield, 6000, 300);
-			uManager.creerUtilitary(evilHeart, 10000, 700);
-		}
+		eManager.creerEnemy(config.bossID, 1400, 700, textureManager);
+
+		//Powerups
+		spawnPowerups(player, uManager); 
 	}
-	if (isFightingBoss == true && toKill == 0 && Univeau2A == true && state == niveau2A)
-	{
+
+	//Victory
+	if (isFightingBoss && eManager.getEnemies().empty() && state == levelState) {
+		exManager.clear();
 		previousScreen = screen;
-		screen = NextLevel;
+		if (state == finalBoss) {
+			hasWon = true; 
+			screen = Win;
+		}
+		else {
+			screen = NextLevel;
+		}
 	}
+
 }
 
-void Game::level2B(Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background)
+void Game::spawnPowerups(Player& player, UtilitaryManager& uManager)
 {
-
-	if (state == niveau2B && loadLevel == true && isFightingBoss == false && Univeau2B == true)
+	if (player.difficulty != Hardcore)
 	{
-		currentLevelText.setString("TIER: 2 - LEVEL: 2");
-		background.setUpTier(textureManager, "palier2");
-		finalhours.stop();
-		boss.stop();
-		finalBossM.stop();
-		playing.play();
-		gameClock.restart();
-		setGameDuration(240);
-		toKill = 10;
-		eManager.creerEnemy(ENNEMI2, 1000, 500, textureManager);
-		eManager.creerEnemy(ENNEMI2, 2500, 300, textureManager);
-		eManager.creerEnemy(ENNEMI2, 4000, 700, textureManager);
-		oManager.creerObstacle(4700, 500);
-		eManager.creerEnemy(ENNEMI2, 5500, 100, textureManager);
-		eManager.creerEnemy(ENNEMI3, 7000, 800, textureManager);
-		eManager.creerEnemy(ENNEMI2, 8500, 400, textureManager);
-		eManager.creerEnemy(ENNEMI2, 10000, 600, textureManager);
-		eManager.creerEnemy(ENNEMI3, 11500, 300, textureManager);
-		eManager.creerEnemy(ENNEMI2, 13000, 500, textureManager);
-		eManager.creerEnemy(ENNEMI3, 14500, 800, textureManager);
-
-		loadLevel = false;
+		uManager.creerUtilitary(shield, 2000, 700);
+		uManager.creerUtilitary(battery, 6000, 500);
+		uManager.creerUtilitary(heart, 10000, 300);
 	}
-	if (gameClock.getElapsedTime().asSeconds() > gameDuration.asSeconds())
+	if (player.difficulty == Hardcore)
 	{
-		player.HP = 0;
-	}
-	if (gameClock.getElapsedTime().asSeconds() > gameDuration.asSeconds() - gameDuration.asSeconds() / 4 && finalhours.getStatus() != Sound::Playing && player.HP >= 0 && lose.getStatus() != Sound::Playing)
-	{
-		playing.stop();
-		finalBossM.stop();
-		boss.stop();
-		finalhours.play();
-	}
-	if (state == niveau2B && toKill == 0 && isFightingBoss == false)
-	{
-		playing.stop();
-		finalBossM.stop();
-		if (finalhours.getStatus() != Sound::Playing)
-			boss.play();
-		isFightingBoss = true;
-		toKill = 1;
-		eManager.creerEnemy(BOSS2, 1400, 700, textureManager);
-		if (player.difficulty != Hardcore)
-		{
-			uManager.creerUtilitary(shield, 2000, 700);
-			uManager.creerUtilitary(battery, 6000, 500);
-			uManager.creerUtilitary(heart, 10000, 300);
-		}
-		if (player.difficulty == Hardcore)
-		{
-			uManager.creerUtilitary(evilBattery, 2000, 200);
-			uManager.creerUtilitary(evilShield, 6000, 300);
-			uManager.creerUtilitary(evilHeart, 10000, 700);
-		}
-	}
-	if (isFightingBoss == true && toKill == 0 && Univeau2B == true && state == niveau2B)
-	{
-		previousScreen = screen;
-		screen = NextLevel;
-	}
-}
-
-void Game::level2C(Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background)
-{
-
-	if (state == niveau2C && loadLevel == true && isFightingBoss == false && Univeau2C == true)
-	{
-		currentLevelText.setString("TIER: 2 - LEVEL: 3");
-		background.setUpTier(textureManager, "palier2");
-		finalhours.stop();
-		boss.stop();
-		finalBossM.stop();
-		playing.play();
-		gameClock.restart();
-		setGameDuration(240);
-		toKill = 10;
-		eManager.creerEnemy(ENNEMI3, 1000, 500, textureManager);
-		eManager.creerEnemy(ENNEMI2, 2500, 300, textureManager);
-		eManager.creerEnemy(ENNEMI2, 4000, 700, textureManager);
-		oManager.creerObstacle(4700, 500);
-		eManager.creerEnemy(ENNEMI2, 5500, 100, textureManager);
-		eManager.creerEnemy(ENNEMI3, 7000, 800, textureManager);
-		eManager.creerEnemy(ENNEMI2, 8500, 400, textureManager);
-		eManager.creerEnemy(ENNEMI2, 10000, 600, textureManager);
-		eManager.creerEnemy(ENNEMI3, 11500, 300, textureManager);
-		eManager.creerEnemy(ENNEMI2, 13000, 500, textureManager);
-		eManager.creerEnemy(ENNEMI3, 14500, 800, textureManager);
-
-		loadLevel = false;
-	}
-	if (gameClock.getElapsedTime().asSeconds() > gameDuration.asSeconds())
-	{
-		player.HP = 0;
-	}
-	if (gameClock.getElapsedTime().asSeconds() > gameDuration.asSeconds() - gameDuration.asSeconds() / 4 && finalhours.getStatus() != Sound::Playing && player.HP >= 0 && lose.getStatus() != Sound::Playing)
-	{
-		playing.stop();
-		finalBossM.stop();
-		boss.stop();
-		finalhours.play();
-	}
-	if (state == niveau2C && toKill == 0 && isFightingBoss == false)
-	{
-		playing.stop();
-		finalBossM.stop();
-		if (finalhours.getStatus() != Sound::Playing)
-			boss.play();
-		isFightingBoss = true;
-		toKill = 1;
-		eManager.creerEnemy(BOSS2, 1400, 700, textureManager);
-		if (player.difficulty != Hardcore)
-		{
-			uManager.creerUtilitary(shield, 2000, 700);
-			uManager.creerUtilitary(battery, 6000, 500);
-			uManager.creerUtilitary(heart, 10000, 300);
-		}
-		if (player.difficulty == Hardcore)
-		{
-			uManager.creerUtilitary(evilBattery, 2000, 200);
-			uManager.creerUtilitary(evilShield, 6000, 300);
-			uManager.creerUtilitary(evilHeart, 10000, 700);
-		}
-	}
-	if (isFightingBoss == true && toKill == 0 && Univeau2C == true && state == niveau2C)
-	{
-		previousScreen = screen;
-		screen = NextLevel;
-	}
-}
-
-void Game::level3A(Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background)
-{
-
-	if (state == niveau3A && loadLevel == true && isFightingBoss == false && Univeau3A == true)
-	{
-		currentLevelText.setString("TIER: 3 - LEVEL: 1");
-		background.setUpTier(textureManager, "palier3");
-		finalhours.stop();
-		boss.stop();
-		finalBossM.stop();
-		playing.play();
-		gameClock.restart();
-		setGameDuration(240);
-		toKill = 10;
-		eManager.creerEnemy(ENNEMI3, 1000, 500, textureManager);
-		eManager.creerEnemy(ENNEMI3, 2500, 300, textureManager);
-		eManager.creerEnemy(ENNEMI3, 4000, 700, textureManager);
-		oManager.creerObstacle(4700, 500);
-		eManager.creerEnemy(ENNEMI3, 5500, 100, textureManager);
-		eManager.creerEnemy(ENNEMI3, 7000, 800, textureManager);
-		eManager.creerEnemy(ENNEMI3, 8500, 400, textureManager);
-		eManager.creerEnemy(ENNEMI3, 10000, 600, textureManager);
-		oManager.creerObstacle(6000, 500);
-		eManager.creerEnemy(ENNEMI3, 11500, 300, textureManager);
-		eManager.creerEnemy(ENNEMI3, 13000, 500, textureManager);
-		eManager.creerEnemy(ENNEMI3, 14500, 800, textureManager);
-
-		loadLevel = false;
-	}
-	if (gameClock.getElapsedTime().asSeconds() > gameDuration.asSeconds())
-	{
-		player.HP = 0;
-	}
-	if (gameClock.getElapsedTime().asSeconds() > gameDuration.asSeconds() - gameDuration.asSeconds() / 4 && finalhours.getStatus() != Sound::Playing && player.HP >= 0 && lose.getStatus() != Sound::Playing)
-	{
-		playing.stop();
-		finalBossM.stop();
-		boss.stop();
-		finalhours.play();
-	}
-	if (state == niveau3A && toKill == 0 && isFightingBoss == false)
-	{
-		playing.stop();
-		finalBossM.stop();
-		if (finalhours.getStatus() != Sound::Playing)
-			boss.play();
-		isFightingBoss = true;
-		toKill = 1;
-		eManager.creerEnemy(BOSS3, 1400, 700, textureManager);
-		if (player.difficulty != Hardcore)
-		{
-			uManager.creerUtilitary(shield, 2000, 700);
-			uManager.creerUtilitary(battery, 6000, 500);
-			uManager.creerUtilitary(heart, 10000, 300);
-		}
-		if (player.difficulty == Hardcore)
-		{
-			uManager.creerUtilitary(evilBattery, 2000, 200);
-			uManager.creerUtilitary(evilShield, 6000, 300);
-			uManager.creerUtilitary(evilHeart, 10000, 700);
-		}
-	}
-	if (isFightingBoss == true && toKill == 0 && Univeau3A == true && state == niveau3A)
-	{
-		previousScreen = screen;
-		screen = NextLevel;
-	}
-}
-
-void Game::level3B(Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background)
-{
-
-	if (state == niveau3B && loadLevel == true && isFightingBoss == false && Univeau3B == true)
-	{
-		currentLevelText.setString("TIER: 3 - LEVEL: 2");
-		background.setUpTier(textureManager, "palier3");
-		finalhours.stop();
-		boss.stop();
-		finalBossM.stop();
-		playing.play();
-		gameClock.restart();
-		setGameDuration(300);
-		toKill = 15;
-		eManager.creerEnemy(ENNEMI3, 1000, 500, textureManager);
-		eManager.creerEnemy(ENNEMI3, 900, 700, textureManager);
-		eManager.creerEnemy(ENNEMI3, 2500, 300, textureManager);
-		eManager.creerEnemy(ENNEMI3, 2400, 500, textureManager);
-		eManager.creerEnemy(ENNEMI3, 4000, 700, textureManager);
-		oManager.creerObstacle(4700, 500);
-		eManager.creerEnemy(ENNEMI3, 5500, 100, textureManager);
-		eManager.creerEnemy(ENNEMI3, 7000, 800, textureManager);
-		eManager.creerEnemy(ENNEMI3, 6900, 500, textureManager);
-		eManager.creerEnemy(ENNEMI3, 8500, 400, textureManager);
-		eManager.creerEnemy(ENNEMI3, 10000, 600, textureManager);
-		oManager.creerObstacle(6000, 500);
-		eManager.creerEnemy(ENNEMI3, 11500, 300, textureManager);
-		eManager.creerEnemy(ENNEMI3, 11400, 700, textureManager);
-		eManager.creerEnemy(ENNEMI3, 13000, 500, textureManager);
-		eManager.creerEnemy(ENNEMI3, 14500, 800, textureManager);
-		eManager.creerEnemy(ENNEMI3, 14400, 500, textureManager);
-
-		loadLevel = false;
-	}
-	if (gameClock.getElapsedTime().asSeconds() > gameDuration.asSeconds())
-	{
-		player.HP = 0;
-	}
-	if (gameClock.getElapsedTime().asSeconds() > gameDuration.asSeconds() - gameDuration.asSeconds() / 4 && finalhours.getStatus() != Sound::Playing && player.HP >= 0 && lose.getStatus() != Sound::Playing)
-	{
-		playing.stop();
-		finalBossM.stop();
-		boss.stop();
-		finalhours.play();
-	}
-	if (state == niveau3B && toKill == 0 && isFightingBoss == false)
-	{
-		playing.stop();
-		finalBossM.stop();
-		if (finalhours.getStatus() != Sound::Playing)
-			boss.play();
-		isFightingBoss = true;
-		toKill = 1;
-		eManager.creerEnemy(BOSS3, 1400, 700, textureManager);
-		if (player.difficulty != Hardcore)
-		{
-			uManager.creerUtilitary(shield, 2000, 700);
-			uManager.creerUtilitary(battery, 6000, 500);
-			uManager.creerUtilitary(heart, 10000, 300);
-		}
-		if (player.difficulty == Hardcore)
-		{
-			uManager.creerUtilitary(evilBattery, 2000, 200);
-			uManager.creerUtilitary(evilShield, 6000, 300);
-			uManager.creerUtilitary(evilHeart, 10000, 700);
-		}
-	}
-	if (isFightingBoss == true && toKill == 0 && Univeau3B == true && state == niveau3B)
-	{
-		previousScreen = screen;
-		screen = NextLevel;
-	}
-}
-
-void Game::level3C(Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background)
-{
-
-	if (state == niveau3C && loadLevel == true && isFightingBoss == false && Univeau3C == true)
-	{
-		currentLevelText.setString("TIER: 3 - LEVEL: 3");
-		background.setUpTier(textureManager, "palier3");
-		finalhours.stop();
-		boss.stop();
-		finalBossM.stop();
-		playing.play();
-		gameClock.restart();
-		setGameDuration(360);
-		toKill = 20;
-		eManager.creerEnemy(ENNEMI3, 1000, 500, textureManager);
-		eManager.creerEnemy(ENNEMI3, 900, 700, textureManager);
-		eManager.creerEnemy(ENNEMI3, 800, 300, textureManager);
-		eManager.creerEnemy(ENNEMI3, 2500, 300, textureManager);
-		eManager.creerEnemy(ENNEMI3, 2400, 500, textureManager);
-		eManager.creerEnemy(ENNEMI3, 2300, 700, textureManager);
-		eManager.creerEnemy(ENNEMI3, 4000, 700, textureManager);
-		oManager.creerObstacle(4700, 500);
-		eManager.creerEnemy(ENNEMI3, 5500, 100, textureManager);
-		eManager.creerEnemy(ENNEMI3, 7000, 800, textureManager);
-		eManager.creerEnemy(ENNEMI3, 6900, 500, textureManager);
-		eManager.creerEnemy(ENNEMI3, 6800, 200, textureManager);
-		eManager.creerEnemy(ENNEMI3, 8500, 400, textureManager);
-		eManager.creerEnemy(ENNEMI3, 10000, 600, textureManager);
-		oManager.creerObstacle(6000, 500);
-		eManager.creerEnemy(ENNEMI3, 11500, 300, textureManager);
-		eManager.creerEnemy(ENNEMI3, 11400, 700, textureManager);
-		eManager.creerEnemy(ENNEMI3, 11300, 500, textureManager);
-		eManager.creerEnemy(ENNEMI3, 13000, 500, textureManager);
-		eManager.creerEnemy(ENNEMI3, 14500, 800, textureManager);
-		eManager.creerEnemy(ENNEMI3, 14400, 500, textureManager);
-		eManager.creerEnemy(ENNEMI3, 14300, 200, textureManager);
-
-		loadLevel = false;
-	}
-	if (gameClock.getElapsedTime().asSeconds() > gameDuration.asSeconds())
-	{
-		player.HP = 0;
-	}
-	if (gameClock.getElapsedTime().asSeconds() > gameDuration.asSeconds() - gameDuration.asSeconds() / 4 && finalhours.getStatus() != Sound::Playing && player.HP >= 0 && lose.getStatus() != Sound::Playing)
-	{
-		playing.stop();
-		finalBossM.stop();
-		boss.stop();
-		finalhours.play();
-	}
-	if (state == niveau3C && toKill == 0 && isFightingBoss == false)
-	{
-		playing.stop();
-		finalBossM.stop();
-		if (finalhours.getStatus() != Sound::Playing)
-			boss.play();
-		isFightingBoss = true;
-		toKill = 1;
-		eManager.creerEnemy(BOSS3, 1400, 700, textureManager);
-		if (player.difficulty != Hardcore)
-		{
-			uManager.creerUtilitary(shield, 2000, 700);
-			uManager.creerUtilitary(battery, 6000, 500);
-			uManager.creerUtilitary(heart, 10000, 300);
-		}
-		if (player.difficulty == Hardcore)
-		{
-			uManager.creerUtilitary(evilBattery, 2000, 200);
-			uManager.creerUtilitary(evilShield, 6000, 300);
-			uManager.creerUtilitary(evilHeart, 10000, 700);
-		}
-	}
-	if (isFightingBoss == true && toKill == 0 && Univeau3C == true && state == niveau3C)
-	{
-		previousScreen = screen;
-		screen = NextLevel;
-	}
-}
-
-void Game::level4(Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background, Starparallaxe& star, Starparallaxe& faststar)
-{
-	if (state == finalBoss && loadLevel == true && isFightingBoss == false && UfinalBoss == true)
-	{
-		currentLevelText.setString("FINAL BOSS");
-		background.setUpTier(textureManager, "palier4");
-		star.sprite.setColor(Color(245, 194, 254));
-		star.sprite2.setColor(Color(245, 194, 254));
-		faststar.sprite.setColor(Color(245, 194, 254));
-		faststar.sprite2.setColor(Color(245, 194, 254));
-		finalhours.stop();
-		gameClock.restart();
-		setGameDuration(360);
-		toKill = 0;
-		
-		
-
-		loadLevel = false;
-	}
-	if (gameClock.getElapsedTime().asSeconds() > gameDuration.asSeconds())
-	{
-		player.HP = 0;
-	}
-	if (gameClock.getElapsedTime().asSeconds() > gameDuration.asSeconds() - gameDuration.asSeconds() / 4 && finalhours.getStatus() != Sound::Playing && player.HP >= 0 && lose.getStatus() != Sound::Playing)
-	{
-		playing.stop();
-		finalBossM.stop();
-		boss.stop();
-		finalhours.play();
-	}
-	if (state == finalBoss && toKill == 0 && isFightingBoss == false)
-	{
-		playing.stop();
-		boss.stop();
-		finalBossM.play();
-		
-		isFightingBoss = true;
-		toKill = 1;
-		oManager.creerObstacle(1000, 100);
-		oManager.creerObstacle(1000, 900);
-		eManager.creerEnemy(BOSS4, 1400, 700, textureManager);
-		if (player.difficulty != Hardcore)
-		{
-			uManager.creerUtilitary(shield, 2000, 700);
-			uManager.creerUtilitary(battery, 6000, 500);
-			uManager.creerUtilitary(heart, 10000, 300);
-		}
 		uManager.creerUtilitary(evilBattery, 2000, 200);
 		uManager.creerUtilitary(evilShield, 6000, 300);
 		uManager.creerUtilitary(evilHeart, 10000, 700);
 	}
-	if (isFightingBoss == true && toKill == 0 && state == finalBoss)
-	{
-		previousScreen = screen;
-		hasWon = true;
-		screen = Win;
-
-		saveData(player, *this);
-		openData(player, *this);
-	}
-	
 }
+
 
 void Game::levelP(Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background)
 {
@@ -1832,6 +1351,7 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 		oManager.clear();
 		uManager.clear();
 		exManager.clear();
+		pManager.clear();
 		coin.setScale(0.5, 0.5);
 		coin.setPosition(750, 670);
 		saveCurrentScore(player);
@@ -2581,28 +2101,23 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 		coin.setPosition(0, 45);
 		pauseS.setScale(1, 1);
 		pauseS.setPosition(1100, 0);
-		if (state != niveauEDIT)
+		if (state != niveauEDIT && levelDatabase.count(state))
 		{
-			if(state == niveau1A && Univeau1A == true)
-				level1A(player, eManager, oManager, pManager, uManager, exManager, playing, boss, finalBossM, background);
-			else if(state == niveau1B && Univeau1B == true)
-				level1B(player, eManager, oManager, pManager, uManager, exManager, playing, boss, finalBossM, background);
-			else if (state == niveau1C && Univeau1C == true)
-				level1C(player, eManager, oManager, pManager, uManager, exManager, playing, boss, finalBossM, background);
-			else if (state == niveau2A && Univeau2A == true)
-				level2A(player, eManager, oManager, pManager, uManager, exManager, playing, boss, finalBossM, background);
-			else if (state == niveau2B && Univeau2B == true)
-				level2B(player, eManager, oManager, pManager, uManager, exManager, playing, boss, finalBossM, background);
-			else if (state == niveau2C && Univeau2C == true)
-				level2C(player, eManager, oManager, pManager, uManager, exManager, playing, boss, finalBossM, background);
-			else if (state == niveau3A && Univeau3A == true)
-				level3A(player, eManager, oManager, pManager, uManager, exManager, playing, boss, finalBossM, background);
-			else if (state == niveau3B && Univeau3B == true)
-				level3B(player, eManager, oManager, pManager, uManager, exManager, playing, boss, finalBossM, background);
-			else if (state == niveau3C && Univeau3C == true)
-				level3C(player, eManager, oManager, pManager, uManager, exManager, playing, boss, finalBossM, background);
-			else if (state == finalBoss && UfinalBoss == true)
-				level4(player, eManager, oManager, pManager, uManager, exManager, playing, boss, finalBossM, background, star, faststar);
+			if (state == finalBoss && loadLevel)
+			{
+				sf::Color bossPurple(245, 194, 254);
+				star.sprite.setColor(bossPurple);
+				star.sprite2.setColor(bossPurple);
+				faststar.sprite.setColor(bossPurple);
+				faststar.sprite2.setColor(bossPurple);
+			}
+			playLevel(state, player, eManager, oManager, pManager, uManager, exManager, playing, boss, finalBossM, background);
+
+			if (state == finalBoss && screen == Win)
+			{
+				saveData(player, *this);
+				openData(player, *this);
+			}
 		}
 		else if (state == niveauEDIT)
 			levelP(player, eManager, oManager, pManager, uManager, exManager, playing, boss, finalBossM, background);

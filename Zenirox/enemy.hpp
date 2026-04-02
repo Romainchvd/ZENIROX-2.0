@@ -21,6 +21,7 @@ public:
 	int shield = 0;
 	int maxShield = 0;
 	float velocity = 2;
+	float horizontalVelocity = 12 ; //4
 	Direction direction = up;
 	Sprite sprite;
 	Sound impact;

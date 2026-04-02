@@ -93,9 +93,9 @@ void Enemy::enemyMove() {
 	if (id == ENNEMI2 || id == ENNEMI3)
 	{
 		if (direction == up)
-			sprite.move(-4, -velocity);
+			sprite.move(-horizontalVelocity, -velocity);
 		else
-			sprite.move(-4, velocity);
+			sprite.move(-horizontalVelocity, velocity);
 	}
 	if (id == BOSS1 || id == BOSS2 || id == BOSS3 ||id == BOSS4)
 	{
@@ -106,7 +106,7 @@ void Enemy::enemyMove() {
 	}
 	if (id == ENNEMI1)
 	{
-		sprite.move(-4, 0);
+		sprite.move(-horizontalVelocity, 0);
 	}
 	if (sprite.getPosition().x < -500 && id != ENNEMI3)
 	{

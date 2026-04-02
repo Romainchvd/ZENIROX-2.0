@@ -27,6 +27,20 @@ enum gameState {
 	niveauEDIT, niveau1A, niveau1B, niveau1C, niveau2A, niveau2B, niveau2C, niveau3A, niveau3B, niveau3C, finalBoss
 };
 
+struct EnemySpawn {
+	ID id;
+	float x, y;
+};
+
+struct LevelConfig {
+	std::string title;
+	std::string tierName; // pour le background
+	float duration;
+	int enemiesToKill;
+	ID bossID;
+	std::vector<EnemySpawn> enemies;
+	std::vector<sf::Vector2f> obstacles;
+};
 
 class Game {
 private:
@@ -40,36 +54,9 @@ public:
 	Game();
 
 	TextureManager textureManager;
-	Sprite backgroundSprite;
-	Sprite closeS;
-	Sprite confirmS;
-	Sprite editorS;
-	Sprite cancelS;
-	Sprite dataS;
-	Sprite easyS;
-	Sprite hardcoreS;
-	Sprite menuS;
-	Sprite normalS;
-	Sprite questS;
-	Sprite resumeS;
-	Sprite settingsS;
-	Sprite buyS;
-	Sprite yesS;
-	Sprite yes2S;
-	Sprite noS;
-	Sprite no2S;
-	Sprite backS;
-	Sprite shopS;
-	Sprite continueS;
-	Sprite resetS;
-	Sprite buyShip1S;
-	Sprite buyShip2S;
-	Sprite buyShip3S;
-	Sprite inventoryShipS;
-	Sprite inventoryShip1S;
-	Sprite inventoryShip2S;
-	Sprite inventoryShip3S;
-	Sprite pauseS;
+	Sprite backgroundSprite, closeS, confirmS, editorS, cancelS, dataS,
+		easyS, hardcoreS, menuS, normalS, questS, resumeS, settingsS, buyS, yesS, yes2S, noS, no2S, backS,
+		shopS, continueS, resetS, buyShip1S, buyShip2S, buyShip3S, inventoryShipS, inventoryShip1S, inventoryShip2S, inventoryShip3S, pauseS;
 
 	Font font;
 
@@ -111,18 +98,12 @@ public:
 
 
 	void setGameDuration(float duration);
-	void level1A(Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background);
-	void level1B(Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background);
-	void level1C(Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background);
-	void level2A(Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background);
-	void level2B(Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background);
-	void level2C(Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background);
-	void level3A(Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background);
-	void level3B(Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background);
-	void level3C(Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background);
-	void level4(Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background, Starparallaxe& star, Starparallaxe& faststar);
 	void levelP(Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background);
 	void run(RenderWindow& window, Player& player, Sprite& coin, Background& background, Starparallaxe& star, Starparallaxe& faststar, Healthbar& healthbar, EnemyManager& eManager, ProjectileManager& pManager, ObstacleManager& oManager, UtilitaryManager& uManager, ExplosionManager& exManager, Clock& clock, Text& scoreText, Font& scoreFont, RectangleShape& interface, Music& playing, Music& boss, Music& finalBossM, vector<Sound>& playerShot, SoundBuffer& shot, Text& totalScoreText);
+	std::map<gameState, LevelConfig> levelDatabase;
+	void initLevelDatabase();
+	void playLevel(gameState levelState, Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background);
+	void spawnPowerups(Player& player, UtilitaryManager& uManager);
 };
 
 #endif
