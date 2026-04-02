@@ -77,8 +77,10 @@ void EnemyManager::creerEnemy(ID defLevel, float width, float height, TextureMan
 	}
 	enemies.push_back(move(e));
 }
-void EnemyManager::detruireEnemy(unique_ptr<Enemy>& enemy) {
-	erase_if(enemies, [&enemy](const unique_ptr<Enemy>& e) { return e.get() == enemy.get(); });
+void EnemyManager::detruireEnemy() {
+	erase_if(enemies, [](const std::unique_ptr<Enemy>& e) {
+		return e->isDead;
+		});
 }
 
 
@@ -87,7 +89,7 @@ void EnemyManager::checkEnemy(unique_ptr<Enemy>& enemy, int& toKill, ExplosionMa
 	if (enemy->HP < 1)
 	{
 		exManager.creerExplosion(enemy);
-		detruireEnemy(enemy);
+		enemy->isDead = true;
 	}
 }
 void EnemyManager::clear()

@@ -16,8 +16,8 @@ enum ID {
 
 
 
-const float HEIGHT = 1080;
-const float WIDTH = 1920;
-const float MAXHEIGHT = 95;
+const unsigned int HEIGHT = 1080;
+const unsigned int WIDTH = 1920;
+const unsigned int MAXHEIGHT = 95;
 
 #endif 

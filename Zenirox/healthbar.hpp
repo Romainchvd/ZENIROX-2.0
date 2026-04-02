@@ -4,6 +4,7 @@
 #include "player.hpp"
 #include "enemy.hpp"
 #include <vector>
+#include <memory>
 #include <SFML/Graphics.hpp>
 
 using namespace std;

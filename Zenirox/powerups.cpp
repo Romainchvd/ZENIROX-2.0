@@ -1,5 +1,5 @@
 #include "powerups.hpp"
-
+#include <memory>
 Utilitary::Utilitary() {}
 Utilitary::~Utilitary() { cout << "Un powerup de heal a ete detruit" << endl; }
 void Utilitary::setUtilitary(TextureManager& textureManager) {
@@ -52,9 +52,11 @@ vector<unique_ptr<Utilitary>>& UtilitaryManager::getUtilitaryList()
 {
 	return utilitaryList;
 }
-void UtilitaryManager::detruireUtilitary(unique_ptr<Utilitary>& h)
+void UtilitaryManager::detruireUtilitary()
 {
-	erase_if(utilitaryList, [&h](const unique_ptr<Utilitary>& utilitary) {return h.get() == utilitary.get(); });
+	erase_if(utilitaryList, [](const std::unique_ptr<Utilitary>& u) {
+		return u->isDead;
+		});
 }
 void UtilitaryManager::checkUtilitary(unique_ptr<Utilitary>& h, Player& player, EnemyManager& eManager)
 {
@@ -110,11 +112,16 @@ void UtilitaryManager::checkUtilitary(unique_ptr<Utilitary>& h, Player& player, 
 			}
 			player.malus.play();
 		}
-		detruireUtilitary(h);
+		h->isDead = true;
 	}
 	if (h->sprite.getPosition().x < -500)
 	{
-		detruireUtilitary(h);
+		h->isDead = true;
 	}
 
+}
+
+void UtilitaryManager::clear()
+{
+	utilitaryList.clear();
 }

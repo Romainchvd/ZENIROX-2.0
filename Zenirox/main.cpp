@@ -74,7 +74,7 @@ int main() {
 
 	UtilitaryManager uManager(game.textureManager);
 
-	ExplosionManager exManager;
+	ExplosionManager exManager(game.textureManager);
 
 	Music playing;
 	Music boss;

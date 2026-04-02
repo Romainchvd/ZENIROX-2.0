@@ -25,7 +25,7 @@ void ProjectileManager::creerProjectile(Player player) {
 	p->sprite.setOrigin(p->sprite.getGlobalBounds().width / 2, p->sprite.getGlobalBounds().height / 2);
 	p->id = player.id;
 	p->setProjectile();
-	projectiles.push_back(p);
+	projectiles.push_back(move(p));
 }
 
 void ProjectileManager::creerProjectile(unique_ptr<Enemy>& enemy, int defVelocity) {
@@ -62,11 +62,13 @@ void ProjectileManager::creerProjectile(unique_ptr<Enemy>& enemy, int defVelocit
 	default:
 		break;
 	}
-	projectiles.push_back(p);
+	projectiles.push_back(move(p));
 }
-void ProjectileManager::detruireProjectile(const unique_ptr<Projectile>& projectile)
+void ProjectileManager::detruireProjectile()
 {
-	erase_if(projectiles, [&projectile](const unique_ptr<Projectile>& p) {return p.get() == projectile.get(); });
+	erase_if(projectiles, [](const std::unique_ptr<Projectile>& p) {
+		return p->isDead;
+		});
 }
 const vector<unique_ptr<Projectile>>& ProjectileManager::getProjectiles() const { return projectiles; }
 void ProjectileManager::clear() {
@@ -75,13 +77,13 @@ void ProjectileManager::clear() {
 
 void ProjectileManager::checkProjectileOutOfScreen(const unique_ptr<Projectile>& projectile, EnemyManager &manager, Player &player, Text &scoreText) {
 	if (projectile->sprite.getPosition().y > HEIGHT || projectile->sprite.getPosition().y < 0 || projectile->sprite.getPosition().x > WIDTH || projectile->sprite.getPosition().x < 0)
-	detruireProjectile(projectile);
+		projectile->isDead = true;
 	else
 		for (auto i = 0; i < manager.getEnemies().size(); i++)
 		{
 			if (projectile->sprite.getGlobalBounds().intersects(manager.getEnemies()[i]->sprite.getGlobalBounds()) && projectile->id == PLAYER)
 			{
-				detruireProjectile(projectile);
+				projectile->isDead = true;
 				manager.getEnemies()[i]->impact.play();
 				if (manager.getEnemies()[i]->shield == 0)
 					manager.getEnemies()[i]->HP -= player.attack;
@@ -101,7 +103,7 @@ void ProjectileManager::checkProjectileOutOfScreen(const unique_ptr<Projectile>&
 			if (projectile->sprite.getGlobalBounds().intersects(player.sprite.getGlobalBounds()) && projectile->id != PLAYER)
 			{
 				
-				detruireProjectile(projectile);
+				projectile->isDead = true;
 				player.impact.play();
 				if (player.shield == 0)
 					player.HP -= manager.getEnemies()[i]->AttackDamages;

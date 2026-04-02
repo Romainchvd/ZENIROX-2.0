@@ -26,7 +26,7 @@ public:
 	~Utilitary();
 	void setUtilitary(TextureManager& textureManager);
 	void moveUtilitary();
-
+	bool isDead = false;	
 	
 };
 
@@ -37,7 +37,7 @@ private:
 public:
 	UtilitaryManager(TextureManager& manager);
 	void creerUtilitary(Powerup type, float width, float height);
-	void detruireUtilitary(unique_ptr<Utilitary>& utilitary);
+	void detruireUtilitary();
 	vector<unique_ptr<Utilitary>>& getUtilitaryList();
 	void checkUtilitary(unique_ptr<Utilitary>& h, Player& player, EnemyManager& eManager);
 	void clear();

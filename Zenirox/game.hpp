@@ -4,6 +4,7 @@
 #include <ctime>
 #include <stdexcept>
 #include <string>
+#include <memory>
 #include "projectile.hpp"
 #include "background.hpp"
 #include "parallaxe.hpp"

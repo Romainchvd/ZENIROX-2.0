@@ -68,7 +68,9 @@ void ObstacleManager::clear()
 {
 	obstacles.clear();
 }
-void ObstacleManager::detruireObstacle(unique_ptr<Obstacle>& obstacle)
+void ObstacleManager::detruireObstacle()
 {
-	erase_if(obstacles, [&obstacle](const unique_ptr<Obstacle>& o) {return obstacle.get() == o.get(); });
+	erase_if(obstacles, [](const std::unique_ptr<Obstacle>& o) {
+		return o->isDead;
+		});
 }

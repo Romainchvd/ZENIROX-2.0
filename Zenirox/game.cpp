@@ -164,7 +164,7 @@ void Game::level1A(Player& player, EnemyManager &eManager, ObstacleManager& oMan
 		playing.play();
 		gameClock.restart();
 		setGameDuration(240);
-		toKill = 10;
+		
 
 		eManager.creerEnemy(ENNEMI1, 1000, 600, textureManager);
 		eManager.creerEnemy(ENNEMI1, 2500, 300, textureManager);
@@ -177,7 +177,6 @@ void Game::level1A(Player& player, EnemyManager &eManager, ObstacleManager& oMan
 		eManager.creerEnemy(ENNEMI1, 11500, 300, textureManager);
 		eManager.creerEnemy(ENNEMI1, 13000, 500, textureManager);
 		eManager.creerEnemy(ENNEMI3, 14500, 800, textureManager);
-		
 		
 		loadLevel = false;
 	}
@@ -192,7 +191,7 @@ void Game::level1A(Player& player, EnemyManager &eManager, ObstacleManager& oMan
 		boss.stop();
 		finalhours.play();
 	}
-	else if (state == niveau1A && toKill == 0 && isFightingBoss == false)
+	else if (state == niveau1A && eManager.getEnemies().size() == 0 && isFightingBoss == false)
 	{
 		playing.stop(); 
 		finalBossM.stop();
@@ -217,16 +216,16 @@ void Game::level1A(Player& player, EnemyManager &eManager, ObstacleManager& oMan
 		
 		//Ecran de victoire...
 	}
-	if (isFightingBoss == true && toKill == 0 && Univeau1A == true && state == niveau1A)
+	if (isFightingBoss == true && eManager.getEnemies().size() == 0 && Univeau1A == true && state == niveau1A)
 	{
 		previousScreen = screen;
 		screen = NextLevel;
+		exManager.clear();
 	}
 }
 
 void Game::level1B(Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background)
 {
-	
 	if (state == niveau1B && loadLevel == true && isFightingBoss == false && Univeau1B == true)
 	{
 		currentLevelText.setString("TIER: 1 - LEVEL: 2");
@@ -1457,6 +1456,11 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 
 	if (screen == Win)
 	{
+		pManager.clear();
+		oManager.clear();
+		uManager.clear();
+		exManager.clear();
+		eManager.clear();
 		resetS.setPosition(764, 872);
 		settingsS.setScale(2, 2);
 		settingsS.setPosition(192, 872);
@@ -1552,11 +1556,11 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 		if (!lostScreenT.loadFromFile("lostscreen.png")) throw runtime_error("Erreur lors du chargement de l'ecran de defaite");
 		lostScreen.setTexture(lostScreenT);
 		Event event;
-		pManager.~ProjectileManager();
-		oManager.~ObstacleManager();
-		uManager.~UtilitaryManager();
-		exManager.~ExplosionManager();
-		eManager.~EnemyManager();
+		pManager.clear();
+		oManager.clear();
+		uManager.clear();
+		exManager.clear();
+		eManager.clear();
 		player.currentScore = 0;
 		player.isAlive = true;
 		while (window.pollEvent(event))
@@ -1825,10 +1829,9 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 			nextLevelM.play();
 		finalBossM.stop();
 		finalhours.stop();
-		pManager.~ProjectileManager();
-		oManager.~ObstacleManager();
-		uManager.~UtilitaryManager();
-		exManager.~ExplosionManager();
+		oManager.clear();
+		uManager.clear();
+		exManager.clear();
 		coin.setScale(0.5, 0.5);
 		coin.setPosition(750, 670);
 		saveCurrentScore(player);
@@ -2574,7 +2577,7 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 
 	if (screen == Playing)
 	{
-		coin.setScale(0.2, 0.2);
+		coin.setScale(0.2f, 0.2f);
 		coin.setPosition(0, 45);
 		pauseS.setScale(1, 1);
 		pauseS.setPosition(1100, 0);
@@ -2606,17 +2609,17 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 
 		if (player.boostClock.getElapsedTime().asSeconds() < player.boostDuration.asSeconds() && player.canBeBoosted == true)
 		{
-			player.attackCooldown = seconds(0.1);
+			player.attackCooldown = seconds(0.1f);
 		}
 		else
-			player.attackCooldown = seconds(0.2);
+			player.attackCooldown = seconds(0.2f);
 
 		player.checkOutOfScreen(); //Empêche de sortir de l'écran
 		Event event;
 		if (Keyboard::isKeyPressed(Keyboard::Up))
-			player.sprite.move(0, -10);
+			player.sprite.move(0.f, -10.f);
 		if (Keyboard::isKeyPressed(Keyboard::Down))
-			player.sprite.move(0, 10);
+			player.sprite.move(0.f, 10.f);
 
 		//Créé un projectile lorsqu'il y a un click gauche avec un cooldown
 
@@ -2681,7 +2684,7 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 		faststar.draw(window);
 
 		//Gestion de l'affichage, de la durée de vie des projectiles et des dégâts infligés
-		for (auto i = 0; i < pManager.getProjectiles().size(); i++)
+		for (unsigned int i = 0; i < pManager.getProjectiles().size(); i++)
 		{
 			window.draw(pManager.getProjectiles()[i]->sprite);
 			if (pManager.getProjectiles()[i]->id == PLAYER)
@@ -2690,6 +2693,7 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 				pManager.getProjectiles()[i]->sprite.move(pManager.getProjectiles()[i]->velocity, 0);
 			pManager.checkProjectileOutOfScreen(pManager.getProjectiles()[i], eManager, player, scoreText);
 		}
+		pManager.detruireProjectile();
 		for (auto i = 0; i < uManager.getUtilitaryList().size(); i++)
 		{
 			window.draw(uManager.getUtilitaryList()[i]->sprite);
@@ -2703,36 +2707,37 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 			cout << eManager.getEnemies()[i]->HP << endl;
 			eManager.checkEnemy(eManager.getEnemies()[i], toKill, exManager);
 		}
+		eManager.detruireEnemy();
 		for (auto i = 0; i < eManager.getEnemies().size(); i++)
 		{
 			if (eManager.getEnemies()[i]->boostClock.getElapsedTime().asSeconds() < eManager.getEnemies()[i]->boostDuration.asSeconds() && eManager.getEnemies()[i]->canBeBoosted == true)
 			{
-				eManager.getEnemies()[i]->attackCooldown = seconds(0.05);
+				eManager.getEnemies()[i]->attackCooldown = seconds(0.05f);
 			}
 			else
 			{
 				switch (eManager.getEnemies()[i]->id)
 				{
 				case ENNEMI1:
-					eManager.getEnemies()[i]->attackCooldown = seconds(3);
+					eManager.getEnemies()[i]->attackCooldown = seconds(3.f);
 					break;
 				case ENNEMI2:
-					eManager.getEnemies()[i]->attackCooldown = seconds(1.5);
+					eManager.getEnemies()[i]->attackCooldown = seconds(1.5f);
 					break;
 				case ENNEMI3:
-					eManager.getEnemies()[i]->attackCooldown = seconds(1);
+					eManager.getEnemies()[i]->attackCooldown = seconds(1.f);
 					break;
 				case BOSS1:
-					eManager.getEnemies()[i]->attackCooldown = seconds(0.08);
+					eManager.getEnemies()[i]->attackCooldown = seconds(0.08f);
 					break;
 				case BOSS2:
-					eManager.getEnemies()[i]->attackCooldown = seconds(0.2);
+					eManager.getEnemies()[i]->attackCooldown = seconds(0.2f);
 					break;
 				case BOSS3:
-					eManager.getEnemies()[i]->attackCooldown = seconds(0.2);
+					eManager.getEnemies()[i]->attackCooldown = seconds(0.2f);
 					break;
 				case BOSS4:
-					eManager.getEnemies()[i]->attackCooldown = seconds(0.06);
+					eManager.getEnemies()[i]->attackCooldown = seconds(0.06f);
 					break;
 				}
 			}
@@ -2793,9 +2798,10 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 			exManager.getExplosions()[i]->sprite.move(-4, 0);
 			if (exManager.getExplosions()[i]->frame == 8)
 			{
-				exManager.detruireExplosion(exManager.getExplosions()[i]);
+				exManager.getExplosions()[i]->isDead = true;
 			}
 		}
+		
 		updateScoreText(player, scoreText);
 		healthbar.setHealthbar(player);
 		player.checkOutOfScreen();
@@ -2842,5 +2848,7 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 				}
 			}
 		}
+		exManager.detruireExplosion();
 	}
+	
 }

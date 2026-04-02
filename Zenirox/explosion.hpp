@@ -25,6 +25,7 @@ public:
 	int frame = 0;
 	void setExplosion(TextureManager& textureManager);
 	void animate();
+	bool isDead = false;
 };
 
 class ExplosionManager {
@@ -36,7 +37,7 @@ public:
 	void creerExplosion(unique_ptr<Enemy>& enemy);
 	void creerExplosion(Player player);
 	vector<unique_ptr<Explosion>>& getExplosions();
-	void detruireExplosion(unique_ptr<Explosion>& explosion);
+	void detruireExplosion();
 	void clear();
 };
 

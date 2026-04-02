@@ -7,7 +7,7 @@ private:
 	vector<unique_ptr<Enemy>> enemies;
 public:
 	void creerEnemy(ID defLevel, float width, float height, TextureManager& manager);
-	void detruireEnemy(unique_ptr<Enemy>& enemy);
+	void detruireEnemy();
 	void checkEnemy(unique_ptr<Enemy>& enemy, int& toKill, ExplosionManager& exManager);
 	void clear();
 	vector<unique_ptr<Enemy>>& getEnemies();

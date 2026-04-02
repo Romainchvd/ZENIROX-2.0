@@ -18,6 +18,7 @@ public:
 	Projectile(TextureManager& textureManager);
 	~Projectile();
 	void setProjectile();
+	bool isDead = false;
 };
 
 class ProjectileManager {
@@ -28,7 +29,7 @@ public:
 	ProjectileManager(TextureManager& manager) : textureManager(manager) {}
 	void creerProjectile(Player player);
 	void creerProjectile(unique_ptr<Enemy>& enemy, int defVelocity);
-	void detruireProjectile(const unique_ptr<Projectile>& projectile);
+	void detruireProjectile();
 	void checkProjectileOutOfScreen(const unique_ptr<Projectile>& projectile, EnemyManager &manager, Player &player, Text &scoreText);
 	void clear();
 	const vector<unique_ptr<Projectile>>& getProjectiles() const;

@@ -1,5 +1,5 @@
 #include "healthbar.hpp"
-
+#include <memory>
 
 using namespace std;
 using namespace sf;
@@ -8,10 +8,10 @@ using namespace sf;
 
 void Healthbar::setHealthbar(Player player)
 {
-	psprite.setScale(0.4, 0.4);
-	psprite.setPosition(0, 0);
-	pShield.setScale(0.4, 0.4);
-	pShield.setPosition(0, 0);
+	psprite.setScale(0.4f, 0.4f);
+	psprite.setPosition(0.f, 0.f);
+	pShield.setScale(0.4f, 0.4f);
+	pShield.setPosition(0.f, 0.f);
 	
 		if (player.HP <= player.maxHP * 0.1)
 			psprite.setTexture(PtextureList[0]);
@@ -77,9 +77,9 @@ void Healthbar::setHealthbar(Player player)
 
 void Healthbar::setHealthbar(unique_ptr<Enemy>& enemy)
 {
-	esprite.setScale(0.4, 0.4);
+	esprite.setScale(0.4f, 0.4f);
 	esprite.setPosition(1600, 0);
-	eShield.setScale(0.4, 0.4);
+	eShield.setScale(0.4f, 0.4f);
 	eShield.setPosition(1600, 0);
 
 		if (enemy->HP <= enemy->maxHP * 0.1)

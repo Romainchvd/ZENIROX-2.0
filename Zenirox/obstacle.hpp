@@ -22,6 +22,7 @@ public:
 	void moveObstacle(int randValue);
 	void moveObstacleF();
 	void checkObstacle(Player& player);
+	bool isDead = false;
 };
 
 class ObstacleManager {
@@ -31,7 +32,7 @@ private:
 public:
 	ObstacleManager(TextureManager& manager) : manager(manager) {}
 	void creerObstacle(float width, float height);
-	void detruireObstacle(unique_ptr<Obstacle>& obstacle);
+	void detruireObstacle();
 	vector<unique_ptr<Obstacle>>& getObstacles();
 	void clear();
 };

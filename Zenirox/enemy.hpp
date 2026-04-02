@@ -38,6 +38,7 @@ public:
 	bool canBeBoosted = false;
 	void setTexture(TextureManager& manager);
 	void setAttackAndHP();
+	bool isDead = false;
 	Enemy();
 	~Enemy();
 	void enemyMove();
