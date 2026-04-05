@@ -1,10 +1,31 @@
 #include "game.hpp"
 #include <stdexcept>
 #include "SFML/Graphics.hpp"
-Game::Game() : hoveredOption(-1), player(textureManager), score(fontManager) {
+Game::Game() : hoveredOption(-1), player(textureManager), score(fontManager), projectileManager(textureManager), obstacleManager(textureManager), utilitaryManager(textureManager), explosionManager(textureManager) {
 
 	score.setCurrentScoreText(player);
 	score.openData(player, levelProgress);
+
+	if (levelProgress.UfinalBoss == true)
+		currentLevel = GameLevel::FinalBoss;
+	else if (levelProgress.Univeau3C == true)
+		currentLevel = GameLevel::Niveau3C;
+	else if (levelProgress.Univeau3B == true)
+		currentLevel = GameLevel::Niveau3B;
+	else if (levelProgress.Univeau3A == true)
+		currentLevel = GameLevel::Niveau3A;
+	else if (levelProgress.Univeau2C == true)
+		currentLevel = GameLevel::Niveau2C;
+	else if (levelProgress.Univeau2B == true)
+		currentLevel = GameLevel::Niveau2B;
+	else if (levelProgress.Univeau2A == true)
+		currentLevel = GameLevel::Niveau2A;
+	else if (levelProgress.Univeau1C == true)
+		currentLevel = GameLevel::Niveau1C;
+	else if (levelProgress.Univeau1B == true)
+		currentLevel = GameLevel::Niveau1B;
+	else
+		currentLevel = GameLevel::Niveau1A;
 	// font
 	if (!font.loadFromFile("UIfont.ttf")) {
 		throw std::runtime_error("Failed to load texture");
@@ -149,7 +170,9 @@ Game::Game() : hoveredOption(-1), player(textureManager), score(fontManager) {
 	initLevelDatabase();
 }
 
-
+Game::~Game() {
+	score.saveData(player, currentLevel);
+}
 
 void Game::setGameDuration(float duration) {
 	gameDuration = seconds(duration);

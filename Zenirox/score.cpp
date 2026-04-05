@@ -1,55 +1,42 @@
 #include "score.hpp"
-#include "player.hpp"
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <fstream>
 
 using namespace std;
 using namespace sf;
-
-int setCurrentScoreText(Player player, Font &scoreFont, Text &scoreText)
+//ne pas oublier de dégager les initialisations redondantes
+int Score::setCurrentScoreText(Player& player)
 {
 	scoreText.setString("Score: " + to_string(player.currentScore));
-	scoreText.setFillColor(Color::White);
-	scoreText.setOutlineColor(Color::Black);
-	scoreText.setOutlineThickness(4);
-	scoreText.setPosition(0, 50);
-
-	if (!scoreFont.loadFromFile("font.otf")) { cout << "Erreur lors du chargement de la police d'ecriture" << endl; return -1; }
-	scoreText.setFont(scoreFont);
+	scoreText.setPosition(0, 50);	
 }
-int setTotalScoreText(Player player, Font& scoreFont, Text& scoreText)
+int Score::setTotalScoreText(Player& player)
 {
 	scoreText.setString("       " + to_string(player.totalScore));
-	scoreText.setFillColor(Color::White);
-	scoreText.setOutlineColor(Color::Black);
-	scoreText.setOutlineThickness(4);
 	scoreText.setCharacterSize(60);
 	scoreText.setPosition(800, 700);
-
-	if (!scoreFont.loadFromFile("font.otf")) { cout << "Erreur lors du chargement de la police d'ecriture" << endl; return -1; }
-	scoreText.setFont(scoreFont);
 }
-void updateScoreText(Player player, Text& scoreText)
+void Score::updateScoreText(Player& player)
 {
 	scoreText.setString("       " + to_string(player.currentScore));
 }
-void openData(Player &player, Game &game) {
+void Score::openData(Player &player, LevelProgress& levelProgress) {
 	ifstream scoreFile("score.txt");
 	int totalScore;
 	bool nv1B, nv1C, nv2A, nv2B, nv2C, nv3A, nv3B, nv3C, FB, HW;
 	scoreFile >> totalScore >> boolalpha >> nv1B >> nv1C >> nv2A >> nv2B >> nv2C >> nv3A >> nv3B >> nv3C >> FB >> HW;
 	player.totalScore = totalScore;
-	game.Univeau1B = nv1B;
-	game.Univeau1C = nv1C;
-	game.Univeau2A = nv2A;
-	game.Univeau2B = nv2B;
-	game.Univeau2C = nv2C;
-	game.Univeau3A = nv3A;
-	game.Univeau3B = nv3B;
-	game.Univeau3C = nv3C;
-	game.UfinalBoss = FB;
-	game.hasWon = HW;
+	levelProgress.Univeau1B = nv1B;
+	levelProgress.Univeau1C = nv1C;
+	levelProgress.Univeau2A = nv2A;
+	levelProgress.Univeau2B = nv2B;
+	levelProgress.Univeau2C = nv2C;
+	levelProgress.Univeau3A = nv3A;
+	levelProgress.Univeau3B = nv3B;
+	levelProgress.Univeau3C = nv3C;
+	levelProgress.UfinalBoss = FB;
+	levelProgress.hasWon = HW;
 	scoreFile.close();
 	ifstream inventoryFile("inventory.txt");
 	bool U1, U2, U3;
@@ -59,44 +46,44 @@ void openData(Player &player, Game &game) {
 	player.UShip3 = U3;
 	inventoryFile.close();
 }
-void saveData(Player player, Game &game)
+void Score::saveData(Player& player, GameLevel& currentLevel)
 {
 	ofstream scoreFile("score.txt");
-	if (game.state == niveau1A)
+	if (currentLevel == GameLevel::Niveau1A)
 		scoreFile << player.totalScore << ' ' << boolalpha << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ';
-	else if (game.state == niveau1B)
+	else if (currentLevel == GameLevel::Niveau1B)
 	{
 		scoreFile << player.totalScore << ' ' << boolalpha << true << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ';
 	}
-	else if (game.state == niveau1C)
+	else if (currentLevel == GameLevel::Niveau1C)
 	{
 		scoreFile << player.totalScore << ' ' << boolalpha << true << ' ' << true << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ';
 	}
-	else if (game.state == niveau2A)
+	else if (currentLevel == GameLevel::Niveau2A)
 	{
 		scoreFile << player.totalScore << ' ' << boolalpha << true << ' ' << true << ' ' << true << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ';
 	}
-	else if (game.state == niveau2B)
+	else if (currentLevel == GameLevel::Niveau2B)
 	{
 		scoreFile << player.totalScore << ' ' << boolalpha << true << ' ' << true << ' ' << true << ' ' << true << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ';
 	}
-	else if (game.state == niveau2C)
+	else if (currentLevel == GameLevel::Niveau2C)
 	{
 		scoreFile << player.totalScore << ' ' << boolalpha << true << ' ' << true << ' ' << true << ' ' << true << ' ' << true << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ';
 	}
-	else if (game.state == niveau3A)
+	else if (currentLevel == GameLevel::Niveau3A)
 	{
 		scoreFile << player.totalScore << ' ' << boolalpha << true << ' ' << true << ' ' << true << ' ' << true << ' ' << true << ' ' << true << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ';
 	}
-	else if (game.state == niveau3B)
+	else if (currentLevel == GameLevel::Niveau3B)
 	{
 		scoreFile << player.totalScore << ' ' << boolalpha << true << ' ' << true << ' ' << true << ' ' << true << ' ' << true << ' ' << true << ' ' << true << ' ' << false << ' ' << false << ' ' << false << ' ';
 	}
-	else if (game.state == niveau3C)
+	else if (currentLevel == GameLevel::Niveau3C)
 	{
 		scoreFile << player.totalScore << ' ' << boolalpha << true << ' ' << true << ' ' << true << ' ' << true << ' ' << true << ' ' << true << ' ' << true << ' ' << true << ' ' << false << ' ' << false << ' ';
 	}
-	else if (game.state == finalBoss)
+	else if (currentLevel == GameLevel::FinalBoss)
 	{
 		scoreFile << player.totalScore << ' ' << boolalpha << true << ' ' << true << ' ' << true << ' ' << true << ' ' << true << ' ' << true << ' ' << true << ' ' << true << ' ' << true << ' ' << game.hasWon << ' ';
 	}
@@ -105,27 +92,27 @@ void saveData(Player player, Game &game)
 	inventoryFile << boolalpha << player.UShip1 << ' ' << player.UShip2 << ' ' << player.UShip3;
 	inventoryFile.close();
 }
-void saveCurrentScore(Player& player)
+void Score::saveCurrentScore(Player& player)
 {
 	player.totalScore += player.currentScore;
 }
-void removeData(Player& player, Game &game)
+void Score::removeData(Player& player, LevelProgress& levelProgress, GameLevel& currentLevel)
 {
 	ofstream scoreFile("score.txt");
 	scoreFile << 0 << boolalpha << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false;
 	player.currentScore = 0;
 	player.totalScore = 0;
-	game.Univeau1B = false;
-	game.Univeau1C = false;
-	game.Univeau2A = false;
-	game.Univeau2B = false;
-	game.Univeau2C = false;
-	game.Univeau3A = false;
-	game.Univeau3B = false;
-	game.Univeau3C = false;
-	game.UfinalBoss = false;
-	game.hasWon = false;
-	game.state = niveau1A;
+	levelProgress.Univeau1B = false;
+	levelProgress.Univeau1C = false;
+	levelProgress.Univeau2A = false;
+	levelProgress.Univeau2B = false;
+	levelProgress.Univeau2C = false;
+	levelProgress.Univeau3A = false;
+	levelProgress.Univeau3B = false;
+	levelProgress.Univeau3C = false;
+	levelProgress.UfinalBoss = false;
+	levelProgress.hasWon = false;
+	currentLevel = GameLevel::Niveau1A;
 	scoreFile.close();
 	ofstream inventoryFile("inventory.txt");
 	inventoryFile << boolalpha << false << ' ' << false << ' ' << false;
@@ -134,18 +121,26 @@ void removeData(Player& player, Game &game)
 	player.UShip3 = false;
 	inventoryFile.close();
 }
-void resetQuest(Player &player, Game& game)
+void Score::resetQuest(Player &player, LevelProgress& levelProgress)
 {
 	ofstream scoreFile("score.txt");
 	scoreFile << player.totalScore << boolalpha << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false << ' ' << false;
-	game.Univeau1B = false;
-	game.Univeau1C = false;
-	game.Univeau2A = false;
-	game.Univeau2B = false;
-	game.Univeau2C = false;
-	game.Univeau3A = false;
-	game.Univeau3B = false;
-	game.Univeau3C = false;
-	game.UfinalBoss = false;
-	game.hasWon = false;
+	levelProgress.Univeau1B = false;
+	levelProgress.Univeau1C = false;
+	levelProgress.Univeau2A = false;
+	levelProgress.Univeau2B = false;
+	levelProgress.Univeau2C = false;
+	levelProgress.Univeau3A = false;
+	levelProgress.Univeau3B = false;
+	levelProgress.Univeau3C = false;
+	levelProgress.UfinalBoss = false;
+	levelProgress.hasWon = false;
+}
+
+Score::Score(FontManager& fontManager)
+{
+	scoreText.setFillColor(Color::White);
+	scoreText.setOutlineColor(Color::Black);
+	scoreText.setOutlineThickness(4);
+	scoreText.setFont(fontManager.getFont("Engcomica"));
 }

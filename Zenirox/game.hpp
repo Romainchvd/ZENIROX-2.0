@@ -17,6 +17,7 @@
 #include "powerups.hpp"
 #include "enemyManager.hpp"
 #include "textureManager.hpp"
+#include "fontManager.hpp"
 #include "gameScreen.hpp"
 #include "gameLevel.hpp"
 #include "levelProgress.hpp"
@@ -54,9 +55,16 @@ private:
 
 public:
 	Game();
+	~Game();
 	Player player;
+	Score score;
 	TextureManager textureManager;
-	EnemyManager eManager;
+	FontManager fontManager;
+	EnemyManager enemyManager;
+	ProjectileManager projectileManager;
+	ObstacleManager obstacleManager;
+	UtilitaryManager utilitaryManager;
+	ExplosionManager explosionManager;
 	Sprite backgroundSprite, closeS, confirmS, editorS, cancelS, dataS,
 		easyS, hardcoreS, menuS, normalS, questS, resumeS, settingsS, buyS, yesS, yes2S, noS, no2S, backS,
 		shopS, continueS, resetS, buyShip1S, buyShip2S, buyShip3S, inventoryShipS, inventoryShip1S, inventoryShip2S, inventoryShip3S, pauseS;

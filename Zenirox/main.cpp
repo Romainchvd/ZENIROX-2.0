@@ -8,34 +8,11 @@ using namespace sf;
 
 int main() {
 	srand(time(NULL));
-	RenderWindow window(VideoMode(WIDTH, HEIGHT), "ZENIROX", Style::Default);
-	window.setFramerateLimit(60);
-	window.setVerticalSyncEnabled(true);
+	
 
 	Game game;
 
-	Player player(game.textureManager);
-	player.setSprite();
-	EnemyManager eManager;
-
-	RectangleShape interface(Vector2f(1920, 95));
-	Texture interfaceT;
-	if (!interfaceT.loadFromFile("cockpit.png")) { throw runtime_error("Erreur de chargement cockpit"); }
-	interface.setTexture(&interfaceT);
-
-	Sprite coin;
-	Texture coinTexture;
-	if (!coinTexture.loadFromFile("coin.png")) { cout << "Erreur de chargement de la texture de piece" << endl; return -1; }
-	coin.setTexture(coinTexture);
-	coin.setScale(0.2, 0.2);
-	coin.setPosition(0, 45);
-
-	game.Univeau1A = true;
-	Text scoreText;
-	Font scoreFont;
-	Text totalScoreText;
-
-	setCurrentScoreText(player, scoreFont, scoreText);
+	
 	Background background(game.textureManager, -31);
 
 	Starparallaxe star(game.textureManager, -100.f, "star");
@@ -47,34 +24,9 @@ int main() {
 	sf::Clock clock;
 
 	ProjectileManager pManager(game.textureManager);
-	openData(player, game);
 	
-	if (game.UfinalBoss == true)
-		game.state = finalBoss;
-	else if (game.Univeau3C == true)
-		game.state = niveau3C;
-	else if (game.Univeau3B == true)
-		game.state = niveau3B;
-	else if (game.Univeau3A == true)
-		game.state = niveau3A;
-	else if (game.Univeau2C == true)
-		game.state = niveau2C;
-	else if (game.Univeau2B == true)
-		game.state = niveau2B;
-	else if (game.Univeau2A == true)
-		game.state = niveau2A;
-	else if (game.Univeau1C == true)
-		game.state = niveau1C;
-	else if (game.Univeau1B == true)
-		game.state = niveau1B;
-	else
-		game.state = niveau1A;
+	
 
-	ObstacleManager oManager(game.textureManager);
-
-	UtilitaryManager uManager(game.textureManager);
-
-	ExplosionManager exManager(game.textureManager);
 
 	Music playing;
 	Music boss;
@@ -100,16 +52,8 @@ int main() {
 		playerShot[i].setBuffer(shot);
 	}
 
-	Clock warningClock;
-	Time warningCooldown = seconds(1);
-	Text warningText;
-	warningText.setFont(scoreFont);
-	warningText.setString("HURRY UP!");
-	warningText.setFillColor(Color::Red);
-	warningText.setOutlineColor(Color::Black);
-	warningText.setOutlineThickness(4);
-	warningText.setScale(1.5, 1.5);
-	warningText.setPosition(450, 20);
+
+	
 	Sprite skull;
 	Texture skullT;
 	if (!skullT.loadFromFile("skull.png")) throw runtime_error("Erreur chargement crane");
@@ -121,7 +65,7 @@ int main() {
 
 	while (window.isOpen()){
 		//Chargement des niveaux
-		game.run(window, player, coin, background, star, faststar, healthbar, eManager, pManager, oManager, uManager, exManager, clock, scoreText, scoreFont, interface, playing, boss, finalBossM, playerShot, shot, totalScoreText);
+		game.run(window, player, coin, background, star, faststar, healthbar, eManager, pManager, oManager, uManager, exManager, clock, scoreText, scoreFont, cockpit, playing, boss, finalBossM, playerShot, shot, totalScoreText);
 
 
 
@@ -153,7 +97,5 @@ int main() {
 		window.display();
 
 	}
-
-	saveData(player, game);
 	return 0;
 }
