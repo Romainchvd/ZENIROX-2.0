@@ -1,7 +1,10 @@
 #include "game.hpp"
 #include <stdexcept>
+#include "SFML/Graphics.hpp"
+Game::Game() : hoveredOption(-1), player(textureManager), score(fontManager) {
 
-Game::Game() : hoveredOption(-1) {
+	score.setCurrentScoreText(player);
+	score.openData(player, levelProgress);
 	// font
 	if (!font.loadFromFile("UIfont.ttf")) {
 		throw std::runtime_error("Failed to load texture");

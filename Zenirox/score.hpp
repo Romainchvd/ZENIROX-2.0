@@ -1,15 +1,21 @@
-#ifndef SCORE_HPP
-#define SCORE_HPP
+#pragma once
 #include <SFML/Graphics.hpp>
-#include "game.hpp"
+#include "player.hpp"
+#include "gameLevel.hpp"
+#include "levelProgress.hpp"
+#include "fontManager.hpp"
 using namespace sf;
-class Game;
-int setCurrentScoreText(Player player, Font &textFont, Text &scoreText);
-int setTotalScoreText(Player player, Font& textFont, Text& scoreText);
-void updateScoreText(Player player, Text& scoreText);
-void openData(Player &player, Game &game);
-void saveData(Player player, Game &game);
-void saveCurrentScore(Player &player);
-void removeData(Player& player, Game &game);
-void resetQuest(Player& player, Game& game);
-#endif
+class Score {
+public:
+	Text scoreText;
+	Text totalScoreText;
+	int setCurrentScoreText(Player& player);
+	int setTotalScoreText(Player& player);
+	void updateScoreText(Player& player);
+	void openData(Player& player, LevelProgress& levelProgress);
+	void saveData(Player& player, GameLevel& currentLevel);
+	void saveCurrentScore(Player& player);
+	void removeData(Player& player, LevelProgress& levelProgress, GameLevel& currentLevel);
+	void resetQuest(Player& player, LevelProgress& levelProgress);
+	Score(FontManager& fontManager);
+};
