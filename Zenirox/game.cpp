@@ -199,7 +199,7 @@ void Game::setGameDuration(float duration) {
 }
 
 void Game::initLevelDatabase() {
-	levelDatabase[niveau1A] = {
+	levelDatabase[GameLevel::Niveau1A] = {
 		"TIER: 1 - LEVEL: 1",
 		"palier1",
 		240.0f,
@@ -214,7 +214,7 @@ void Game::initLevelDatabase() {
 		{ {4700, 500} }
 	};
 
-	levelDatabase[niveau1B] = {
+	levelDatabase[GameLevel::Niveau1B] = {
 		"TIER: 1 - LEVEL: 2", "palier1", 240.0f, 11, BOSS1,
 		{
 			{ENNEMI1, 1000, 500}, {ENNEMI1, 2500, 300}, {ENNEMI2, 4000, 700},
@@ -225,7 +225,7 @@ void Game::initLevelDatabase() {
 		{ {4700, 500} }
 	};
 
-	levelDatabase[niveau1C] = {
+	levelDatabase[GameLevel::Niveau1C] = {
 		"TIER: 1 - LEVEL: 3",
 		"palier1",
 		240.0f,
@@ -239,7 +239,7 @@ void Game::initLevelDatabase() {
 		},
 		{ {4700, 500} }
 	};
-	levelDatabase[niveau2A] = {
+	levelDatabase[GameLevel::Niveau2A] = {
 		"TIER: 2 - LEVEL: 1",
 		"palier2",           
 		240.0f,
@@ -253,7 +253,7 @@ void Game::initLevelDatabase() {
 		},
 		{ {4700, 500} }
 	};
-	levelDatabase[niveau2B] = {
+	levelDatabase[GameLevel::Niveau2B] = {
 	"TIER: 2 - LEVEL: 2",
 	"palier2",
 	240.0f,
@@ -268,7 +268,7 @@ void Game::initLevelDatabase() {
 	{ {4700, 500} }
 	};
 
-	levelDatabase[niveau2C] = {
+	levelDatabase[GameLevel::Niveau2C] = {
 		"TIER: 2 - LEVEL: 3",
 		"palier2",
 		240.0f,
@@ -283,7 +283,7 @@ void Game::initLevelDatabase() {
 		{ {4700, 500} }
 	};
 
-	levelDatabase[niveau3A] = {
+	levelDatabase[GameLevel::Niveau3A] = {
 		"TIER: 3 - LEVEL: 1", "palier3", 240.0f, 11, BOSS3,
 		{
 			{ENNEMI3, 1000, 500}, {ENNEMI3, 2500, 300}, {ENNEMI3, 4000, 700},
@@ -294,7 +294,7 @@ void Game::initLevelDatabase() {
 		{ {4700, 500}, {6000, 500} }
 	};
 
-	levelDatabase[niveau3B] = {
+	levelDatabase[GameLevel::Niveau3B] = {
 		"TIER: 3 - LEVEL: 2", "palier3", 300.0f, 16, BOSS3,
 		{
 			{ENNEMI3, 1000, 500}, {ENNEMI3, 900, 700}, {ENNEMI3, 2500, 300},
@@ -306,7 +306,7 @@ void Game::initLevelDatabase() {
 		{ {4700, 500}, {6000, 500} }
 	};
 
-	levelDatabase[niveau3C] = {
+	levelDatabase[GameLevel::Niveau3C] = {
 		"TIER: 3 - LEVEL: 3", "palier3", 360.0f, 21, BOSS3,
 		{
 			{ENNEMI3, 1000, 500}, {ENNEMI3, 900, 700}, {ENNEMI3, 800, 300},
@@ -320,7 +320,7 @@ void Game::initLevelDatabase() {
 		{ {4700, 500}, {6000, 500} }
 	};
 
-	levelDatabase[finalBoss] = {
+	levelDatabase[GameLevel::FinalBoss] = {
 	"FINAL BOSS",
 	"palier4",
 	360.0f,
@@ -949,45 +949,45 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 				window.close();
 			if (event.type == Event::MouseButtonPressed)
 			{
-				Vector2i mousePos = Mouse::getPosition(window);
+				Vector2i mousePos = Mouse::getPosition(window.window);
 
 				if (event.mouseButton.button == Mouse::Left && editorS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					confirmSound.play();
-					currentLevel = niveauEDIT;
+					currentLevel = GameLevel::NiveauEDIT;
 					previousScreen = currentScreen;
-					currentScreen = SetDifficulty;
+					currentScreen = GameScreen::SetDifficulty;
 					loadEdited = true;
-					openData(player, *this);
+					score.openData(player, levelProgress);
 				}
 				if (event.mouseButton.button == Mouse::Left && dataS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					confirmSound.play();
 					previousScreen = currentScreen;
-					currentScreen = EreaseData;
-					openData(player, *this);
+					currentScreen = GameScreen::EreaseData;
+					score.openData(player, levelProgress);
 				}
 				if (event.mouseButton.button == Mouse::Left && questS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					confirmSound.play();
 					previousScreen = currentScreen;
-					currentScreen = SetDifficulty;
+					currentScreen = GameScreen::SetDifficulty;
 					loadCampain = true; //Load campain veut dire charger Quest (Playing)
-					openData(player, *this);
+					score.openData(player, levelProgress);
 				}
 				if (event.mouseButton.button == Mouse::Left && settingsS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					confirmSound.play();
 					previousScreen = currentScreen;
-					currentScreen = Settings;
-					openData(player, *this);
+					currentScreen = GameScreen::Settings;
+					score.openData(player, levelProgress);
 				}
 				if (event.mouseButton.button == Mouse::Left && shopS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					confirmSound.play();
 					previousScreen = currentScreen;
-					currentScreen = Shop;
-					openData(player, *this);
+					currentScreen = GameScreen::Shop;
+					score.openData(player, levelProgress);
 				}
 				if (event.mouseButton.button == Mouse::Left && closeS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
@@ -1021,12 +1021,12 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 		window.draw(shopS);
 	}
 
-		if (currentScreen == Win)
+		if (currentScreen == GameScreen::Win)
 		{
 		projectileManager.clear();
 		obstacleManager.clear();
 		utilitaryManager.clear();
-		exManager.clear();
+		explosionManager.clear();
 		enemyManager.clear();
 		resetS.setPosition(764, 872);
 		settingsS.setScale(2, 2);
@@ -1053,55 +1053,55 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 		{
 			if (event.type == Event::Closed)
 			{
-				saveCurrentScore(player);
-				saveData(player, *this);
-				openData(player, *this);
+				score.saveCurrentScore(player);
+				score.saveData(player, currentLevel);
+				score.openData(player, levelProgress);
 				window.close();
 			}
 			if (event.type == Event::KeyPressed)
 			{
 				if (event.key.code == Keyboard::Enter)
 				{
-					saveCurrentScore(player);
-					saveData(player, *this);
-					openData(player, *this);
+					score.saveCurrentScore(player);
+					score.saveData(player, currentLevel);
+					score.openData(player, levelProgress);
 					window.close();
 				}
 			}
 			if (event.type == Event::MouseButtonPressed)
 			{
-				Vector2i mousePos = Mouse::getPosition(window);
+				Vector2i mousePos = Mouse::getPosition(window.window);
 
 				if (event.mouseButton.button == Mouse::Left && resetS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					confirmSound.play();
 					currentScreen = previousScreen;
-					resetQuest(player, *this);
-					currentLevel = niveau1A;
-					saveData(player, *this);
-					openData(player, *this);
+					score.resetQuest(player, levelProgress);
+					currentLevel = GameLevel::Niveau1A;
+					score.saveData(player, currentLevel);
+					score.openData(player, levelProgress);
 				}
 
 				if (event.mouseButton.button == Mouse::Left && settingsS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					confirmSound.play();
 					previousScreen = currentScreen;
-					currentScreen = Settings;
+					currentScreen = GameScreen::Settings;
 				}
 				if (event.mouseButton.button == Mouse::Left && closeS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
-					saveCurrentScore(player);
-					saveData(player, *this);
-					openData(player, *this);
+					score.saveCurrentScore(player);
+					score.saveData(player, currentLevel);
+					score.openData(player, levelProgress);
 					window.close();
 				}
 				if (event.mouseButton.button == Mouse::Left && menuS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
-					saveCurrentScore(player);
-					saveData(player, *this);
+					score.saveCurrentScore(player);
+					score.saveData(player, currentLevel);
 					previousScreen = currentScreen;
 					victoryM.stop();
-					currentScreen = Menu;
+					currentScreen = GameScreen::Menu;
 				}
 			}
 		}
@@ -1112,7 +1112,7 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 		window.draw(menuS);
 		}
 
-		if (currentScreen == Lost)
+		if (currentScreen == GameScreen::Lost)
 		{
 		menuS.setPosition(192 , 714);
 		closeS.setPosition(760 , 714);
@@ -1126,7 +1126,7 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 		projectileManager.clear();
 		obstacleManager.clear();
 		utilitaryManager.clear();
-		exManager.clear();
+		explosionManager.clear();
 		enemyManager.clear();
 		player.currentScore = 0;
 		player.isAlive = true;
@@ -1141,60 +1141,60 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 				confirmSound.play();
 					switch (currentLevel)
 					{
-					case niveauEDIT:
+					case GameLevel::NiveauEDIT:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						previousScreen = currentScreen;
-						currentScreen = Editor;
+						currentScreen = GameScreen::Editor;
 						counter = 1;
 						break;
-					case niveau1A:
+					case GameLevel::Niveau1A:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
-					case niveau1B:
+					case GameLevel::Niveau1B:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
-					case niveau1C:
+					case GameLevel::Niveau1C:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
-					case niveau2A:
+					case GameLevel::Niveau2A:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
-					case niveau2B:
+					case GameLevel::Niveau2B:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
-					case niveau2C:
+					case GameLevel::Niveau2C:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
-					case niveau3A:
+					case GameLevel::Niveau3A:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
-					case niveau3B:
+					case GameLevel::Niveau3B:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
-					case niveau3C:
+					case GameLevel::Niveau3C:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
-					case finalBoss:
+					case GameLevel::FinalBoss:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
@@ -1204,76 +1204,76 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 					}
 					lose.stop();
 					player.HP = player.maxHP;
-					if(currentLevel != niveauEDIT)
+					if(currentLevel != GameLevel::NiveauEDIT)
 					{
 						previousScreen = currentScreen;
-						currentScreen = Playing;
+						currentScreen = GameScreen::Playing;
 					}
 				}
 			}
 			if (event.type == Event::MouseButtonPressed)
 			{
-				Vector2i mousePos = Mouse::getPosition(window);
+				Vector2i mousePos = Mouse::getPosition(window.window);
 
 				if (event.mouseButton.button == Mouse::Left && continueS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					confirmSound.play();
 					switch (currentLevel)
 					{
-					case niveauEDIT:
+					case GameLevel::NiveauEDIT:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						previousScreen = currentScreen;
-						currentScreen = Editor;
+						currentScreen = GameScreen::Editor;
 						counter = 1;
 						break;
-					case niveau1A:
+					case GameLevel::Niveau1A:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
-					case niveau1B:
+					case GameLevel::Niveau1B:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
-					case niveau1C:
+					case GameLevel::Niveau1C:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
-					case niveau2A:
+					case GameLevel::Niveau2A:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
-					case niveau2B:
+					case GameLevel::Niveau2B:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
-					case niveau2C:
+					case GameLevel::Niveau2C:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
-					case niveau3A:
+					case GameLevel::Niveau3A:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
-					case niveau3B:
+					case GameLevel::Niveau3B:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
-					case niveau3C:
+					case GameLevel::Niveau3C:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
-					case finalBoss:
+					case GameLevel::FinalBoss:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
@@ -1283,10 +1283,10 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 					}
 					lose.stop();
 					player.HP = player.maxHP;
-					if (currentLevel != niveauEDIT)
+					if (currentLevel != GameLevel::NiveauEDIT)
 					{
 						previousScreen = currentScreen;
-						currentScreen = Playing;
+						currentScreen = GameScreen::Playing;
 					}
 				}
 
@@ -1295,60 +1295,60 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 					confirmSound.play();
 					switch (currentLevel)
 					{
-					case niveauEDIT:
+					case GameLevel::NiveauEDIT:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						previousScreen = currentScreen;
-						currentScreen = Editor;
+						currentScreen = GameScreen::Editor;
 						counter = 1;
 						break;
-					case niveau1A:
+					case GameLevel::Niveau1A:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
-					case niveau1B:
+					case GameLevel::Niveau1B:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
-					case niveau1C:
+					case GameLevel::Niveau1C:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
-					case niveau2A:
+					case GameLevel::Niveau2A:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
-					case niveau2B:
+					case GameLevel::Niveau2B:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
-					case niveau2C:
+					case GameLevel::Niveau2C:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
-					case niveau3A:
+					case GameLevel::Niveau3A:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
-					case niveau3B:
+					case GameLevel::Niveau3B:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
-					case niveau3C:
+					case GameLevel::Niveau3C:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
-					case finalBoss:
+					case GameLevel::FinalBoss:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
@@ -1360,7 +1360,7 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 					lose.stop();
 					confirmSound.play();
 					previousScreen = currentScreen;
-					currentScreen = Menu;
+					currentScreen = GameScreen::Menu;
 					counter = 1;
 					currentID = 0;
 				}
@@ -1376,7 +1376,7 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 		window.draw(menuS);
 		}
 
-		if (currentScreen == NextLevel)
+		if (currentScreen == GameScreen::NextLevel)
 		{
 		editorM.stop();
 		if (player.difficulty != Hardcore)
@@ -1398,12 +1398,12 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 		finalhours.stop();
 		obstacleManager.clear();
 		utilitaryManager.clear();
-		exManager.clear();
+		explosionManager.clear();
 		projectileManager.clear();
-		coin.setScale(0.5, 0.5);
-		coin.setPosition(750, 670);
-		saveCurrentScore(player);
-		setTotalScoreText(player, scoreFont, totalScoreText);
+		hud.coin.setScale(0.5, 0.5);
+		hud.coin.setPosition(750, 670);
+		score.saveCurrentScore(player);
+		score.setTotalScoreText(player);
 		player.currentScore = 0;
 		Sprite nextLevelBackground;
 		Texture nextLevelBackgroundT;
@@ -1414,76 +1414,76 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 		{
 			if (event.type == Event::Closed)
 			{
-				saveCurrentScore(player);
-				saveData(player, *this);
+				score.saveCurrentScore(player);
+				score.saveData(player, currentLevel);
 				switch (currentLevel)
 				{
-				case niveauEDIT:
+				case GameLevel::NiveauEDIT:
 					loadLevel = true;
 					doLoadBackground = true;
 					levelProgress.isFightingBoss = false;
 					counter = 1;
-					currentLevel = niveauEDIT;
-					currentScreen = Editor;
+					currentLevel = GameLevel::NiveauEDIT;
+					currentScreen = GameScreen::Editor;
 					nextLevelM.stop();
 					break;
-				case niveau1A:
+				case GameLevel::Niveau1A:
 					levelProgress.isFightingBoss = false;
 					loadLevel = true;
 					doLoadBackground = true;
-					Univeau1B = true;
-					currentLevel = niveau1B;
+					levelProgress.Univeau1B = true;
+					currentLevel = GameLevel::Niveau1B;
 					break;
-				case niveau1B:
+				case GameLevel::Niveau1B:
 					levelProgress.isFightingBoss = false;
 					loadLevel = true;
 					doLoadBackground = true;
-					Univeau1C = true;
-					currentLevel = niveau1C;
+					levelProgress.Univeau1C = true;
+					currentLevel = GameLevel::Niveau1C;
 					break;
-				case niveau1C:
+				case GameLevel::Niveau1C:
 					levelProgress.isFightingBoss = false;
 					loadLevel = true;
-					Univeau2A = true;
-					currentLevel = niveau2A;
+					levelProgress.Univeau2A = true;
+					currentLevel = GameLevel::Niveau2A;
 					break;
-				case niveau2A:
+				case GameLevel::Niveau2A:
 					levelProgress.isFightingBoss = false;
 					loadLevel = true;
-					Univeau2B = true;
-					currentLevel = niveau2B;
+					levelProgress.Univeau2B = true;
+					currentLevel = GameLevel::Niveau2B;
 					break;
-				case niveau2B:
+				case GameLevel::Niveau2B:
 					levelProgress.isFightingBoss = false;
 					loadLevel = true;
-					Univeau2C = true;
-					currentLevel = niveau2C;
+					levelProgress.Univeau2C = true;
+					currentLevel = GameLevel::Niveau2C;
 					break;
-				case niveau2C:
+				case GameLevel::Niveau2C:
 					levelProgress.isFightingBoss = false;
 					loadLevel = true;
-					Univeau3A = true;
-					currentLevel = niveau3A;
+					levelProgress.Univeau3A = true;
+					currentLevel = GameLevel::Niveau3A;
 					break;
-				case niveau3A:
+				case GameLevel::Niveau3A:
 					levelProgress.isFightingBoss = false;
 					loadLevel = true;
-					Univeau3B = true;
-					currentLevel = niveau3B;
+					levelProgress.Univeau3B = true;
+					currentLevel = GameLevel::Niveau3B;
 					break;
-				case niveau3B:
+				case GameLevel::Niveau3B:
 					levelProgress.isFightingBoss = false;
 					loadLevel = true;
-					Univeau3C = true;
-					currentLevel = niveau3C;
+					levelProgress.Univeau3C = true;
+					currentLevel = GameLevel::Niveau3C;
 					break;
-				case niveau3C:
+				case GameLevel::Niveau3C:
 					levelProgress.isFightingBoss = false;
 					loadLevel = true;
-					UfinalBoss = true;
-					currentLevel = finalBoss;
+					levelProgress.UfinalBoss = true;
+					currentLevel = GameLevel::FinalBoss;
 					break;
-				case finalBoss:
+				case GameLevel::FinalBoss:
 					break;
 				default:
 					break;
@@ -1498,87 +1498,87 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 				confirmSound.play();
 					switch (currentLevel)
 					{
-					case niveauEDIT:
-						saveCurrentScore(player);
-						saveData(player, *this);
-						openData(player, *this);
+					case GameLevel::NiveauEDIT:
+						score.saveCurrentScore(player);
+						score.saveData(player, currentLevel);
+						score.openData(player, levelProgress);
 						loadLevel = true;
 						doLoadBackground = true;
 						levelProgress.isFightingBoss = false;
 						counter = 1;
-						currentLevel = niveauEDIT;
+						currentLevel = GameLevel::NiveauEDIT;
 						previousScreen = currentScreen;
-						currentScreen = Editor;
+						currentScreen = GameScreen::Editor;
 						nextLevelM.stop();
 						break;
-					case niveau1A:
+					case GameLevel::Niveau1A:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
-						Univeau1B = true;
-						currentLevel = niveau1B;
+						levelProgress.Univeau1B = true;
+						currentLevel = GameLevel::Niveau1B;
 						break;
-					case niveau1B:
+					case GameLevel::Niveau1B:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
-						Univeau1C = true;
-						currentLevel = niveau1C;
+						levelProgress.Univeau1C = true;
+						currentLevel = GameLevel::Niveau1C;
 						break;
-					case niveau1C:
+					case GameLevel::Niveau1C:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						Univeau2A = true;
-						currentLevel = niveau2A;
+						levelProgress.Univeau2A = true;
+						currentLevel = GameLevel::Niveau2A;
 						break;
-					case niveau2A:
+					case GameLevel::Niveau2A:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						Univeau2B = true;
-						currentLevel = niveau2B;
+						levelProgress.Univeau2B = true;
+						currentLevel = GameLevel::Niveau2B;
 						break;
-					case niveau2B:
+					case GameLevel::Niveau2B:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						Univeau2C = true;
-						currentLevel = niveau2C;
+						levelProgress.Univeau2C = true;
+						currentLevel = GameLevel::Niveau2C;
 						break;
-					case niveau2C:
+					case GameLevel::Niveau2C:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						Univeau3A = true;
-						currentLevel = niveau3A;
+						levelProgress.Univeau3A = true;
+						currentLevel = GameLevel::Niveau3A;
 						break;
-					case niveau3A:
+					case GameLevel::Niveau3A:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						Univeau3B = true;
-						currentLevel = niveau3B;
+						levelProgress.Univeau3B = true;
+						currentLevel = GameLevel::Niveau3B;
 						break;
-					case niveau3B:
+					case GameLevel::Niveau3B:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						Univeau3C = true;
-						currentLevel = niveau3C;
+						levelProgress.Univeau3C = true;
+						currentLevel = GameLevel::Niveau3C;
 						break;
-					case niveau3C:
+					case GameLevel::Niveau3C:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						UfinalBoss = true;
-						currentLevel = finalBoss;
+						levelProgress.UfinalBoss = true;
+						currentLevel = GameLevel::FinalBoss;
 						break;
-					case finalBoss:
+					case GameLevel::FinalBoss:
 						break;
 					default:
 						break;
 					}
 					player.currentScore = 0;
-					coin.setPosition(0.f, 50.f);
-					coin.setScale(0.2f, 0.2f);
-					if(currentLevel != niveauEDIT)
+					hud.coin.setPosition(0.f, 50.f);
+					hud.coin.setScale(0.2f, 0.2f);
+					if(currentLevel != GameLevel::NiveauEDIT)
 					{
 						previousScreen = currentScreen;
-						currentScreen = Playing;
+						currentScreen = GameScreen::Playing;
 						nextLevelM.stop();
 					}
 
@@ -1586,93 +1586,93 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 			}
 			if (event.type == Event::MouseButtonPressed)
 			{
-				Vector2i mousePos = Mouse::getPosition(window);
+				Vector2i mousePos = Mouse::getPosition(window.window);
 
 				if (event.mouseButton.button == Mouse::Left && continueS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					confirmSound.play();
 					switch (currentLevel)
 					{
-					case niveauEDIT:
+					case GameLevel::NiveauEDIT:
 						loadLevel = true;
 						doLoadBackground = true;
 						levelProgress.isFightingBoss = false;
 						counter = 1;
-						currentLevel = niveauEDIT;
+						currentLevel = GameLevel::NiveauEDIT;
 						previousScreen = currentScreen;
-						currentScreen = Editor;
+						currentScreen = GameScreen::Editor;
 						nextLevelM.stop();
 						break;
-					case niveau1A:
+					case GameLevel::Niveau1A:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
-						Univeau1B = true;
-						currentLevel = niveau1B;
+						levelProgress.Univeau1B = true;
+						currentLevel = GameLevel::Niveau1B;
 						break;
-					case niveau1B:
+					case GameLevel::Niveau1B:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
-						Univeau1C = true;
-						currentLevel = niveau1C;
+						levelProgress.Univeau1C = true;
+						currentLevel = GameLevel::Niveau1C;
 						break;
-					case niveau1C:
+					case GameLevel::Niveau1C:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						Univeau2A = true;
-						currentLevel = niveau2A;
+						levelProgress.Univeau2A = true;
+						currentLevel = GameLevel::Niveau2A;
 						break;
-					case niveau2A:
+					case GameLevel::Niveau2A:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						Univeau2B = true;
-						currentLevel = niveau2B;
+						levelProgress.Univeau2B = true;
+						currentLevel = GameLevel::Niveau2B;
 						break;
-					case niveau2B:
+					case GameLevel::Niveau2B:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						Univeau2C = true;
-						currentLevel = niveau2C;
+						levelProgress.Univeau2C = true;
+						currentLevel = GameLevel::Niveau2C;
 						break;
-					case niveau2C:
+					case GameLevel::Niveau2C:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						Univeau3A = true;
-						currentLevel = niveau3A;
+						levelProgress.Univeau3A = true;
+						currentLevel = GameLevel::Niveau3A;
 						break;
-					case niveau3A:
+					case GameLevel::Niveau3A:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						Univeau3B = true;
-						currentLevel = niveau3B;
+						levelProgress.Univeau3B = true;
+						currentLevel = GameLevel::Niveau3B;
 						break;
-					case niveau3B:
+					case GameLevel::Niveau3B:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						Univeau3C = true;
-						currentLevel = niveau3C;
+						levelProgress.Univeau3C = true;
+						currentLevel = GameLevel::Niveau3C;
 						break;
-					case niveau3C:
+					case GameLevel::Niveau3C:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						UfinalBoss = true;
-						currentLevel = finalBoss;
+						levelProgress.UfinalBoss = true;
+						currentLevel = GameLevel::FinalBoss;
 						break;
-					case finalBoss:
+					case GameLevel::FinalBoss:
 						break;
 					default:
 						break;
 					}
-					saveCurrentScore(player);
-					saveData(player, *this);
+					score.saveCurrentScore(player);
+					score.saveData(player, currentLevel);
 					player.currentScore = 0;
-					coin.setPosition(0.f, 50.f);
-					coin.setScale(0.2f, 0.2f);
-					if (currentLevel != niveauEDIT)
+					hud.coin.setPosition(0.f, 50.f);
+					hud.coin.setScale(0.2f, 0.2f);
+					if (currentLevel != GameLevel::NiveauEDIT)
 					{
 						previousScreen = currentScreen;
-						currentScreen = Playing;
+						currentScreen = GameScreen::Playing;
 						nextLevelM.stop();
 					}
 
@@ -1682,86 +1682,86 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 				{
 					confirmSound.play();
 					previousScreen = currentScreen;
-					currentScreen = Settings;
+					currentScreen = GameScreen::Settings;
 				}
 				if (event.mouseButton.button == Mouse::Left && closeS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					confirmSound.play();
 					switch (currentLevel)
 					{
-					case niveauEDIT:
+					case GameLevel::NiveauEDIT:
 						loadLevel = true;
 						doLoadBackground = true;
 						levelProgress.isFightingBoss = false;
 						counter = 1;
-						currentLevel = niveauEDIT;
+						currentLevel = GameLevel::NiveauEDIT;
 						previousScreen = currentScreen;
-						currentScreen = Editor;
+						currentScreen = GameScreen::Editor;
 						nextLevelM.stop();
 						break;
-					case niveau1A:
+					case GameLevel::Niveau1A:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
-						Univeau1B = true;
-						currentLevel = niveau1B;
+						levelProgress.Univeau1B = true;
+						currentLevel = GameLevel::Niveau1B;
 						break;
-					case niveau1B:
+					case GameLevel::Niveau1B:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
-						Univeau1C = true;
-						currentLevel = niveau1C;
+						levelProgress.Univeau1C = true;
+						currentLevel = GameLevel::Niveau1C;
 						break;
-					case niveau1C:
+					case GameLevel::Niveau1C:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						Univeau2A = true;
-						currentLevel = niveau2A;
+						levelProgress.Univeau2A = true;
+						currentLevel = GameLevel::Niveau2A;
 						break;
-					case niveau2A:
+					case GameLevel::Niveau2A:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						Univeau2B = true;
-						currentLevel = niveau2B;
+						levelProgress.Univeau2B = true;
+						currentLevel = GameLevel::Niveau2B;
 						break;
-					case niveau2B:
+					case GameLevel::Niveau2B:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						Univeau2C = true;
-						currentLevel = niveau2C;
+						levelProgress.Univeau2C = true;
+						currentLevel = GameLevel::Niveau2C;
 						break;
-					case niveau2C:
+					case GameLevel::Niveau2C:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						Univeau3A = true;
-						currentLevel = niveau3A;
+						levelProgress.Univeau3A = true;
+						currentLevel = GameLevel::Niveau3A;
 						break;
-					case niveau3A:
+					case GameLevel::Niveau3A:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						Univeau3B = true;
-						currentLevel = niveau3B;
+						levelProgress.Univeau3B = true;
+						currentLevel = GameLevel::Niveau3B;
 						break;
-					case niveau3B:
+					case GameLevel::Niveau3B:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						Univeau3C = true;
-						currentLevel = niveau3C;
+						levelProgress.Univeau3C = true;
+						currentLevel = GameLevel::Niveau3C;
 						break;
-					case niveau3C:
+					case GameLevel::Niveau3C:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						UfinalBoss = true;
-						currentLevel = finalBoss;
+						levelProgress.UfinalBoss = true;
+						currentLevel = GameLevel::FinalBoss;
 						break;
-					case finalBoss:
+					case GameLevel::FinalBoss:
 						break;
 					default:
 						break;
 					}
-					saveCurrentScore(player);
-					saveData(player, *this);
+					score.saveCurrentScore(player);
+					score.saveData(player, currentLevel);
 					window.close();
 				}
 				if (event.mouseButton.button == Mouse::Left && menuS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
@@ -1769,97 +1769,97 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 					confirmSound.play();
 					switch (currentLevel)
 					{
-					case niveauEDIT:
+					case GameLevel::NiveauEDIT:
 						loadLevel = true;
 						doLoadBackground = true;
 						levelProgress.isFightingBoss = false;
 						counter = 1;
-						currentLevel = niveauEDIT;
+						currentLevel = GameLevel::NiveauEDIT;
 						previousScreen = currentScreen;
-						currentScreen = Editor;
+						currentScreen = GameScreen::Editor;
 						nextLevelM.stop();
 						break;
-					case niveau1A:
+					case GameLevel::Niveau1A:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
-						Univeau1B = true;
-						currentLevel = niveau1B;
+						levelProgress.Univeau1B = true;
+						currentLevel = GameLevel::Niveau1B;
 						break;
-					case niveau1B:
+					case GameLevel::Niveau1B:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
-						Univeau1C = true;
-						currentLevel = niveau1C;
+						levelProgress.Univeau1C = true;
+						currentLevel = GameLevel::Niveau1C;
 						break;
-					case niveau1C:
+					case GameLevel::Niveau1C:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						Univeau2A = true;
-						currentLevel = niveau2A;
+						levelProgress.Univeau2A = true;
+						currentLevel = GameLevel::Niveau2A;
 						break;
-					case niveau2A:
+					case GameLevel::Niveau2A:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						Univeau2B = true;
-						currentLevel = niveau2B;
+						levelProgress.Univeau2B = true;
+						currentLevel = GameLevel::Niveau2B;
 						break;
-					case niveau2B:
+					case GameLevel::Niveau2B:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						Univeau2C = true;
-						currentLevel = niveau2C;
+						levelProgress.Univeau2C = true;
+						currentLevel = GameLevel::Niveau2C;
 						break;
-					case niveau2C:
+					case GameLevel::Niveau2C:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						Univeau3A = true;
-						currentLevel = niveau3A;
+						levelProgress.Univeau3A = true;
+						currentLevel = GameLevel::Niveau3A;
 						break;
-					case niveau3A:
+					case GameLevel::Niveau3A:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						Univeau3B = true;
-						currentLevel = niveau3B;
+						levelProgress.Univeau3B = true;
+						currentLevel = GameLevel::Niveau3B;
 						break;
-					case niveau3B:
+					case GameLevel::Niveau3B:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						Univeau3C = true;
-						currentLevel = niveau3C;
+						levelProgress.Univeau3C = true;
+						currentLevel = GameLevel::Niveau3C;
 						break;
-					case niveau3C:
+					case GameLevel::Niveau3C:
 						levelProgress.isFightingBoss = false;
 						loadLevel = true;
-						UfinalBoss = true;
-						currentLevel = finalBoss;
+						levelProgress.UfinalBoss = true;
+						currentLevel = GameLevel::FinalBoss;
 						break;
-					case finalBoss:
+					case GameLevel::FinalBoss:
 						break;
 					default:
 						break;
 					}
-					saveCurrentScore(player);
-					saveData(player, *this);
-					coin.setPosition(0.f, 50.f);
-					coin.setScale(0.2f, 0.2f);
+					score.saveCurrentScore(player);
+					score.saveData(player, currentLevel);
+					hud.coin.setPosition(0.f, 50.f);
+					hud.coin.setScale(0.2f, 0.2f);
 					previousScreen = currentScreen;
 					nextLevelM.stop();
-					currentScreen = Menu;
+					currentScreen = GameScreen::Menu;
 				}
 			}
 		}
 		window.draw(nextLevelBackground);
-		window.draw(totalScoreText);
-		window.draw(coin);
+		window.draw(score.totalScoreText);
+		window.draw(hud.coin);
 		window.draw(settingsS);
 		window.draw(closeS);
 		window.draw(continueS);
 		window.draw(menuS);
 		}
 
-		if (currentScreen == Editor)
+		if (currentScreen == GameScreen::Editor)
 	{
 		player.shield = 0;
 		if(editorM.getStatus() != Sound::Playing)
@@ -1869,7 +1869,7 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 		numerotation.setString(to_string(counter));
 		if (counter > 10)
 			numerotation.setString("Boss");
-		numerotation.setFont(scoreFont);
+		numerotation.setFont(fontManager.getFont("Engcomica"));
 		numerotation.setOutlineThickness(6);
 		numerotation.setOutlineColor(Color::Black);
 		numerotation.setPosition(1220, 35);
@@ -1944,7 +1944,7 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 				window.close();
 			if (event.type == Event::MouseButtonPressed || event.type == Event::KeyPressed)
 			{
-				Vector2i mousePos = Mouse::getPosition(window);
+				Vector2i mousePos = Mouse::getPosition(window.window);
 				if (event.mouseButton.button == Mouse::Left && up.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)) || event.key.code == Keyboard::Up)
 				{
 					
@@ -1987,7 +1987,7 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 				{
 					confirmSound.play();
 					currentScreen = previousScreen;
-					previousScreen = Editor;
+					previousScreen = GameScreen::Editor;
 					counter = 1;
 					currentID = 0;
 					
@@ -2006,7 +2006,7 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 					confirmSound.play();
 					counter--;
 					currentScreen = previousScreen;
-					currentScreen = Settings;
+					currentScreen = GameScreen::Settings;
 
 
 				}
@@ -2061,7 +2061,7 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 						bossID = *alias;
 						player.HP = player.maxHP;
 						previousScreen = currentScreen;
-						currentScreen = Playing;
+						currentScreen = GameScreen::Playing;
 						editorM.stop();
 						break;
 					}
@@ -2120,7 +2120,7 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 						bossID = *alias;
 						player.HP = player.maxHP;
 						previousScreen = currentScreen;
-						currentScreen = Playing;
+						currentScreen = GameScreen::Playing;
 						editorM.stop();
 						break;
 					}
@@ -2143,15 +2143,15 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 
 	/////////////////////////////////////////////////////////////////////
 
-		if (currentScreen == Playing)
+		if (currentScreen == GameScreen::Playing)
 	{
-		coin.setScale(0.2f, 0.2f);
-		coin.setPosition(0, 45);
+		hud.coin.setScale(0.2f, 0.2f);
+		hud.coin.setPosition(0, 45);
 		pauseS.setScale(1, 1);
 		pauseS.setPosition(1100, 0);
-		if (currentLevel != niveauEDIT && levelDatabase.count(currentLevel))
+		if (currentLevel != GameLevel::NiveauEDIT && levelDatabase.count(currentLevel))
 		{
-			if (currentLevel == finalBoss && loadLevel)
+			if (currentLevel == GameLevel::FinalBoss && loadLevel)
 			{
 				sf::Color bossPurple(245, 194, 254);
 				star.sprite.setColor(bossPurple);
@@ -2159,16 +2159,16 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 				faststar.sprite.setColor(bossPurple);
 				faststar.sprite2.setColor(bossPurple);
 			}
-			playLevel(currentLevel, player, enemyManager, obstacleManager, projectileManager, utilitaryManager, exManager, playing, boss, finalBossM, background);
+			playLevel(currentLevel, player, enemyManager, obstacleManager, projectileManager, utilitaryManager, explosionManager, playing, boss, finalBossM, background);
 
-			if (currentLevel == finalBoss && currentScreen == Win)
+			if (currentLevel == GameLevel::FinalBoss && currentScreen == GameScreen::Win)
 			{
-				saveData(player, *this);
-				openData(player, *this);
+				score.saveData(player, currentLevel);
+				score.openData(player, levelProgress);
 			}
 		}
-		else if (currentLevel == niveauEDIT)
-			levelP(player, enemyManager, obstacleManager, projectileManager, utilitaryManager, exManager, playing, boss, finalBossM, background);
+		else if (currentLevel == GameLevel::NiveauEDIT)
+			levelP(player, enemyManager, obstacleManager, projectileManager, utilitaryManager, explosionManager, playing, boss, finalBossM, background);
 
 		if (player.boostClock.getElapsedTime().asSeconds() < player.boostDuration.asSeconds() && player.canBeBoosted == true)
 		{
@@ -2217,17 +2217,17 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 				if (event.key.code == Keyboard::Escape)
 				{
 					previousScreen = currentScreen;
-					currentScreen = Paused;
+					currentScreen = GameScreen::Paused;
 				}
 			}
 			if (event.type == Event::MouseButtonPressed)
 			{
-				Vector2i mousePos = Mouse::getPosition(window);
+				Vector2i mousePos = Mouse::getPosition(window.window);
 
 				if (event.mouseButton.button == Mouse::Left && pauseS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					previousScreen = currentScreen;
-					currentScreen = Paused;
+					currentScreen = GameScreen::Paused;
 				}
 			}
 
@@ -2253,7 +2253,7 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 				projectileManager.getProjectiles()[i]->sprite.move(14, 0);
 			if (projectileManager.getProjectiles()[i]->id != PLAYER)
 				projectileManager.getProjectiles()[i]->sprite.move(projectileManager.getProjectiles()[i]->velocity, 0);
-			projectileManager.checkProjectileOutOfScreen(projectileManager.getProjectiles()[i], enemyManager, player, scoreText);
+			projectileManager.checkProjectileOutOfScreen(projectileManager.getProjectiles()[i], enemyManager, player, score.scoreText);
 		}
 		projectileManager.detruireProjectile();
 		for (auto i = 0; i < utilitaryManager.getUtilitaryList().size(); i++)
@@ -2267,7 +2267,7 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 		{
 			window.draw(enemyManager.getEnemies()[i]->sprite);
 			cout << enemyManager.getEnemies()[i]->HP << endl;
-			enemyManager.checkEnemy(enemyManager.getEnemies()[i], toKill, exManager);
+			enemyManager.checkEnemy(enemyManager.getEnemies()[i], toKill, explosionManager);
 		}
 		enemyManager.detruireEnemy();
 		for (auto i = 0; i < enemyManager.getEnemies().size(); i++)
@@ -2308,9 +2308,9 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 		for (int i = 0; i < obstacleManager.getObstacles().size(); i++) {
 			window.draw(obstacleManager.getObstacles()[i]->sprite);
 			int randValue = rand() % 3;
-			if (currentLevel != finalBoss)
+			if (currentLevel != GameLevel::FinalBoss)
 				obstacleManager.getObstacles()[i]->moveObstacle(randValue);
-			else if (currentLevel == finalBoss)
+			else if (currentLevel == GameLevel::FinalBoss)
 				obstacleManager.getObstacles()[i]->moveObstacleF();
 			obstacleManager.getObstacles()[i]->checkObstacle(player);
 		}
@@ -2353,22 +2353,22 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 
 		}
 
-		for (int i = 0; i < exManager.getExplosions().size(); i++)
+		for (int i = 0; i < explosionManager.getExplosions().size(); i++)
 		{
-			exManager.getExplosions()[i]->animate();
-			window.draw(exManager.getExplosions()[i]->sprite);
-			exManager.getExplosions()[i]->sprite.move(-4, 0);
-			if (exManager.getExplosions()[i]->frame == 8)
+			explosionManager.getExplosions()[i]->animate();
+			window.draw(explosionManager.getExplosions()[i]->sprite);
+			explosionManager.getExplosions()[i]->sprite.move(-4, 0);
+			if (explosionManager.getExplosions()[i]->frame == 8)
 			{
-				exManager.getExplosions()[i]->isDead = true;
+				explosionManager.getExplosions()[i]->isDead = true;
 			}
 		}
 		
-		updateScoreText(player, scoreText);
-		healthbar.setHealthbar(player);
+		score.updateScoreText(player);
+		hud.healthbar.setHealthbar(player);
 		player.checkOutOfScreen();
 
-		window.draw(interface);
+		window.draw(hud.cockpit);
 
 		if (player.HP > 0)
 			window.draw(player.sprite);
@@ -2376,7 +2376,7 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 		{
 			if (player.isAlive == true)
 			{
-				exManager.creerExplosion(player);
+				explosionManager.creerExplosion(player);
 				player.isAlive = false;
 				boss.stop();
 				finalBossM.stop();
@@ -2384,18 +2384,18 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 				finalhours.stop();
 				lose.play();
 				previousScreen = currentScreen;
-				currentScreen = Lost;
+				currentScreen = GameScreen::Lost;
 				player.shield = 0;
 			}
 		}
 
-		window.draw(scoreText);
-		window.draw(coin);
+		window.draw(score.scoreText);
+		window.draw(hud.coin);
 		window.draw(currentLevelText);
 		window.draw(pauseS);
-		window.draw(healthbar.psprite);
+		window.draw(hud.healthbar.psprite);
 		if (player.shield > 0)
-			window.draw(healthbar.pShield);
+			window.draw(hud.healthbar.pShield);
 
 		if(levelProgress.isFightingBoss == true)
 		{
@@ -2403,19 +2403,19 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 			{
 				if (enemyManager.getEnemies()[i]->id == ENNEMI1 || enemyManager.getEnemies()[i]->id == ENNEMI2 || enemyManager.getEnemies()[i]->id == ENNEMI3 || enemyManager.getEnemies()[i]->id == BOSS1 || enemyManager.getEnemies()[i]->id == BOSS2 || enemyManager.getEnemies()[i]->id == BOSS3 || enemyManager.getEnemies()[i]->id == BOSS4)
 				{
-					healthbar.setHealthbar(enemyManager.getEnemies()[i]);
-					window.draw(healthbar.esprite);
+					hud.healthbar.setHealthbar(enemyManager.getEnemies()[i]);
+					window.draw(hud.healthbar.esprite);
 					if (enemyManager.getEnemies()[i]->shield > 0)
-						window.draw(healthbar.eShield);
+						window.draw(hud.healthbar.eShield);
 				}
 			}
 		}
-		exManager.detruireExplosion();
+		explosionManager.detruireExplosion();
 	}
 
 	if (finalhours.getStatus() == Sound::Playing)
 	{
-		hud.handleWarning(window);
+		hud.handleWarning(window.window);
 	}
 	window.display();
 	}
