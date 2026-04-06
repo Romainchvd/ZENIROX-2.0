@@ -3,6 +3,7 @@
 #include "globalvar.hpp"
 #include "game.hpp"
 #include <SFML/Graphics.hpp>
+#include "gameWindow.hpp"
 
 class Starparallaxe {
 private:
@@ -15,5 +16,5 @@ public:
     void starTexture();
     void cloudTexture();
     void update(float deltaTime);
-    void draw(sf::RenderWindow& window);
+    void draw(gameWindow& gameWindow);
 };

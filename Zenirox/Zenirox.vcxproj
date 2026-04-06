@@ -179,7 +179,10 @@ gdi32.lib;sfml-graphics-s.lib;sfml-window-s.lib;sfml-network-s.lib;sfml-audio-s.
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="enemyManager.cpp" />
     <ClCompile Include="explosion.cpp" />
+    <ClCompile Include="fontManager.cpp" />
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="gameHUD.cpp" />
+    <ClCompile Include="gameWindow.cpp" />
     <ClCompile Include="healthbar.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="obstacle.cpp" />
@@ -195,9 +198,15 @@ gdi32.lib;sfml-graphics-s.lib;sfml-window-s.lib;sfml-network-s.lib;sfml-audio-s.
     <ClCompile Include="projectile.cpp" />
     <ClInclude Include="enemyManager.hpp" />
     <ClInclude Include="explosion.hpp" />
+    <ClInclude Include="fontManager.hpp" />
     <ClInclude Include="game.hpp" />
+    <ClInclude Include="gameHUD.hpp" />
+    <ClInclude Include="gameScreen.hpp" />
+    <ClInclude Include="gameLevel.hpp" />
+    <ClInclude Include="gameWindow.hpp" />
     <ClInclude Include="globalvar.hpp" />
     <ClInclude Include="healthbar.hpp" />
+    <ClInclude Include="levelProgress.hpp" />
     <ClInclude Include="powerups.hpp" />
     <ClInclude Include="score.hpp" />
     <ClInclude Include="textureManager.hpp" />

@@ -24,9 +24,9 @@ void Background::update(float deltaTime) {
     }
 }
 
-void Background::draw(sf::RenderWindow& window) {
-    window.draw(sprite);
-    window.draw(sprite2);
+void Background::draw(gameWindow& gameWindow) {
+    gameWindow.draw(sprite);
+    gameWindow.draw(sprite2);
 }
 
 void Background::setUpTier(TextureManager& manager, std::string tier) {

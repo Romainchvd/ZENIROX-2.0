@@ -37,7 +37,7 @@ int main() {
 
 
 		//Chargement des niveaux
-		game.run(window, player, coin, background, star, faststar, healthbar, eManager, pManager, oManager, uManager, exManager, clock, scoreText, scoreFont, cockpit, playing, boss, finalBossM, playerShot, shot, totalScoreText);
+		game.run(playerShot, shot);
 
 
 

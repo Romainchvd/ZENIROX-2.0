@@ -21,6 +21,7 @@ public:
 	void setHealthbar(Player player);
 	void setHealthbar(unique_ptr<Enemy>& enemy);
 	int setTextureList();
+	Healthbar();
 };
 
 

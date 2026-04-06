@@ -2,20 +2,23 @@
 #include <SFML/Graphics.hpp>
 #include "textureManager.hpp"
 #include "fontManager.hpp"
+#include "healthbar.hpp"
 
-class gameHUD {
+class GameHUD {
 public:
 	sf::Sprite cockpit;
+	sf::Sprite skull;
 	sf::Sprite coin;
 	sf::Clock warningClock;
 	sf::Time warningDuration;
 	sf::Text warningText;
+	Healthbar healthbar;
 	TextureManager& textureManager;
 	FontManager& fontManager;
-	gameHUD(TextureManager& textureManager, FontManager& fontManager);
+	GameHUD(TextureManager& textureManager, FontManager& fontManager);
 	void initCockpit();
 	void initCoin();
 	void initWarningText();
-	void updateScoreText(int currentScore);
-	void updateTotalScoreText(int totalScore);
+	void initSkull();
+	void handleWarning(sf::RenderWindow& window);
 };

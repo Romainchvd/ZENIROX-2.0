@@ -10,7 +10,6 @@
 #include "projectile.hpp"
 #include "background.hpp"
 #include "parallaxe.hpp"
-#include "parallaxe2.hpp"
 #include "score.hpp"
 #include "healthbar.hpp"
 #include "obstacle.hpp"
@@ -21,7 +20,6 @@
 #include "gameScreen.hpp"
 #include "gameLevel.hpp"
 #include "levelProgress.hpp"
-#include "parallaxe.hpp"
 #include "gameHUD.hpp"
 
 using namespace std;
