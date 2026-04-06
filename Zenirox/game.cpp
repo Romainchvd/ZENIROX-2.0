@@ -1,7 +1,7 @@
 #include "game.hpp"
 #include <stdexcept>
 #include "SFML/Graphics.hpp"
-Game::Game() : hoveredOption(-1), player(textureManager), score(fontManager), projectileManager(textureManager), obstacleManager(textureManager), utilitaryManager(textureManager), explosionManager(textureManager) {
+Game::Game() : hoveredOption(-1), player(textureManager), score(fontManager), projectileManager(textureManager), obstacleManager(textureManager), utilitaryManager(textureManager), explosionManager(textureManager), star(textureManager, -100, "star"), faststar(textureManager, -200, "star"), background(textureManager, -31.f), hud(textureManager, fontManager) {
 
 	score.setCurrentScoreText(player);
 	score.openData(player, levelProgress);
@@ -136,6 +136,26 @@ Game::Game() : hoveredOption(-1), player(textureManager), score(fontManager), pr
 
 	//Musique victoire
 	if (!victoryM.openFromFile("sounds/victory.ogg")) throw runtime_error("Echec lors de l'ouverture de la musique de fin");
+
+	//Musique de combat classique
+	if (!playing.openFromFile("sounds/playing.ogg")) throw runtime_error("Musique de combat classique non chargee");
+	playing.setLoop(true);
+
+	//Musique de combat de boss
+	if (!boss.openFromFile("sounds/boss.ogg")) throw runtime_error("Musique de combat de boss non chargee");
+	boss.setLoop(true);
+
+	//Musique de combat final
+	if (!finalBossM.openFromFile("sounds/finalboss.ogg")) throw runtime_error("Musique de combat final non chargee");
+	finalBossM.setLoop(true);
+
+
+	//Volume des musiques
+	playing.setVolume(50);
+	boss.setVolume(50);
+	finalBossM.setVolume(50);
+
+
 
 	//Son de confirmation
 	if (!confirmSoundBuffer.loadFromFile("sounds/confirm.ogg")) throw runtime_error("Echec lors de l'ouverture du son de confirmation");
@@ -311,15 +331,14 @@ void Game::initLevelDatabase() {
 	};
 }
 
-void Game::playLevel(gameState levelState, Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background)
+void Game::playLevel(GameLevel levelState, Player& player, EnemyManager& enemyManager, ObstacleManager& obstacleManager, ProjectileManager& projectileManager, UtilitaryManager& utilitaryManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background)
 {
 	
 	//Does the level exists
 	if (levelDatabase.find(levelState) == levelDatabase.end()) return;
 	const LevelConfig& config = levelDatabase[levelState];
-
 	// Loading
-	if (state == levelState && loadLevel == true && isFightingBoss == false) {
+	if (currentLevel == levelState && loadLevel == true && levelProgress.isFightingBoss == false) {
 		currentLevelText.setString(config.title);
 		background.setUpTier(textureManager, config.tierName);
 
@@ -331,10 +350,10 @@ void Game::playLevel(gameState levelState, Player& player, EnemyManager& eManage
 
 		// Spawning enemies via configuration
 		for (const auto& e : config.enemies) {
-			eManager.creerEnemy(e.id, e.x, e.y, textureManager);
+			enemyManager.creerEnemy(e.id, e.x, e.y, textureManager);
 		}
 		for (const auto& o : config.obstacles) {
-			oManager.creerObstacle(o.x, o.y);
+			obstacleManager.creerObstacle(o.x, o.y);
 		}
 
 		loadLevel = false;
@@ -345,57 +364,57 @@ void Game::playLevel(gameState levelState, Player& player, EnemyManager& eManage
 	if (elapsed > gameDuration.asSeconds()) player.HP = 0;
 
 	//Boss
-	if (state == levelState && eManager.getEnemies().empty() && !isFightingBoss) {
+	if (currentLevel == levelState && enemyManager.getEnemies().empty() && !levelProgress.isFightingBoss) {
 		playing.stop();
-		if (state == finalBoss) {
+		if (currentLevel == GameLevel::FinalBoss) {
 			finalBossM.play();
 		}
 		else {
 			if (finalhours.getStatus() != Sound::Playing) boss.play();
 		}
-		isFightingBoss = true;
+		levelProgress.isFightingBoss = true;
 		toKill = 1;
-		eManager.creerEnemy(config.bossID, 1400, 700, textureManager);
+		enemyManager.creerEnemy(config.bossID, 1400, 700, textureManager);
 
 		//Powerups
-		spawnPowerups(player, uManager); 
+		spawnPowerups(player, utilitaryManager); 
 	}
 
 	//Victory
-	if (isFightingBoss && eManager.getEnemies().empty() && state == levelState) {
+	if (levelProgress.isFightingBoss && enemyManager.getEnemies().empty() && currentLevel == levelState) {
 		exManager.clear();
-		previousScreen = screen;
-		if (state == finalBoss) {
-			hasWon = true; 
-			screen = Win;
+		previousScreen = currentScreen;
+		if (currentLevel == GameLevel::FinalBoss) {
+			levelProgress.hasWon = true;
+			currentScreen = GameScreen::Win;
 		}
 		else {
-			screen = NextLevel;
+			currentScreen = GameScreen::NextLevel;
 		}
 	}
 
 }
 
-void Game::spawnPowerups(Player& player, UtilitaryManager& uManager)
+void Game::spawnPowerups(Player& player, UtilitaryManager& utilitaryManager)
 {
 	if (player.difficulty != Hardcore)
 	{
-		uManager.creerUtilitary(shield, 2000, 700);
-		uManager.creerUtilitary(battery, 6000, 500);
-		uManager.creerUtilitary(heart, 10000, 300);
+		utilitaryManager.creerUtilitary(shield, 2000, 700);
+		utilitaryManager.creerUtilitary(battery, 6000, 500);
+		utilitaryManager.creerUtilitary(heart, 10000, 300);
 	}
 	if (player.difficulty == Hardcore)
 	{
-		uManager.creerUtilitary(evilBattery, 2000, 200);
-		uManager.creerUtilitary(evilShield, 6000, 300);
-		uManager.creerUtilitary(evilHeart, 10000, 700);
+		utilitaryManager.creerUtilitary(evilBattery, 2000, 200);
+		utilitaryManager.creerUtilitary(evilShield, 6000, 300);
+		utilitaryManager.creerUtilitary(evilHeart, 10000, 700);
 	}
 }
 
 
-void Game::levelP(Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background)
+void Game::levelP(Player& player, EnemyManager& enemyManager, ObstacleManager& obstacleManager, ProjectileManager& projectileManager, UtilitaryManager& utilitaryManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background)
 {
-	if (state == niveauEDIT && loadLevel == true && isFightingBoss == false)
+	if (currentLevel == GameLevel::NiveauEDIT && loadLevel == true && levelProgress.isFightingBoss == false)
 	{
 		currentLevelText.setString("EDITED LEVEL");
 		background.setUpTier(textureManager, "palier1");
@@ -407,17 +426,17 @@ void Game::levelP(Player& player, EnemyManager& eManager, ObstacleManager& oMana
 		toKill = 10;
 
 		if(EloadObstacle == true)
-			oManager.creerObstacle(4700, 500);
-		eManager.creerEnemy(nb1, 1000, 600, textureManager);
-		eManager.creerEnemy(nb2, 2500, 300, textureManager);
-		eManager.creerEnemy(nb3, 4000, 700, textureManager);
-		eManager.creerEnemy(nb4, 5500, 100, textureManager);
-		eManager.creerEnemy(nb5, 7000, 800, textureManager);
-		eManager.creerEnemy(nb6, 8500, 400, textureManager);
-		eManager.creerEnemy(nb7, 10000, 600, textureManager);
-		eManager.creerEnemy(nb8, 11500, 300, textureManager);
-		eManager.creerEnemy(nb9, 13000, 500, textureManager);
-		eManager.creerEnemy(nb10, 14500, 800, textureManager);
+			obstacleManager.creerObstacle(4700, 500);
+		enemyManager.creerEnemy(nb1, 1000, 600, textureManager);
+		enemyManager.creerEnemy(nb2, 2500, 300, textureManager);
+		enemyManager.creerEnemy(nb3, 4000, 700, textureManager);
+		enemyManager.creerEnemy(nb4, 5500, 100, textureManager);
+		enemyManager.creerEnemy(nb5, 7000, 800, textureManager);
+		enemyManager.creerEnemy(nb6, 8500, 400, textureManager);
+		enemyManager.creerEnemy(nb7, 10000, 600, textureManager);
+		enemyManager.creerEnemy(nb8, 11500, 300, textureManager);
+		enemyManager.creerEnemy(nb9, 13000, 500, textureManager);
+		enemyManager.creerEnemy(nb10, 14500, 800, textureManager);
 
 		loadLevel = false;
 	}
@@ -432,61 +451,64 @@ void Game::levelP(Player& player, EnemyManager& eManager, ObstacleManager& oMana
 		boss.stop();
 		finalhours.play();
 	}
-	else if (state == niveauEDIT && toKill == 0 && isFightingBoss == false)
+	else if (currentLevel == GameLevel::NiveauEDIT && toKill == 0 && levelProgress.isFightingBoss == false)
 	{
 		playing.stop();
 		finalBossM.stop();
 		if (finalhours.getStatus() != Sound::Playing)
 			boss.play();
-		isFightingBoss = true;
+		levelProgress.isFightingBoss = true;
 		toKill = 1;
-		eManager.creerEnemy(bossID, 1400, 700, textureManager);
+		enemyManager.creerEnemy(bossID, 1400, 700, textureManager);
 		if (EloadPowerups == true)
 		{
 			if (player.difficulty == Easy)
 			{
-				uManager.creerUtilitary(shield, 2000, 700);
-				uManager.creerUtilitary(battery, 6000, 500);
-				uManager.creerUtilitary(heart, 10000, 300);
+				utilitaryManager.creerUtilitary(shield, 2000, 700);
+				utilitaryManager.creerUtilitary(battery, 6000, 500);
+				utilitaryManager.creerUtilitary(heart, 10000, 300);
 			}
 			else if (player.difficulty == Hardcore)
 			{
-				uManager.creerUtilitary(evilBattery, 2000, 200);
-				uManager.creerUtilitary(evilShield, 6000, 300);
-				uManager.creerUtilitary(evilHeart, 10000, 700);
+				utilitaryManager.creerUtilitary(evilBattery, 2000, 200);
+				utilitaryManager.creerUtilitary(evilShield, 6000, 300);
+				utilitaryManager.creerUtilitary(evilHeart, 10000, 700);
 			}
 			else if (player.difficulty == Normal)
 			{
-				uManager.creerUtilitary(shield, 2000, 700);
-				uManager.creerUtilitary(battery, 6000, 500);
-				uManager.creerUtilitary(heart, 10000, 300);
-				uManager.creerUtilitary(evilBattery, 2000, 200);
-				uManager.creerUtilitary(evilShield, 6000, 300);
-				uManager.creerUtilitary(evilHeart, 10000, 700);
+				utilitaryManager.creerUtilitary(shield, 2000, 700);
+				utilitaryManager.creerUtilitary(battery, 6000, 500);
+				utilitaryManager.creerUtilitary(heart, 10000, 300);
+				utilitaryManager.creerUtilitary(evilBattery, 2000, 200);
+				utilitaryManager.creerUtilitary(evilShield, 6000, 300);
+				utilitaryManager.creerUtilitary(evilHeart, 10000, 700);
 			}
 		}
 	}
-	if (isFightingBoss == true && toKill == 0 && state == niveauEDIT)
+	if (levelProgress.isFightingBoss == true && toKill == 0 && currentLevel == GameLevel::NiveauEDIT)
 	{
-		isFightingBoss = false;
+		levelProgress.isFightingBoss = false;
 		doLoadBackground = true;
 		loadLevel = true;
 		boss.stop();
-		previousScreen = screen;
-		screen = Editor;
+		previousScreen = currentScreen;
+		currentScreen = GameScreen::Editor;
 		counter = 1;
 		currentID = 0;
-		previousScreen = SetDifficulty;
+		previousScreen = GameScreen::SetDifficulty;
 
 
 	}
 
 }
 
-void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& background, Starparallaxe& star, Starparallaxe& faststar, Healthbar& healthbar, EnemyManager& eManager, ProjectileManager& pManager, ObstacleManager& oManager, UtilitaryManager& uManager, ExplosionManager& exManager, Clock& clock, Text& scoreText, Font& scoreFont, RectangleShape& interface, Music& playing, Music& boss, Music& finalBossM, vector<Sound>& playerShot, SoundBuffer& shot, Text& totalScoreText)
+void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 {
-	if (screen == Paused)
+	while (window.isOpen())
 	{
+		window.clear();
+		if (currentScreen == GameScreen::Paused)
+		{
 		resumeS.setPosition(780, 485);
 		Sprite pauseBackgroundS;
 		Texture pauseBackgroundT;
@@ -501,20 +523,20 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 			if (event.type == Event::KeyPressed)
 			{
 				if (event.key.code == Keyboard::Escape)
-					screen = previousScreen;
+					currentScreen = previousScreen;
 			}
 			if (event.type == Event::MouseButtonPressed)
 			{
-				Vector2i mousePos = Mouse::getPosition(window);
+				Vector2i mousePos = Mouse::getPosition(window.window);
 				if (event.mouseButton.button == Mouse::Left && resumeS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
-					screen = previousScreen;
+					currentScreen = previousScreen;
 			}
 
 		}
 		window.draw(pauseBackgroundS);
 		window.draw(resumeS);
-	}
-	if (screen == Shop)
+		}
+		if (currentScreen == GameScreen::Shop)
 	{
 			Sprite shopBackgroundS;
 			Texture shopBackgroundT;
@@ -526,11 +548,11 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 			backS.setPosition(360.f, 860.f);
 			settingsS.setPosition(1163.f, 860.f);
 			settingsS.setScale(2.f, 2.f);
-			coin.setScale(0.26f, 0.26f);
-			coin.setPosition(880.f, 5.f);
-			totalScoreText.setScale(1.f, 1.f);
-			setTotalScoreText(player, scoreFont, totalScoreText);
-			totalScoreText.setPosition(880.f, 0.f);
+			hud.coin.setScale(0.26f, 0.26f);
+			hud.coin.setPosition(880.f, 5.f);
+			score.totalScoreText.setScale(1.f, 1.f);
+			score.setTotalScoreText(player);
+			score.totalScoreText.setPosition(880.f, 0.f);
 			
 
 
@@ -543,7 +565,7 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 					window.close();
 			if (event.type == Event::MouseButtonPressed)
 			{
-				Vector2i mousePos = Mouse::getPosition(window);
+				Vector2i mousePos = Mouse::getPosition(window.window);
 
 				if (player.UShip1 == false && event.mouseButton.button == Mouse::Left && buyShip1S.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
@@ -552,7 +574,7 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 						player.buy.play();
 						player.totalScore -= 2500;
 						player.UShip1 = true;
-						saveData(player, *this);
+						score.saveData(player, currentLevel);
 					}
 					else
 						impossibleAction.play();
@@ -564,7 +586,7 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 						player.buy.play();
 						player.totalScore -= 4000;
 						player.UShip2 = true;
-						saveData(player, *this);
+						score.saveData(player, currentLevel);
 					}
 					else
 						impossibleAction.play();
@@ -576,7 +598,7 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 						player.buy.play();
 						player.totalScore -= 7500;
 						player.UShip3 = true;
-						saveData(player, *this);
+						score.saveData(player, currentLevel);
 					}
 					else
 						impossibleAction.play();
@@ -584,13 +606,13 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 				if (event.mouseButton.button == Mouse::Left && backS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					confirmSound.play();
-					screen = previousScreen;
+					currentScreen = previousScreen;
 				}
 				if (event.mouseButton.button == Mouse::Left && settingsS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)) && settingsClock.getElapsedTime().asSeconds() > settingsCooldown.asSeconds())
 				{
 					confirmSound.play();
 					settingsClock.restart();
-					screen = Settings;
+					currentScreen = GameScreen::Settings;
 				}
 			}
 
@@ -604,10 +626,10 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 				window.draw(buyShip3S);
 			window.draw(backS);
 			window.draw(settingsS);
-			window.draw(coin);
-			window.draw(totalScoreText);
+			window.draw(hud.coin);
+			window.draw(score.totalScoreText);
 	}
-	if (screen == Settings)
+		if (currentScreen == GameScreen::Settings)
 	{
 		Sprite settingsBackgroundS;
 		Texture settingsBackgroundT;
@@ -629,46 +651,46 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 				window.close();
 		if (event.type == Event::MouseButtonPressed)
 		{
-			Vector2i mousePos = Mouse::getPosition(window);
+			Vector2i mousePos = Mouse::getPosition(window.window);
 
 			if (event.mouseButton.button == Mouse::Left && backS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 			{
 				confirmSound.play();
-				screen = previousScreen;
+				currentScreen = previousScreen;
 			}
 			if (event.mouseButton.button == Mouse::Left && shopS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)) && settingsClock.getElapsedTime().asSeconds() > settingsCooldown.asSeconds())
 			{
 				confirmSound.play();
 				settingsClock.restart();
-				screen = Shop;
+				currentScreen = GameScreen::Shop;
 			}
 			if (event.mouseButton.button == Mouse::Left && inventoryShipS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 			{
 				confirmSound.play();
 				player.ship = Default;
 				player.handleShipTexture();
-				screen = previousScreen;
+				currentScreen = previousScreen;
 			}
 			if (player.UShip1 == true && event.mouseButton.button == Mouse::Left && inventoryShip1S.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 			{
 				confirmSound.play();
 				player.ship = Ship1;
 				player.handleShipTexture();
-				screen = previousScreen;
+				currentScreen = previousScreen;
 			}
 			if (player.UShip2 == true && event.mouseButton.button == Mouse::Left && inventoryShip2S.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 			{
 				confirmSound.play();
 				player.ship = Ship2;
 				player.handleShipTexture();
-				screen = previousScreen;
+				currentScreen = previousScreen;
 			}
 			if (player.UShip3 == true && event.mouseButton.button == Mouse::Left && inventoryShip3S.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 			{
 				confirmSound.play();
 				player.ship = Ship3;
 				player.handleShipTexture();
-				screen = previousScreen;
+				currentScreen = previousScreen;
 			}
 		}
 
@@ -684,10 +706,10 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 		window.draw(shopS);
 	}
 
-	if (screen == SetDifficulty)
+		if (currentScreen == GameScreen::SetDifficulty)
 	{
-		openData(player, *this);
-		if (previousScreen == Editor)
+		score.openData(player, levelProgress);
+		if (previousScreen == GameScreen::Editor)
 			loadEdited = true;
 		backS.setScale(2, 2);
 		Sprite SetDifficultyS;
@@ -698,10 +720,10 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 		normalS.setPosition(760, 496);
 		hardcoreS.setPosition(1240, 496);
 		backS.setPosition(760, 777);
-		if (previousScreen == Editor)
+		if (previousScreen == GameScreen::Editor)
 			if (editorM.getStatus() != Sound::Playing)
 				editorM.play();
-		if (previousScreen == Menu)
+		if (previousScreen == GameScreen::Menu)
 			if (titleScreenM.getStatus() != Sound::Playing)
 				titleScreenM.play();
 
@@ -712,43 +734,43 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 				window.close();
 			if (event.type == Event::MouseButtonPressed)
 			{
-				Vector2i mousePos = Mouse::getPosition(window);
+				Vector2i mousePos = Mouse::getPosition(window.window);
 
 				if (event.mouseButton.button == Mouse::Left && easyS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					player.setDifficulty(Easy);
 					confirmSound.play();
 					titleScreenM.stop();
-					previousScreen = screen;
+					previousScreen = currentScreen;
 					if (loadCampain == true)
 					{
-						screen = Playing;
+						currentScreen = GameScreen::Playing;
 						loadCampain = false;
-						if (UfinalBoss == true)
-							state = finalBoss;
-						else if (Univeau3C == true)
-							state = niveau3C;
-						else if (Univeau3B == true)
-							state = niveau3B;
-						else if (Univeau3A == true)
-							state = niveau3A;
-						else if (Univeau2C == true)
-							state = niveau2C;
-						else if (Univeau2B == true)
-							state = niveau2B;
-						else if (Univeau2A == true)
-							state = niveau2A;
-						else if (Univeau1C == true)
-							state = niveau1C;
-						else if (Univeau1B == true)
-							state = niveau1B;
+						if (levelProgress.UfinalBoss == true)
+							currentLevel = GameLevel::FinalBoss;
+						else if (levelProgress.Univeau3C == true)
+							currentLevel = GameLevel::Niveau3C;
+						else if (levelProgress.Univeau3B == true)
+							currentLevel = GameLevel::Niveau3B;
+						else if (levelProgress.Univeau3A == true)
+							currentLevel = GameLevel::Niveau3A;
+						else if (levelProgress.Univeau2C == true)
+							currentLevel = GameLevel::Niveau2C;
+						else if (levelProgress.Univeau2B == true)
+							currentLevel = GameLevel::Niveau2B;
+						else if (levelProgress.Univeau2A == true)
+							currentLevel = GameLevel::Niveau2A;
+						else if (levelProgress.Univeau1C == true)
+							currentLevel = GameLevel::Niveau1C;
+						else if (levelProgress.Univeau1B == true)
+							currentLevel = GameLevel::Niveau1B;
 						else
-							state = niveau1A;
+							currentLevel = GameLevel::Niveau1A;
 					}
 					else if (loadEdited == true)
 					{
-						screen = previousScreen;
-						screen = Editor;
+						currentScreen = previousScreen;
+						currentScreen = GameScreen::Editor;
 						loadEdited = false;
 					}
 					
@@ -758,35 +780,35 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 					player.setDifficulty(Normal);
 					confirmSound.play();
 					titleScreenM.stop();
-					previousScreen = screen;
+					previousScreen = currentScreen;
 					if (loadCampain == true)
 					{
-						screen = Playing;
+						currentScreen = GameScreen::Playing;
 						loadCampain = false;
-						if (UfinalBoss == true)
-							state = finalBoss;
-						else if (Univeau3C == true)
-							state = niveau3C;
-						else if (Univeau3B == true)
-							state = niveau3B;
-						else if (Univeau3A == true)
-							state = niveau3A;
-						else if (Univeau2C == true)
-							state = niveau2C;
-						else if (Univeau2B == true)
-							state = niveau2B;
-						else if (Univeau2A == true)
-							state = niveau2A;
-						else if (Univeau1C == true)
-							state = niveau1C;
-						else if (Univeau1B == true)
-							state = niveau1B;
+						if (levelProgress.UfinalBoss == true)
+							currentLevel = GameLevel::FinalBoss;
+						else if (levelProgress.Univeau3C == true)
+							currentLevel = GameLevel::Niveau3C;
+						else if (levelProgress.Univeau3B == true)
+							currentLevel = GameLevel::Niveau3B;
+						else if (levelProgress.Univeau3A == true)
+							currentLevel = GameLevel::Niveau3A;
+						else if (levelProgress.Univeau2C == true)
+							currentLevel = GameLevel::Niveau2C;
+						else if (levelProgress.Univeau2B == true)
+							currentLevel = GameLevel::Niveau2B;
+						else if (levelProgress.Univeau2A == true)
+							currentLevel = GameLevel::Niveau2A;
+						else if (levelProgress.Univeau1C == true)
+							currentLevel = GameLevel::Niveau1C;
+						else if (levelProgress.Univeau1B == true)
+							currentLevel = GameLevel::Niveau1B;
 						else
-							state = niveau1A;
+							currentLevel = GameLevel::Niveau1A;
 					}
 					else if (loadEdited == true)
 					{
-						screen = Editor;
+						currentScreen = GameScreen::Editor;
 						loadEdited = false;
 					}
 					
@@ -796,42 +818,42 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 					player.setDifficulty(Hardcore);
 					confirmSound.play();
 					titleScreenM.stop();
-					previousScreen = screen;
+					previousScreen = currentScreen;
 					if (loadCampain == true)
 					{
-						screen = Playing;
+						currentScreen = GameScreen::Playing;
 						loadCampain = false;
-						if (UfinalBoss == true)
-							state = finalBoss;
-						else if (Univeau3C == true)
-							state = niveau3C;
-						else if (Univeau3B == true)
-							state = niveau3B;
-						else if (Univeau3A == true)
-							state = niveau3A;
-						else if (Univeau2C == true)
-							state = niveau2C;
-						else if (Univeau2B == true)
-							state = niveau2B;
-						else if (Univeau2A == true)
-							state = niveau2A;
-						else if (Univeau1C == true)
-							state = niveau1C;
-						else if (Univeau1B == true)
-							state = niveau1B;
+						if (levelProgress.UfinalBoss == true)
+							currentLevel = GameLevel::FinalBoss;
+						else if (levelProgress.Univeau3C == true)
+							currentLevel = GameLevel::Niveau3C;
+						else if (levelProgress.Univeau3B == true)
+							currentLevel = GameLevel::Niveau3B;
+						else if (levelProgress.Univeau3A == true)
+							currentLevel = GameLevel::Niveau3A;
+						else if (levelProgress.Univeau2C == true)
+							currentLevel = GameLevel::Niveau2C;
+						else if (levelProgress.Univeau2B == true)
+							currentLevel = GameLevel::Niveau2B;
+						else if (levelProgress.Univeau2A == true)
+							currentLevel = GameLevel::Niveau2A;
+						else if (levelProgress.Univeau1C == true)
+							currentLevel = GameLevel::Niveau1C;
+						else if (levelProgress.Univeau1B == true)
+							currentLevel = GameLevel::Niveau1B;
 						else
-							state = niveau1A;
+							currentLevel = GameLevel::Niveau1A;
 					}
 					else if (loadEdited == true)
 					{
-						screen = Editor;
+						currentScreen = GameScreen::Editor;
 						loadEdited = false;
 					}
 				}
 				if (event.mouseButton.button == Mouse::Left && backS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					confirmSound.play();
-					screen = Menu;
+					currentScreen = GameScreen::Menu;
 					loadCampain = false;
 					loadEdited = false;
 				}
@@ -844,7 +866,7 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 		window.draw(backS);
 	}
 
-	if (screen == EreaseData)
+		if (currentScreen == GameScreen::EreaseData)
 	{
 		Sprite EreaseDataS;
 		Texture EreaseDataT;
@@ -861,42 +883,42 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 				window.close();
 			if (event.type == Event::MouseButtonPressed)
 			{
-				Vector2i mousePos = Mouse::getPosition(window);
+				Vector2i mousePos = Mouse::getPosition(window.window);
 
 				if (event.mouseButton.button == Mouse::Left && cancelS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					confirmSound.play();
-					screen = previousScreen;
+					currentScreen = previousScreen;
 				}
 				if (event.mouseButton.button == Mouse::Left && confirmS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					confirmSound.play();
-					screen = previousScreen;
-					removeData(player, *this);
-					state = niveau1A;
-					saveData(player, *this);
-					openData(player, *this);
+					currentScreen = previousScreen;
+					score.removeData(player, levelProgress, currentLevel);
+					currentLevel = GameLevel::Niveau1A;
+					score.saveData(player, currentLevel);
+					score.openData(player, levelProgress);
 				}
-				if (event.mouseButton.button == Mouse::Left && resetS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)) && hasWon == true)
+				if (event.mouseButton.button == Mouse::Left && resetS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)) && levelProgress.hasWon == true)
 				{
 					confirmSound.play();
-					screen = previousScreen;
-					resetQuest(player, *this);
-					state = niveau1A;
-					saveData(player, *this);
-					openData(player, *this);
+					currentScreen = previousScreen;
+					score.resetQuest(player, levelProgress);
+					currentLevel = GameLevel::Niveau1A;
+					score.saveData(player, currentLevel);
+					score.openData(player, levelProgress);
 				}
 			}
 		}
 		window.draw(EreaseDataS);
 		window.draw(confirmS);
 		window.draw(cancelS);
-		if(hasWon == true)
+		if(levelProgress.hasWon == true)
 		window.draw(resetS);
 	}
 
-	if (screen == Menu) {
-		setTotalScoreText(player, scoreFont, totalScoreText);
+		if (currentScreen == GameScreen::Menu) {
+		score.setTotalScoreText(player);
 		editorM.stop();
 		if (titleScreenM.getStatus() != Sound::Playing)
 			titleScreenM.play();
@@ -932,39 +954,39 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 				if (event.mouseButton.button == Mouse::Left && editorS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					confirmSound.play();
-					state = niveauEDIT;
-					previousScreen = screen;
-					screen = SetDifficulty;
+					currentLevel = niveauEDIT;
+					previousScreen = currentScreen;
+					currentScreen = SetDifficulty;
 					loadEdited = true;
 					openData(player, *this);
 				}
 				if (event.mouseButton.button == Mouse::Left && dataS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					confirmSound.play();
-					previousScreen = screen;
-					screen = EreaseData;
+					previousScreen = currentScreen;
+					currentScreen = EreaseData;
 					openData(player, *this);
 				}
 				if (event.mouseButton.button == Mouse::Left && questS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					confirmSound.play();
-					previousScreen = screen;
-					screen = SetDifficulty;
+					previousScreen = currentScreen;
+					currentScreen = SetDifficulty;
 					loadCampain = true; //Load campain veut dire charger Quest (Playing)
 					openData(player, *this);
 				}
 				if (event.mouseButton.button == Mouse::Left && settingsS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					confirmSound.play();
-					previousScreen = screen;
-					screen = Settings;
+					previousScreen = currentScreen;
+					currentScreen = Settings;
 					openData(player, *this);
 				}
 				if (event.mouseButton.button == Mouse::Left && shopS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					confirmSound.play();
-					previousScreen = screen;
-					screen = Shop;
+					previousScreen = currentScreen;
+					currentScreen = Shop;
 					openData(player, *this);
 				}
 				if (event.mouseButton.button == Mouse::Left && closeS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
@@ -999,13 +1021,13 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 		window.draw(shopS);
 	}
 
-	if (screen == Win)
-	{
-		pManager.clear();
-		oManager.clear();
-		uManager.clear();
+		if (currentScreen == Win)
+		{
+		projectileManager.clear();
+		obstacleManager.clear();
+		utilitaryManager.clear();
 		exManager.clear();
-		eManager.clear();
+		enemyManager.clear();
 		resetS.setPosition(764, 872);
 		settingsS.setScale(2, 2);
 		settingsS.setPosition(192, 872);
@@ -1053,9 +1075,9 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 				if (event.mouseButton.button == Mouse::Left && resetS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					confirmSound.play();
-					screen = previousScreen;
+					currentScreen = previousScreen;
 					resetQuest(player, *this);
-					state = niveau1A;
+					currentLevel = niveau1A;
 					saveData(player, *this);
 					openData(player, *this);
 				}
@@ -1063,8 +1085,8 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 				if (event.mouseButton.button == Mouse::Left && settingsS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					confirmSound.play();
-					previousScreen = screen;
-					screen = Settings;
+					previousScreen = currentScreen;
+					currentScreen = Settings;
 				}
 				if (event.mouseButton.button == Mouse::Left && closeS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
@@ -1077,9 +1099,9 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 				{
 					saveCurrentScore(player);
 					saveData(player, *this);
-					previousScreen = screen;
+					previousScreen = currentScreen;
 					victoryM.stop();
-					screen = Menu;
+					currentScreen = Menu;
 				}
 			}
 		}
@@ -1088,10 +1110,10 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 		window.draw(closeS);
 		window.draw(resetS);
 		window.draw(menuS);
-	}
+		}
 
-	if (screen == Lost)
-	{
+		if (currentScreen == Lost)
+		{
 		menuS.setPosition(192 , 714);
 		closeS.setPosition(760 , 714);
 		closeS.setScale(2, 2);
@@ -1101,11 +1123,11 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 		if (!lostScreenT.loadFromFile("lostscreen.png")) throw runtime_error("Erreur lors du chargement de l'ecran de defaite");
 		lostScreen.setTexture(lostScreenT);
 		Event event;
-		pManager.clear();
-		oManager.clear();
-		uManager.clear();
+		projectileManager.clear();
+		obstacleManager.clear();
+		utilitaryManager.clear();
 		exManager.clear();
-		eManager.clear();
+		enemyManager.clear();
 		player.currentScore = 0;
 		player.isAlive = true;
 		while (window.pollEvent(event))
@@ -1117,63 +1139,63 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 				if (event.key.code == Keyboard::Enter)
 				{
 				confirmSound.play();
-					switch (state)
+					switch (currentLevel)
 					{
 					case niveauEDIT:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
-						previousScreen = screen;
-						screen = Editor;
+						previousScreen = currentScreen;
+						currentScreen = Editor;
 						counter = 1;
 						break;
 					case niveau1A:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
 					case niveau1B:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
 					case niveau1C:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
 					case niveau2A:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
 					case niveau2B:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
 					case niveau2C:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
 					case niveau3A:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
 					case niveau3B:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
 					case niveau3C:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
 					case finalBoss:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
@@ -1182,10 +1204,10 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 					}
 					lose.stop();
 					player.HP = player.maxHP;
-					if(state != niveauEDIT)
+					if(currentLevel != niveauEDIT)
 					{
-						previousScreen = screen;
-						screen = Playing;
+						previousScreen = currentScreen;
+						currentScreen = Playing;
 					}
 				}
 			}
@@ -1196,63 +1218,63 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 				if (event.mouseButton.button == Mouse::Left && continueS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					confirmSound.play();
-					switch (state)
+					switch (currentLevel)
 					{
 					case niveauEDIT:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
-						previousScreen = screen;
-						screen = Editor;
+						previousScreen = currentScreen;
+						currentScreen = Editor;
 						counter = 1;
 						break;
 					case niveau1A:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
 					case niveau1B:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
 					case niveau1C:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
 					case niveau2A:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
 					case niveau2B:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
 					case niveau2C:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
 					case niveau3A:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
 					case niveau3B:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
 					case niveau3C:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
 					case finalBoss:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
@@ -1261,73 +1283,73 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 					}
 					lose.stop();
 					player.HP = player.maxHP;
-					if (state != niveauEDIT)
+					if (currentLevel != niveauEDIT)
 					{
-						previousScreen = screen;
-						screen = Playing;
+						previousScreen = currentScreen;
+						currentScreen = Playing;
 					}
 				}
 
 				if (event.mouseButton.button == Mouse::Left && menuS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					confirmSound.play();
-					switch (state)
+					switch (currentLevel)
 					{
 					case niveauEDIT:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
-						previousScreen = screen;
-						screen = Editor;
+						previousScreen = currentScreen;
+						currentScreen = Editor;
 						counter = 1;
 						break;
 					case niveau1A:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
 					case niveau1B:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
 					case niveau1C:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
 					case niveau2A:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
 					case niveau2B:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
 					case niveau2C:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
 					case niveau3A:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
 					case niveau3B:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
 					case niveau3C:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
 					case finalBoss:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						break;
@@ -1337,8 +1359,8 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 					player.HP = player.maxHP;
 					lose.stop();
 					confirmSound.play();
-					previousScreen = screen;
-					screen = Menu;
+					previousScreen = currentScreen;
+					currentScreen = Menu;
 					counter = 1;
 					currentID = 0;
 				}
@@ -1352,10 +1374,10 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 		window.draw(continueS);
 		window.draw(closeS);
 		window.draw(menuS);
-	}
+		}
 
-	if (screen == NextLevel)
-	{
+		if (currentScreen == NextLevel)
+		{
 		editorM.stop();
 		if (player.difficulty != Hardcore)
 			player.HP = player.maxHP;
@@ -1374,10 +1396,10 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 			nextLevelM.play();
 		finalBossM.stop();
 		finalhours.stop();
-		oManager.clear();
-		uManager.clear();
+		obstacleManager.clear();
+		utilitaryManager.clear();
 		exManager.clear();
-		pManager.clear();
+		projectileManager.clear();
 		coin.setScale(0.5, 0.5);
 		coin.setPosition(750, 670);
 		saveCurrentScore(player);
@@ -1394,72 +1416,72 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 			{
 				saveCurrentScore(player);
 				saveData(player, *this);
-				switch (state)
+				switch (currentLevel)
 				{
 				case niveauEDIT:
 					loadLevel = true;
 					doLoadBackground = true;
-					isFightingBoss = false;
+					levelProgress.isFightingBoss = false;
 					counter = 1;
-					state = niveauEDIT;
-					screen = Editor;
+					currentLevel = niveauEDIT;
+					currentScreen = Editor;
 					nextLevelM.stop();
 					break;
 				case niveau1A:
-					isFightingBoss = false;
+					levelProgress.isFightingBoss = false;
 					loadLevel = true;
 					doLoadBackground = true;
 					Univeau1B = true;
-					state = niveau1B;
+					currentLevel = niveau1B;
 					break;
 				case niveau1B:
-					isFightingBoss = false;
+					levelProgress.isFightingBoss = false;
 					loadLevel = true;
 					doLoadBackground = true;
 					Univeau1C = true;
-					state = niveau1C;
+					currentLevel = niveau1C;
 					break;
 				case niveau1C:
-					isFightingBoss = false;
+					levelProgress.isFightingBoss = false;
 					loadLevel = true;
 					Univeau2A = true;
-					state = niveau2A;
+					currentLevel = niveau2A;
 					break;
 				case niveau2A:
-					isFightingBoss = false;
+					levelProgress.isFightingBoss = false;
 					loadLevel = true;
 					Univeau2B = true;
-					state = niveau2B;
+					currentLevel = niveau2B;
 					break;
 				case niveau2B:
-					isFightingBoss = false;
+					levelProgress.isFightingBoss = false;
 					loadLevel = true;
 					Univeau2C = true;
-					state = niveau2C;
+					currentLevel = niveau2C;
 					break;
 				case niveau2C:
-					isFightingBoss = false;
+					levelProgress.isFightingBoss = false;
 					loadLevel = true;
 					Univeau3A = true;
-					state = niveau3A;
+					currentLevel = niveau3A;
 					break;
 				case niveau3A:
-					isFightingBoss = false;
+					levelProgress.isFightingBoss = false;
 					loadLevel = true;
 					Univeau3B = true;
-					state = niveau3B;
+					currentLevel = niveau3B;
 					break;
 				case niveau3B:
-					isFightingBoss = false;
+					levelProgress.isFightingBoss = false;
 					loadLevel = true;
 					Univeau3C = true;
-					state = niveau3C;
+					currentLevel = niveau3C;
 					break;
 				case niveau3C:
-					isFightingBoss = false;
+					levelProgress.isFightingBoss = false;
 					loadLevel = true;
 					UfinalBoss = true;
-					state = finalBoss;
+					currentLevel = finalBoss;
 					break;
 				case finalBoss:
 					break;
@@ -1474,7 +1496,7 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 				if (event.key.code == Keyboard::Enter)
 				{
 				confirmSound.play();
-					switch (state)
+					switch (currentLevel)
 					{
 					case niveauEDIT:
 						saveCurrentScore(player);
@@ -1482,68 +1504,68 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 						openData(player, *this);
 						loadLevel = true;
 						doLoadBackground = true;
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						counter = 1;
-						state = niveauEDIT;
-						previousScreen = screen;
-						screen = Editor;
+						currentLevel = niveauEDIT;
+						previousScreen = currentScreen;
+						currentScreen = Editor;
 						nextLevelM.stop();
 						break;
 					case niveau1A:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						Univeau1B = true;
-						state = niveau1B;
+						currentLevel = niveau1B;
 						break;
 					case niveau1B:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						Univeau1C = true;
-						state = niveau1C;
+						currentLevel = niveau1C;
 						break;
 					case niveau1C:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						Univeau2A = true;
-						state = niveau2A;
+						currentLevel = niveau2A;
 						break;
 					case niveau2A:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						Univeau2B = true;
-						state = niveau2B;
+						currentLevel = niveau2B;
 						break;
 					case niveau2B:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						Univeau2C = true;
-						state = niveau2C;
+						currentLevel = niveau2C;
 						break;
 					case niveau2C:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						Univeau3A = true;
-						state = niveau3A;
+						currentLevel = niveau3A;
 						break;
 					case niveau3A:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						Univeau3B = true;
-						state = niveau3B;
+						currentLevel = niveau3B;
 						break;
 					case niveau3B:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						Univeau3C = true;
-						state = niveau3C;
+						currentLevel = niveau3C;
 						break;
 					case niveau3C:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						UfinalBoss = true;
-						state = finalBoss;
+						currentLevel = finalBoss;
 						break;
 					case finalBoss:
 						break;
@@ -1553,10 +1575,10 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 					player.currentScore = 0;
 					coin.setPosition(0.f, 50.f);
 					coin.setScale(0.2f, 0.2f);
-					if(state != niveauEDIT)
+					if(currentLevel != niveauEDIT)
 					{
-						previousScreen = screen;
-						screen = Playing;
+						previousScreen = currentScreen;
+						currentScreen = Playing;
 						nextLevelM.stop();
 					}
 
@@ -1569,73 +1591,73 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 				if (event.mouseButton.button == Mouse::Left && continueS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					confirmSound.play();
-					switch (state)
+					switch (currentLevel)
 					{
 					case niveauEDIT:
 						loadLevel = true;
 						doLoadBackground = true;
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						counter = 1;
-						state = niveauEDIT;
-						previousScreen = screen;
-						screen = Editor;
+						currentLevel = niveauEDIT;
+						previousScreen = currentScreen;
+						currentScreen = Editor;
 						nextLevelM.stop();
 						break;
 					case niveau1A:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						Univeau1B = true;
-						state = niveau1B;
+						currentLevel = niveau1B;
 						break;
 					case niveau1B:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						Univeau1C = true;
-						state = niveau1C;
+						currentLevel = niveau1C;
 						break;
 					case niveau1C:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						Univeau2A = true;
-						state = niveau2A;
+						currentLevel = niveau2A;
 						break;
 					case niveau2A:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						Univeau2B = true;
-						state = niveau2B;
+						currentLevel = niveau2B;
 						break;
 					case niveau2B:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						Univeau2C = true;
-						state = niveau2C;
+						currentLevel = niveau2C;
 						break;
 					case niveau2C:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						Univeau3A = true;
-						state = niveau3A;
+						currentLevel = niveau3A;
 						break;
 					case niveau3A:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						Univeau3B = true;
-						state = niveau3B;
+						currentLevel = niveau3B;
 						break;
 					case niveau3B:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						Univeau3C = true;
-						state = niveau3C;
+						currentLevel = niveau3C;
 						break;
 					case niveau3C:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						UfinalBoss = true;
-						state = finalBoss;
+						currentLevel = finalBoss;
 						break;
 					case finalBoss:
 						break;
@@ -1647,10 +1669,10 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 					player.currentScore = 0;
 					coin.setPosition(0.f, 50.f);
 					coin.setScale(0.2f, 0.2f);
-					if (state != niveauEDIT)
+					if (currentLevel != niveauEDIT)
 					{
-						previousScreen = screen;
-						screen = Playing;
+						previousScreen = currentScreen;
+						currentScreen = Playing;
 						nextLevelM.stop();
 					}
 
@@ -1659,79 +1681,79 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 				if (event.mouseButton.button == Mouse::Left && settingsS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					confirmSound.play();
-					previousScreen = screen;
-					screen = Settings;
+					previousScreen = currentScreen;
+					currentScreen = Settings;
 				}
 				if (event.mouseButton.button == Mouse::Left && closeS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					confirmSound.play();
-					switch (state)
+					switch (currentLevel)
 					{
 					case niveauEDIT:
 						loadLevel = true;
 						doLoadBackground = true;
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						counter = 1;
-						state = niveauEDIT;
-						previousScreen = screen;
-						screen = Editor;
+						currentLevel = niveauEDIT;
+						previousScreen = currentScreen;
+						currentScreen = Editor;
 						nextLevelM.stop();
 						break;
 					case niveau1A:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						Univeau1B = true;
-						state = niveau1B;
+						currentLevel = niveau1B;
 						break;
 					case niveau1B:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						Univeau1C = true;
-						state = niveau1C;
+						currentLevel = niveau1C;
 						break;
 					case niveau1C:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						Univeau2A = true;
-						state = niveau2A;
+						currentLevel = niveau2A;
 						break;
 					case niveau2A:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						Univeau2B = true;
-						state = niveau2B;
+						currentLevel = niveau2B;
 						break;
 					case niveau2B:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						Univeau2C = true;
-						state = niveau2C;
+						currentLevel = niveau2C;
 						break;
 					case niveau2C:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						Univeau3A = true;
-						state = niveau3A;
+						currentLevel = niveau3A;
 						break;
 					case niveau3A:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						Univeau3B = true;
-						state = niveau3B;
+						currentLevel = niveau3B;
 						break;
 					case niveau3B:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						Univeau3C = true;
-						state = niveau3C;
+						currentLevel = niveau3C;
 						break;
 					case niveau3C:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						UfinalBoss = true;
-						state = finalBoss;
+						currentLevel = finalBoss;
 						break;
 					case finalBoss:
 						break;
@@ -1745,73 +1767,73 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 				if (event.mouseButton.button == Mouse::Left && menuS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					confirmSound.play();
-					switch (state)
+					switch (currentLevel)
 					{
 					case niveauEDIT:
 						loadLevel = true;
 						doLoadBackground = true;
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						counter = 1;
-						state = niveauEDIT;
-						previousScreen = screen;
-						screen = Editor;
+						currentLevel = niveauEDIT;
+						previousScreen = currentScreen;
+						currentScreen = Editor;
 						nextLevelM.stop();
 						break;
 					case niveau1A:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						Univeau1B = true;
-						state = niveau1B;
+						currentLevel = niveau1B;
 						break;
 					case niveau1B:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						doLoadBackground = true;
 						Univeau1C = true;
-						state = niveau1C;
+						currentLevel = niveau1C;
 						break;
 					case niveau1C:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						Univeau2A = true;
-						state = niveau2A;
+						currentLevel = niveau2A;
 						break;
 					case niveau2A:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						Univeau2B = true;
-						state = niveau2B;
+						currentLevel = niveau2B;
 						break;
 					case niveau2B:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						Univeau2C = true;
-						state = niveau2C;
+						currentLevel = niveau2C;
 						break;
 					case niveau2C:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						Univeau3A = true;
-						state = niveau3A;
+						currentLevel = niveau3A;
 						break;
 					case niveau3A:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						Univeau3B = true;
-						state = niveau3B;
+						currentLevel = niveau3B;
 						break;
 					case niveau3B:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						Univeau3C = true;
-						state = niveau3C;
+						currentLevel = niveau3C;
 						break;
 					case niveau3C:
-						isFightingBoss = false;
+						levelProgress.isFightingBoss = false;
 						loadLevel = true;
 						UfinalBoss = true;
-						state = finalBoss;
+						currentLevel = finalBoss;
 						break;
 					case finalBoss:
 						break;
@@ -1822,9 +1844,9 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 					saveData(player, *this);
 					coin.setPosition(0.f, 50.f);
 					coin.setScale(0.2f, 0.2f);
-					previousScreen = screen;
+					previousScreen = currentScreen;
 					nextLevelM.stop();
-					screen = Menu;
+					currentScreen = Menu;
 				}
 			}
 		}
@@ -1835,9 +1857,9 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 		window.draw(closeS);
 		window.draw(continueS);
 		window.draw(menuS);
-	}
+		}
 
-	if (screen == Editor)
+		if (currentScreen == Editor)
 	{
 		player.shield = 0;
 		if(editorM.getStatus() != Sound::Playing)
@@ -1964,7 +1986,7 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 				if (event.mouseButton.button == Mouse::Left && backS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)) || event.key.code == Keyboard::Down)
 				{
 					confirmSound.play();
-					screen = previousScreen;
+					currentScreen = previousScreen;
 					previousScreen = Editor;
 					counter = 1;
 					currentID = 0;
@@ -1983,8 +2005,8 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 				{
 					confirmSound.play();
 					counter--;
-					screen = previousScreen;
-					screen = Settings;
+					currentScreen = previousScreen;
+					currentScreen = Settings;
 
 
 				}
@@ -2038,8 +2060,8 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 					default:
 						bossID = *alias;
 						player.HP = player.maxHP;
-						previousScreen = screen;
-						screen = Playing;
+						previousScreen = currentScreen;
+						currentScreen = Playing;
 						editorM.stop();
 						break;
 					}
@@ -2097,8 +2119,8 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 					default:
 						bossID = *alias;
 						player.HP = player.maxHP;
-						previousScreen = screen;
-						screen = Playing;
+						previousScreen = currentScreen;
+						currentScreen = Playing;
 						editorM.stop();
 						break;
 					}
@@ -2121,15 +2143,15 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 
 	/////////////////////////////////////////////////////////////////////
 
-	if (screen == Playing)
+		if (currentScreen == Playing)
 	{
 		coin.setScale(0.2f, 0.2f);
 		coin.setPosition(0, 45);
 		pauseS.setScale(1, 1);
 		pauseS.setPosition(1100, 0);
-		if (state != niveauEDIT && levelDatabase.count(state))
+		if (currentLevel != niveauEDIT && levelDatabase.count(currentLevel))
 		{
-			if (state == finalBoss && loadLevel)
+			if (currentLevel == finalBoss && loadLevel)
 			{
 				sf::Color bossPurple(245, 194, 254);
 				star.sprite.setColor(bossPurple);
@@ -2137,16 +2159,16 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 				faststar.sprite.setColor(bossPurple);
 				faststar.sprite2.setColor(bossPurple);
 			}
-			playLevel(state, player, eManager, oManager, pManager, uManager, exManager, playing, boss, finalBossM, background);
+			playLevel(currentLevel, player, enemyManager, obstacleManager, projectileManager, utilitaryManager, exManager, playing, boss, finalBossM, background);
 
-			if (state == finalBoss && screen == Win)
+			if (currentLevel == finalBoss && currentScreen == Win)
 			{
 				saveData(player, *this);
 				openData(player, *this);
 			}
 		}
-		else if (state == niveauEDIT)
-			levelP(player, eManager, oManager, pManager, uManager, exManager, playing, boss, finalBossM, background);
+		else if (currentLevel == niveauEDIT)
+			levelP(player, enemyManager, obstacleManager, projectileManager, utilitaryManager, exManager, playing, boss, finalBossM, background);
 
 		if (player.boostClock.getElapsedTime().asSeconds() < player.boostDuration.asSeconds() && player.canBeBoosted == true)
 		{
@@ -2166,7 +2188,7 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 
 		if (Mouse::isButtonPressed(Mouse::Left) && player.attackClock.getElapsedTime().asSeconds() > player.attackCooldown.asSeconds()) {
 			player.attackClock.restart();
-			pManager.creerProjectile(player);
+			projectileManager.creerProjectile(player);
 			bool soundPlayed = false;
 			for (auto& shot : playerShot)
 			{
@@ -2180,7 +2202,7 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 			}
 			if (!soundPlayed)
 				playerShot[0].play();
-			pManager.getProjectiles()[pManager.getProjectiles().size() - 1]->sprite.setPosition(player.sprite.getPosition().x, player.sprite.getGlobalBounds().top + 50);
+			projectileManager.getProjectiles()[projectileManager.getProjectiles().size() - 1]->sprite.setPosition(player.sprite.getPosition().x, player.sprite.getGlobalBounds().top + 50);
 		}
 
 
@@ -2194,8 +2216,8 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 					window.close();
 				if (event.key.code == Keyboard::Escape)
 				{
-					previousScreen = screen;
-					screen = Paused;
+					previousScreen = currentScreen;
+					currentScreen = Paused;
 				}
 			}
 			if (event.type == Event::MouseButtonPressed)
@@ -2204,103 +2226,102 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 
 				if (event.mouseButton.button == Mouse::Left && pauseS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
-					previousScreen = screen;
-					screen = Paused;
+					previousScreen = currentScreen;
+					currentScreen = Paused;
 				}
 			}
 
 		}
 
 		// Calcul du deltaTime
-		float deltaTime = clock.restart().asSeconds();
+		float deltaTime = deltaTimeClock.restart().asSeconds();
 		// Mettre à jour l'arrière-plan
 		background.update(deltaTime);
 		star.update(deltaTime);
 		faststar.update(deltaTime);
 
-		window.clear();
 
 		background.draw(window);
 		star.draw(window);
 		faststar.draw(window);
 
 		//Gestion de l'affichage, de la durée de vie des projectiles et des dégâts infligés
-		for (unsigned int i = 0; i < pManager.getProjectiles().size(); i++)
+		for (unsigned int i = 0; i < projectileManager.getProjectiles().size(); i++)
 		{
-			window.draw(pManager.getProjectiles()[i]->sprite);
-			if (pManager.getProjectiles()[i]->id == PLAYER)
-				pManager.getProjectiles()[i]->sprite.move(14, 0);
-			if (pManager.getProjectiles()[i]->id != PLAYER)
-				pManager.getProjectiles()[i]->sprite.move(pManager.getProjectiles()[i]->velocity, 0);
-			pManager.checkProjectileOutOfScreen(pManager.getProjectiles()[i], eManager, player, scoreText);
+			window.draw(projectileManager.getProjectiles()[i]->sprite);
+			if (projectileManager.getProjectiles()[i]->id == PLAYER)
+				projectileManager.getProjectiles()[i]->sprite.move(14, 0);
+			if (projectileManager.getProjectiles()[i]->id != PLAYER)
+				projectileManager.getProjectiles()[i]->sprite.move(projectileManager.getProjectiles()[i]->velocity, 0);
+			projectileManager.checkProjectileOutOfScreen(projectileManager.getProjectiles()[i], enemyManager, player, scoreText);
 		}
-		pManager.detruireProjectile();
-		for (auto i = 0; i < uManager.getUtilitaryList().size(); i++)
+		projectileManager.detruireProjectile();
+		for (auto i = 0; i < utilitaryManager.getUtilitaryList().size(); i++)
 		{
-			window.draw(uManager.getUtilitaryList()[i]->sprite);
-			uManager.getUtilitaryList()[i]->moveUtilitary();
-			uManager.checkUtilitary(uManager.getUtilitaryList()[i], player, eManager);
+			window.draw(utilitaryManager.getUtilitaryList()[i]->sprite);
+			utilitaryManager.getUtilitaryList()[i]->moveUtilitary();
+			utilitaryManager.checkUtilitary(utilitaryManager.getUtilitaryList()[i], player, enemyManager);
 		}
 		//Regarde si un ennemi sort de l'écran ou si il est mort
-		for (auto i = 0; i < eManager.getEnemies().size(); i++)
+		for (auto i = 0; i < enemyManager.getEnemies().size(); i++)
 		{
-			window.draw(eManager.getEnemies()[i]->sprite);
-			cout << eManager.getEnemies()[i]->HP << endl;
-			eManager.checkEnemy(eManager.getEnemies()[i], toKill, exManager);
+			window.draw(enemyManager.getEnemies()[i]->sprite);
+			cout << enemyManager.getEnemies()[i]->HP << endl;
+			enemyManager.checkEnemy(enemyManager.getEnemies()[i], toKill, exManager);
 		}
-		eManager.detruireEnemy();
-		for (auto i = 0; i < eManager.getEnemies().size(); i++)
+		enemyManager.detruireEnemy();
+		for (auto i = 0; i < enemyManager.getEnemies().size(); i++)
 		{
-			if (eManager.getEnemies()[i]->boostClock.getElapsedTime().asSeconds() < eManager.getEnemies()[i]->boostDuration.asSeconds() && eManager.getEnemies()[i]->canBeBoosted == true)
+			if (enemyManager.getEnemies()[i]->boostClock.getElapsedTime().asSeconds() < enemyManager.getEnemies()[i]->boostDuration.asSeconds() && enemyManager.getEnemies()[i]->canBeBoosted == true)
 			{
-				eManager.getEnemies()[i]->attackCooldown = seconds(0.05f);
+				enemyManager.getEnemies()[i]->attackCooldown = seconds(0.05f);
 			}
 			else
 			{
-				switch (eManager.getEnemies()[i]->id)
+				switch (enemyManager.getEnemies()[i]->id)
 				{
 				case ENNEMI1:
-					eManager.getEnemies()[i]->attackCooldown = seconds(3.f);
+					enemyManager.getEnemies()[i]->attackCooldown = seconds(3.f);
 					break;
 				case ENNEMI2:
-					eManager.getEnemies()[i]->attackCooldown = seconds(1.5f);
+					enemyManager.getEnemies()[i]->attackCooldown = seconds(1.5f);
 					break;
 				case ENNEMI3:
-					eManager.getEnemies()[i]->attackCooldown = seconds(1.f);
+					enemyManager.getEnemies()[i]->attackCooldown = seconds(1.f);
 					break;
 				case BOSS1:
-					eManager.getEnemies()[i]->attackCooldown = seconds(0.08f);
+					enemyManager.getEnemies()[i]->attackCooldown = seconds(0.08f);
 					break;
 				case BOSS2:
-					eManager.getEnemies()[i]->attackCooldown = seconds(0.2f);
+					enemyManager.getEnemies()[i]->attackCooldown = seconds(0.2f);
 					break;
 				case BOSS3:
-					eManager.getEnemies()[i]->attackCooldown = seconds(0.2f);
+					enemyManager.getEnemies()[i]->attackCooldown = seconds(0.2f);
 					break;
 				case BOSS4:
-					eManager.getEnemies()[i]->attackCooldown = seconds(0.06f);
+					enemyManager.getEnemies()[i]->attackCooldown = seconds(0.06f);
 					break;
 				}
 			}
 		}
 		//Gestion des obstacles
-		for (int i = 0; i < oManager.getObstacles().size(); i++) {
-			window.draw(oManager.getObstacles()[i]->sprite);
+		for (int i = 0; i < obstacleManager.getObstacles().size(); i++) {
+			window.draw(obstacleManager.getObstacles()[i]->sprite);
 			int randValue = rand() % 3;
-			if (state != finalBoss)
-				oManager.getObstacles()[i]->moveObstacle(randValue);
-			else if (state == finalBoss)
-				oManager.getObstacles()[i]->moveObstacleF();
-			oManager.getObstacles()[i]->checkObstacle(player);
+			if (currentLevel != finalBoss)
+				obstacleManager.getObstacles()[i]->moveObstacle(randValue);
+			else if (currentLevel == finalBoss)
+				obstacleManager.getObstacles()[i]->moveObstacleF();
+			obstacleManager.getObstacles()[i]->checkObstacle(player);
 		}
 		//Gestion de l'attaque des ennemis
-		for (auto i = 0; i < eManager.getEnemies().size(); i++)
+		for (auto i = 0; i < enemyManager.getEnemies().size(); i++)
 		{
-			eManager.getEnemies()[i]->enemyMove();
-			if (eManager.getEnemies()[i]->rechargeClock.getElapsedTime().asSeconds() > eManager.getEnemies()[i]->rechargeCooldown.asSeconds())
+			enemyManager.getEnemies()[i]->enemyMove();
+			if (enemyManager.getEnemies()[i]->rechargeClock.getElapsedTime().asSeconds() > enemyManager.getEnemies()[i]->rechargeCooldown.asSeconds())
 			{
 
-				if (eManager.getEnemies()[i]->attackClock.getElapsedTime().asSeconds() > eManager.getEnemies()[i]->attackCooldown.asSeconds())
+				if (enemyManager.getEnemies()[i]->attackClock.getElapsedTime().asSeconds() > enemyManager.getEnemies()[i]->attackCooldown.asSeconds())
 				{
 					int projVelocityChance = rand() % 3;
 					int projVelocity;
@@ -2318,16 +2339,16 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 						projVelocity = -9;
 						break;
 					}
-					eManager.getEnemies()[i]->attackClock.restart();
-					pManager.creerProjectile(eManager.getEnemies()[i], projVelocity);
-					if (eManager.getEnemies()[i]->sprite.getPosition().x > 0 && eManager.getEnemies()[i]->sprite.getPosition().x < WIDTH)
-						eManager.getEnemies()[i]->lasershot.play();
+					enemyManager.getEnemies()[i]->attackClock.restart();
+					projectileManager.creerProjectile(enemyManager.getEnemies()[i], projVelocity);
+					if (enemyManager.getEnemies()[i]->sprite.getPosition().x > 0 && enemyManager.getEnemies()[i]->sprite.getPosition().x < WIDTH)
+						enemyManager.getEnemies()[i]->lasershot.play();
 
 				}
 
 
-				if (eManager.getEnemies()[i]->rechargeClock.getElapsedTime().asSeconds() > eManager.getEnemies()[i]->rechargeCooldown.asSeconds() * 2)
-					eManager.getEnemies()[i]->rechargeClock.restart();
+				if (enemyManager.getEnemies()[i]->rechargeClock.getElapsedTime().asSeconds() > enemyManager.getEnemies()[i]->rechargeCooldown.asSeconds() * 2)
+					enemyManager.getEnemies()[i]->rechargeClock.restart();
 			}
 
 		}
@@ -2362,8 +2383,8 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 				playing.stop();
 				finalhours.stop();
 				lose.play();
-				previousScreen = screen;
-				screen = Lost;
+				previousScreen = currentScreen;
+				currentScreen = Lost;
 				player.shield = 0;
 			}
 		}
@@ -2376,20 +2397,26 @@ void Game::run(RenderWindow& window, Player& player, Sprite& coin, Background& b
 		if (player.shield > 0)
 			window.draw(healthbar.pShield);
 
-		if(isFightingBoss == true)
+		if(levelProgress.isFightingBoss == true)
 		{
-			for (int i = 0; i < eManager.getEnemies().size(); i++)
+			for (int i = 0; i < enemyManager.getEnemies().size(); i++)
 			{
-				if (eManager.getEnemies()[i]->id == ENNEMI1 || eManager.getEnemies()[i]->id == ENNEMI2 || eManager.getEnemies()[i]->id == ENNEMI3 || eManager.getEnemies()[i]->id == BOSS1 || eManager.getEnemies()[i]->id == BOSS2 || eManager.getEnemies()[i]->id == BOSS3 || eManager.getEnemies()[i]->id == BOSS4)
+				if (enemyManager.getEnemies()[i]->id == ENNEMI1 || enemyManager.getEnemies()[i]->id == ENNEMI2 || enemyManager.getEnemies()[i]->id == ENNEMI3 || enemyManager.getEnemies()[i]->id == BOSS1 || enemyManager.getEnemies()[i]->id == BOSS2 || enemyManager.getEnemies()[i]->id == BOSS3 || enemyManager.getEnemies()[i]->id == BOSS4)
 				{
-					healthbar.setHealthbar(eManager.getEnemies()[i]);
+					healthbar.setHealthbar(enemyManager.getEnemies()[i]);
 					window.draw(healthbar.esprite);
-					if (eManager.getEnemies()[i]->shield > 0)
+					if (enemyManager.getEnemies()[i]->shield > 0)
 						window.draw(healthbar.eShield);
 				}
 			}
 		}
 		exManager.detruireExplosion();
 	}
-	
+
+	if (finalhours.getStatus() == Sound::Playing)
+	{
+		hud.handleWarning(window);
+	}
+	window.display();
+	}
 }

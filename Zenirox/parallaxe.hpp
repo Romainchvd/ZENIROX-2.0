@@ -1,5 +1,5 @@
-#ifndef PARALLAXE_HPP
-#define PARALLAXE_HPP
+#pragma once
+
 #include "globalvar.hpp"
 #include "game.hpp"
 #include <SFML/Graphics.hpp>
@@ -17,5 +17,3 @@ public:
     void update(float deltaTime);
     void draw(sf::RenderWindow& window);
 };
-
-#endif

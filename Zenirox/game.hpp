@@ -21,12 +21,11 @@
 #include "gameScreen.hpp"
 #include "gameLevel.hpp"
 #include "levelProgress.hpp"
+#include "parallaxe.hpp"
+#include "gameHUD.hpp"
 
 using namespace std;
 using namespace sf;
-
-class Starparallaxe;
-class fastStarparallaxe;
 
 
 
@@ -68,15 +67,21 @@ public:
 	Sprite backgroundSprite, closeS, confirmS, editorS, cancelS, dataS,
 		easyS, hardcoreS, menuS, normalS, questS, resumeS, settingsS, buyS, yesS, yes2S, noS, no2S, backS,
 		shopS, continueS, resetS, buyShip1S, buyShip2S, buyShip3S, inventoryShipS, inventoryShip1S, inventoryShip2S, inventoryShip3S, pauseS;
-
+	Starparallaxe star;
+	Starparallaxe faststar;
 	Font font;
 	gameWindow window;
+	GameHUD hud;
+	Background background;
 	Music nextLevelM;
 	Music victoryM;
 	Music editorM;
 	Music titleScreenM;
 	Music lose;
 	Music finalhours;
+	Music playing;
+	Music boss;
+	Music finalBossM;
 
 	Sound confirmSound;
 	Sound clickSound;
@@ -92,6 +97,7 @@ public:
 	ID* alias = &nb1;
 	Clock gameClock;
 	Clock settingsClock;
+	Clock deltaTimeClock;
 	Time settingsCooldown = seconds(0.05f);
 	Time gameDuration;
 	ID  nb1, nb2, nb3, nb4, nb5, nb6, nb7, nb8, nb9, nb10, bossID = ENNEMI1;
@@ -109,7 +115,7 @@ public:
 
 	void setGameDuration(float duration);
 	void levelP(Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background);
-	void run(RenderWindow& window, Player& player, Sprite& coin, Background& background, Starparallaxe& star, Starparallaxe& faststar, Healthbar& healthbar, EnemyManager& eManager, ProjectileManager& pManager, ObstacleManager& oManager, UtilitaryManager& uManager, ExplosionManager& exManager, Clock& clock, Text& scoreText, Font& scoreFont, RectangleShape& interface, Music& playing, Music& boss, Music& finalBossM, vector<Sound>& playerShot, SoundBuffer& shot, Text& totalScoreText);
+	void run(vector<Sound>& playerShot, SoundBuffer& shot);
 	std::map<GameLevel, LevelConfig> levelDatabase;
 	void initLevelDatabase();
 	void playLevel(GameLevel levelState, Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background);

@@ -27,9 +27,9 @@ void Starparallaxe::update(float deltaTime) {
 
 
 
-void Starparallaxe::draw(sf::RenderWindow& window) {
-	window.draw(sprite);
-	window.draw(sprite2);
+void Starparallaxe::draw(gameWindow& gameWindow) {
+	gameWindow.draw(sprite);
+	gameWindow.draw(sprite2);
 }
 
 
