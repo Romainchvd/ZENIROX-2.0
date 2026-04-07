@@ -6,12 +6,12 @@
 using namespace std;
 using namespace sf;
 //ne pas oublier de dégager les initialisations redondantes
-int Score::setCurrentScoreText(Player& player)
+void Score::setCurrentScoreText(Player& player)
 {
 	scoreText.setString("Score: " + to_string(player.currentScore));
 	scoreText.setPosition(0, 50);	
 }
-int Score::setTotalScoreText(Player& player)
+void Score::setTotalScoreText(Player& player)
 {
 	scoreText.setString("       " + to_string(player.totalScore));
 	scoreText.setCharacterSize(60);
@@ -46,7 +46,7 @@ void Score::openData(Player &player, LevelProgress& levelProgress) {
 	player.UShip3 = U3;
 	inventoryFile.close();
 }
-void Score::saveData(Player& player, GameLevel& currentLevel)
+void Score::saveData(Player& player, GameLevel& currentLevel, LevelProgress& levelProgress)
 {
 	ofstream scoreFile("score.txt");
 	if (currentLevel == GameLevel::Niveau1A)
@@ -85,7 +85,7 @@ void Score::saveData(Player& player, GameLevel& currentLevel)
 	}
 	else if (currentLevel == GameLevel::FinalBoss)
 	{
-		scoreFile << player.totalScore << ' ' << boolalpha << true << ' ' << true << ' ' << true << ' ' << true << ' ' << true << ' ' << true << ' ' << true << ' ' << true << ' ' << true << ' ' << game.hasWon << ' ';
+		scoreFile << player.totalScore << ' ' << boolalpha << true << ' ' << true << ' ' << true << ' ' << true << ' ' << true << ' ' << true << ' ' << true << ' ' << true << ' ' << true << ' ' << levelProgress.hasWon << ' ';
 	}
 	scoreFile.close();
 	ofstream inventoryFile("inventory.txt");

@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <unordered_map>
 #include <map>
+#include <memory>
 
 class FontManager {
 public:
@@ -10,7 +11,7 @@ public:
 
 	sf::Font& getFont(const std::string& name);
 	std::map<std::string, std::string> filePaths;
-	std::unordered_map<std::string, sf::Font> fonts;
+	std::unordered_map<std::string, std::unique_ptr<sf::Font>> fonts;
 	FontManager();
 
 private:

@@ -1,5 +1,4 @@
-#ifndef GAME_HPP
-#define GAME_HPP
+#pragma once
 #include <SFML/Audio.hpp>
 #include <ctime>
 #include <stdexcept>
@@ -35,7 +34,7 @@ struct EnemySpawn {
 struct LevelConfig {
 	std::string title;
 	std::string tierName; // pour le background
-	float duration;
+	float duration = 15;
 	int enemiesToKill;
 	ID bossID;
 	std::vector<EnemySpawn> enemies;
@@ -54,9 +53,9 @@ public:
 	Game();
 	~Game();
 	Player player;
-	Score score;
 	TextureManager textureManager;
 	FontManager fontManager;
+	Score score;
 	EnemyManager enemyManager;
 	ProjectileManager projectileManager;
 	ObstacleManager obstacleManager;
@@ -119,5 +118,3 @@ public:
 	void playLevel(GameLevel levelState, Player& player, EnemyManager& eManager, ObstacleManager& oManager, ProjectileManager& pManager, UtilitaryManager& uManager, ExplosionManager& exManager, Music& playing, Music& boss, Music& finalBossM, Background& background);
 	void spawnPowerups(Player& player, UtilitaryManager& uManager);
 };
-
-#endif

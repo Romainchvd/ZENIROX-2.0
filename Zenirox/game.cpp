@@ -171,8 +171,7 @@ Game::Game() : hoveredOption(-1), player(textureManager), score(fontManager), pr
 	impossibleAction.setBuffer(impossibleActionSoundBuffer);
 
 	//Texte du niveau actuel
-	if (!currentLevelFont.loadFromFile("font.otf")) throw runtime_error("Erreur de chargement de la police de niveau actuel");
-	currentLevelText.setFont(currentLevelFont);
+	currentLevelText.setFont(fontManager.getFont("Engcomica"));
 	currentLevelText.setPosition(750, 25);
 	currentLevelText.setCharacterSize(40);
 	currentLevelText.setOutlineColor(Color::Black);
@@ -191,7 +190,7 @@ Game::Game() : hoveredOption(-1), player(textureManager), score(fontManager), pr
 }
 
 Game::~Game() {
-	score.saveData(player, currentLevel);
+	score.saveData(player, currentLevel, levelProgress);
 }
 
 void Game::setGameDuration(float duration) {
@@ -574,7 +573,7 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 						player.buy.play();
 						player.totalScore -= 2500;
 						player.UShip1 = true;
-						score.saveData(player, currentLevel);
+						score.saveData(player, currentLevel, levelProgress);
 					}
 					else
 						impossibleAction.play();
@@ -586,7 +585,7 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 						player.buy.play();
 						player.totalScore -= 4000;
 						player.UShip2 = true;
-						score.saveData(player, currentLevel);
+						score.saveData(player, currentLevel, levelProgress);
 					}
 					else
 						impossibleAction.play();
@@ -598,7 +597,7 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 						player.buy.play();
 						player.totalScore -= 7500;
 						player.UShip3 = true;
-						score.saveData(player, currentLevel);
+						score.saveData(player, currentLevel, levelProgress);
 					}
 					else
 						impossibleAction.play();
@@ -896,7 +895,7 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 					currentScreen = previousScreen;
 					score.removeData(player, levelProgress, currentLevel);
 					currentLevel = GameLevel::Niveau1A;
-					score.saveData(player, currentLevel);
+					score.saveData(player, currentLevel, levelProgress);
 					score.openData(player, levelProgress);
 				}
 				if (event.mouseButton.button == Mouse::Left && resetS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)) && levelProgress.hasWon == true)
@@ -905,7 +904,7 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 					currentScreen = previousScreen;
 					score.resetQuest(player, levelProgress);
 					currentLevel = GameLevel::Niveau1A;
-					score.saveData(player, currentLevel);
+					score.saveData(player, currentLevel, levelProgress);
 					score.openData(player, levelProgress);
 				}
 			}
@@ -1054,7 +1053,7 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 			if (event.type == Event::Closed)
 			{
 				score.saveCurrentScore(player);
-				score.saveData(player, currentLevel);
+				score.saveData(player, currentLevel, levelProgress);
 				score.openData(player, levelProgress);
 				window.close();
 			}
@@ -1063,7 +1062,7 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 				if (event.key.code == Keyboard::Enter)
 				{
 					score.saveCurrentScore(player);
-					score.saveData(player, currentLevel);
+					score.saveData(player, currentLevel, levelProgress);
 					score.openData(player, levelProgress);
 					window.close();
 				}
@@ -1078,7 +1077,7 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 					currentScreen = previousScreen;
 					score.resetQuest(player, levelProgress);
 					currentLevel = GameLevel::Niveau1A;
-					score.saveData(player, currentLevel);
+					score.saveData(player, currentLevel, levelProgress);
 					score.openData(player, levelProgress);
 				}
 
@@ -1091,14 +1090,14 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 				if (event.mouseButton.button == Mouse::Left && closeS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					score.saveCurrentScore(player);
-					score.saveData(player, currentLevel);
+					score.saveData(player, currentLevel, levelProgress);
 					score.openData(player, levelProgress);
 					window.close();
 				}
 				if (event.mouseButton.button == Mouse::Left && menuS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
 				{
 					score.saveCurrentScore(player);
-					score.saveData(player, currentLevel);
+					score.saveData(player, currentLevel, levelProgress);
 					previousScreen = currentScreen;
 					victoryM.stop();
 					currentScreen = GameScreen::Menu;
@@ -1415,7 +1414,7 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 			if (event.type == Event::Closed)
 			{
 				score.saveCurrentScore(player);
-				score.saveData(player, currentLevel);
+				score.saveData(player, currentLevel, levelProgress);
 				switch (currentLevel)
 				{
 				case GameLevel::NiveauEDIT:
@@ -1500,7 +1499,7 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 					{
 					case GameLevel::NiveauEDIT:
 						score.saveCurrentScore(player);
-						score.saveData(player, currentLevel);
+						score.saveData(player, currentLevel, levelProgress);
 						score.openData(player, levelProgress);
 						loadLevel = true;
 						doLoadBackground = true;
@@ -1665,7 +1664,7 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 						break;
 					}
 					score.saveCurrentScore(player);
-					score.saveData(player, currentLevel);
+					score.saveData(player, currentLevel, levelProgress);
 					player.currentScore = 0;
 					hud.coin.setPosition(0.f, 50.f);
 					hud.coin.setScale(0.2f, 0.2f);
@@ -1761,7 +1760,7 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 						break;
 					}
 					score.saveCurrentScore(player);
-					score.saveData(player, currentLevel);
+					score.saveData(player, currentLevel, levelProgress);
 					window.close();
 				}
 				if (event.mouseButton.button == Mouse::Left && menuS.getGlobalBounds().contains(static_cast<Vector2f>(mousePos)))
@@ -1841,7 +1840,7 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 						break;
 					}
 					score.saveCurrentScore(player);
-					score.saveData(player, currentLevel);
+					score.saveData(player, currentLevel, levelProgress);
 					hud.coin.setPosition(0.f, 50.f);
 					hud.coin.setScale(0.2f, 0.2f);
 					previousScreen = currentScreen;
@@ -2149,6 +2148,13 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 		hud.coin.setPosition(0, 45);
 		pauseS.setScale(1, 1);
 		pauseS.setPosition(1100, 0);
+		if (gameClock.getElapsedTime().asSeconds() > gameDuration.asSeconds() - gameDuration.asSeconds() / 4 && finalhours.getStatus() != Sound::Playing && player.HP >= 0 && lose.getStatus() != Sound::Playing)
+		{
+			playing.stop();
+			finalBossM.stop();
+			boss.stop();
+			finalhours.play();
+		}
 		if (currentLevel != GameLevel::NiveauEDIT && levelDatabase.count(currentLevel))
 		{
 			if (currentLevel == GameLevel::FinalBoss && loadLevel)
@@ -2163,7 +2169,7 @@ void Game::run(vector<Sound>& playerShot, SoundBuffer& shot)
 
 			if (currentLevel == GameLevel::FinalBoss && currentScreen == GameScreen::Win)
 			{
-				score.saveData(player, currentLevel);
+				score.saveData(player, currentLevel, levelProgress);
 				score.openData(player, levelProgress);
 			}
 		}

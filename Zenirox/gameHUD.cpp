@@ -13,8 +13,8 @@ void GameHUD::initCockpit()
 void GameHUD::initCoin()
 {
 	coin.setTexture(textureManager.getTexture("coin"));
-	coin.setScale(0.2, 0.2);
-	coin.setPosition(0, 45);
+	coin.setScale(0.2f, 0.2f);
+	coin.setPosition(0.f, 45.f);
 }
 
 void GameHUD::initWarningText()
@@ -32,8 +32,8 @@ void GameHUD::initSkull()
 {
 	skull.setTexture(textureManager.getTexture("skull"));
 	skull.setColor(sf::Color::Red);
-	skull.setScale(0.1, 0.1);
-	skull.setPosition(350, 0);
+	skull.setScale(0.1f, 0.1f);
+	skull.setPosition(350.f, 0.f);
 }
 
 void GameHUD::handleWarning(sf::RenderWindow& window)

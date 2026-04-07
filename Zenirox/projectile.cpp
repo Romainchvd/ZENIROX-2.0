@@ -16,7 +16,7 @@ void Projectile::setProjectile() {
 	{
 		sprite.setTexture(textureManager.getTexture("projectileEnemy"));
 	}
-	sprite.setScale(0.3 , 0.3);
+	sprite.setScale(0.3f , 0.3f);
 		
 }
 

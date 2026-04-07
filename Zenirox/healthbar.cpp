@@ -149,6 +149,7 @@ int Healthbar::setTextureList()
 		if (!PtextureList[i].loadFromFile("phealth/" + to_string(i+1) + ".png")) { cout << "Erreur de chargement texture barre de vie " + to_string(i+1) << endl; return -1; }
 	for (int i = 0; i < EtextureList.size(); i++)
 		if (!EtextureList[i].loadFromFile("ehealth/" + to_string(i + 1) + ".png")) { cout << "Erreur de chargement texture barre de vie " + to_string(i + 1) << endl; return -1; }
+	return 0;
 }
 
 Healthbar::Healthbar() 

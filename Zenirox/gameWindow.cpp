@@ -2,7 +2,7 @@
 #include "globalvar.hpp"
 
 gameWindow::gameWindow() {
-	window.create(sf::VideoMode(1920, 1080), "Zenirox", sf::Style::Close);
+	window.create(sf::VideoMode(1920, 1080), "Zenirox", sf::Style::Fullscreen);
 	window.setFramerateLimit(60);
 }
 
